@@ -27,4 +27,8 @@
     <ProjectReference Include="..\DigitalMenu_30_DAL\DigitalMenu_30_DAL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+  </ItemGroup>
+
 </Project>
