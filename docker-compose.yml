@@ -1,0 +1,39 @@
+version: "3.8"
+services:
+  pma:
+    image: jensr22/phpmyadmin:latest
+    container_name: ${APP_NAME}-pma
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      - PMA_HOST=value
+      - PMA_HOST=mysql
+      - PMA_USER=user
+      - PMA_PASSWORD=password
+    networks:
+      - digitalmenu_network
+
+  mysql:
+    image: jensr22/mysql:latest
+    container_name: ${APP_NAME}-mysql
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=example
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+      - MYSQL_DATABASE=digitalmenu
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - digitalmenu_network
+
+networks:
+  digitalmenu_network:
+    external: true
+
+volumes:
+  mysql_data:
+    driver: local
