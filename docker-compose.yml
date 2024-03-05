@@ -7,7 +7,6 @@ services:
     ports:
       - 8080:80
     environment:
-      - PMA_HOST=value
       - PMA_HOST=mysql
       - PMA_USER=user
       - PMA_PASSWORD=password
