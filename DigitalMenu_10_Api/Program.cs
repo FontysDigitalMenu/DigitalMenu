@@ -8,8 +8,8 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(
         connectionString,
-        new MySqlServerVersion(new Version(10, 4, 22)),
-        mySqlOptions => mySqlOptions.MigrationsAssembly("DigitalMenu_10_Api")
+        new MySqlServerVersion(new Version(8, 0, 35)),
+        mySqlOptions => mySqlOptions.MigrationsAssembly("DigitalMenu_30_DAL")
     ));
 
 // Add services to the container.
