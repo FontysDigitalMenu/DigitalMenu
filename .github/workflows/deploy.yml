@@ -1,0 +1,49 @@
+name: Deployment 
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+
+# TEST
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 8.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
+
+    
+# DEPLOY
+    - name: Build the Docker image
+      working-directory: DigitalMenu_10_Api
+      run: docker build -t jensr22/digitalmenu-api:latest -f Dockerfile .. 
+
+    - name: Log into Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Push the image to Docker Hub
+      run: docker push jensr22/digitalmenu-api:latest
+
+    - name: Deploy on production server
+      run: |
+        curl -X POST \
+          -H "Content-Type: application/json" \
+          -d "{\"secret\": \"${{ secrets.DEPLOY_SECRET }}\"}" \
+          https://deploymentbackend.jensramakers.nl/api/v1/process-digitalmenu-api
