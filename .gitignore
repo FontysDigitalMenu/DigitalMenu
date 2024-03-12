@@ -1,2 +1,5 @@
 ﻿.idea
 .vs
+/DigitalMenu_10_Api/Dockerfile
+/DigitalMenu_10_Api/appsettings.json
+/DigitalMenu_30_DAL/Migrations/20240312104700_AddedUser.cs

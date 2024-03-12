@@ -1,9 +1,12 @@
 using DigitalMenu_20_BLL.Interfaces.Repositories;
+using Microsoft.AspNetCore.Identity;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Services;
-using DigitalMenu_30_DAL.Data;
 using DigitalMenu_30_DAL.Repositories;
 using Microsoft.EntityFrameworkCore;
+using DigitalMenu_30_DAL.Data;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Filters;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -17,10 +20,36 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     ));
 
 // Add services to the container.
-builder.Services.AddScoped<ApplicationDbContext>();
+builder.Services.AddAuthorization();
+
+builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+    .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddScoped<ITableService, TableService>();
 builder.Services.AddScoped<ITableRepository, TableRepository>();
+
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey
+    });
+
+    options.OperationFilter<SecurityRequirementsOperationFilter>();
+});
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(corsPolicyBuilder =>
+    {
+        corsPolicyBuilder.WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+});
 
 builder.Services.AddControllers();
 
@@ -30,12 +59,16 @@ builder.Services.AddSwaggerGen();
 
 WebApplication app = builder.Build();
 
+app.MapIdentityApi<IdentityUser>();
+
 // Configure the HTTP request pipeline.
 // if (app.Environment.IsDevelopment())
 // {
     app.UseSwagger();
     app.UseSwaggerUI();
 // }
+
+app.UseCors();
 
 app.UseHttpsRedirection();
 
