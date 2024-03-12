@@ -22,5 +22,5 @@ public class Order
 
     public DateTime OrderDate { get; set; }
 
-    public List<MenuItem> MenuItems { get; set; }
+    public List<OrderMenuItem> OrderMenuItems { get; set; } = new List<OrderMenuItem>();
 }
