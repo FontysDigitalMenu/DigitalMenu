@@ -2,5 +2,5 @@
 
 public class TableRequest
 {
-    public string QRCode { get; set; }
+    public string Name { get; set; }
 }

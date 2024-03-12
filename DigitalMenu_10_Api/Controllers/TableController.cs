@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DigitalMenu_10_Api.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/v1/[controller]")]
 [ApiController]
 public class TableController : ControllerBase
 {
@@ -20,10 +20,11 @@ public class TableController : ControllerBase
     [HttpGet]
     public IEnumerable<TableViewModel> Get()
     {
-        return _tableService.GetAll().Select(x => new TableViewModel
+        return _tableService.GetAll().Select(t => new TableViewModel
         {
-            Id = x.Id,
-            QRCode = x.QRCode
+            Id = t.Id,
+            Name = t.Name,
+            QrCode = t.QrCode
         });
     }
 
@@ -39,7 +40,8 @@ public class TableController : ControllerBase
         TableViewModel tableViewModel = new()
         {
             Id = table.Id,
-            QRCode = table.QRCode
+            Name = table.Name,
+            QrCode = table.QrCode
         };
 
         return tableViewModel;
@@ -50,7 +52,7 @@ public class TableController : ControllerBase
     {
         Table table = new()
         {
-            QRCode = tableRequest.QRCode
+            Name = tableRequest.Name
         };
 
         _tableService.Create(table);
@@ -62,7 +64,7 @@ public class TableController : ControllerBase
         Table table = new()
         {
             Id = id,
-            QRCode = tableRequest.QRCode
+            Name = tableRequest.Name
         };
 
         _tableService.Update(table);
