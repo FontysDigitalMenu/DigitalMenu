@@ -12,9 +12,12 @@ public class TableController : ControllerBase
 {
     private readonly ITableService _tableService;
 
-    public TableController(ITableService tableService)
+    private readonly IConfiguration _configuration;
+
+    public TableController(ITableService tableService, IConfiguration configuration)
     {
         _tableService = tableService;
+        _configuration = configuration;
     }
 
     [HttpGet]
@@ -24,7 +27,7 @@ public class TableController : ControllerBase
         {
             Id = t.Id,
             Name = t.Name,
-            QrCode = t.QrCode
+            QrCode = t.GetQrCode(_configuration["BackendUrl"])
         });
     }
 
@@ -41,7 +44,7 @@ public class TableController : ControllerBase
         {
             Id = table.Id,
             Name = table.Name,
-            QrCode = table.QrCode
+            QrCode = table.GetQrCode(_configuration["BackendUrl"])
         };
 
         return tableViewModel;
