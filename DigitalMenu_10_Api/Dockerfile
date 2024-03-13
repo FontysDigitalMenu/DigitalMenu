@@ -23,6 +23,3 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "DigitalMenu_10_Api.dll"]
-
-# Add the network to the Dockerfile
-CMD ["--network", "digitalmenu_network"]
