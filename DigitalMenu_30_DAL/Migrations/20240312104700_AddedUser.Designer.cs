@@ -4,6 +4,7 @@ using DigitalMenu_30_DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DigitalMenu_30_DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240312104700_AddedUser")]
+    partial class AddedUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -81,10 +84,15 @@ namespace DigitalMenu_30_DAL.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Price")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
 
                     b.ToTable("MenuItems");
                 });
@@ -139,21 +147,6 @@ namespace DigitalMenu_30_DAL.Migrations
                     b.HasIndex("TableId");
 
                     b.ToTable("Orders");
-                });
-
-            modelBuilder.Entity("DigitalMenu_20_BLL.Models.OrderMenuItem", b =>
-                {
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MenuItemId")
-                        .HasColumnType("int");
-
-                    b.HasKey("OrderId", "MenuItemId");
-
-                    b.HasIndex("MenuItemId");
-
-                    b.ToTable("OrderMenuItems");
                 });
 
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.Table", b =>
@@ -380,6 +373,17 @@ namespace DigitalMenu_30_DAL.Migrations
                     b.Navigation("MenuItem");
                 });
 
+            modelBuilder.Entity("DigitalMenu_20_BLL.Models.MenuItem", b =>
+                {
+                    b.HasOne("DigitalMenu_20_BLL.Models.Order", "Order")
+                        .WithMany("MenuItems")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+                });
+
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.MenuItemCategory", b =>
                 {
                     b.HasOne("DigitalMenu_20_BLL.Models.Category", "Category")
@@ -460,25 +464,6 @@ namespace DigitalMenu_30_DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
-                        
-            modelBuilder.Entity("DigitalMenu_20_BLL.Models.OrderMenuItem", b =>
-                {
-                    b.HasOne("DigitalMenu_20_BLL.Models.MenuItem", "MenuItem")
-                        .WithMany()
-                        .HasForeignKey("MenuItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DigitalMenu_20_BLL.Models.Order", "Order")
-                        .WithMany("OrderMenuItems")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("MenuItem");
-
-                    b.Navigation("Order");
-                });
 
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.MenuItem", b =>
                 {
@@ -487,7 +472,7 @@ namespace DigitalMenu_30_DAL.Migrations
 
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.Order", b =>
                 {
-                    b.Navigation("OrderMenuItems");
+                    b.Navigation("MenuItems");
                 });
 
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.Table", b =>
