@@ -19,15 +19,12 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         mySqlOptions => mySqlOptions.MigrationsAssembly("DigitalMenu_30_DAL")
     ));
 
-// Add services to the container.
 builder.Services.AddAuthorization();
-
 builder.Services.AddIdentityApiEndpoints<IdentityUser>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddScoped<ITableService, TableService>();
 builder.Services.AddScoped<ITableRepository, TableRepository>();
-
 builder.Services.AddScoped<IMenuItemService, MenuItemService>();
 builder.Services.AddScoped<IMenuItemRepository, MenuItemRepository>();
 
@@ -53,9 +50,6 @@ builder.Services.AddCors(options =>
             .AllowCredentials();
     });
 });
-
-builder.Services.AddScoped<IMenuItemService, MenuItemService>();
-builder.Services.AddScoped<IMenuItemRepository, MenuItemRepository>();
 
 builder.Services.AddControllers();
 
