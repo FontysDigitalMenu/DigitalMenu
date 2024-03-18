@@ -34,4 +34,26 @@ public class MenuItemController : ControllerBase
         }
         return Ok(menuItemViewModels);
     }
+
+    [HttpGet("GetCategories")]
+    public IActionResult GetCategories(int lastId, int amount)
+    {
+        List<Category> categories = (List<Category>)_menuItemService.GetCategoriesWithNextMenuItems(lastId, amount);
+
+        List<CategoryViewModel> categoryViewModels = categories.Select(category => new CategoryViewModel
+        {
+            Id = category.Id,
+            Name = category.Name,
+            MenuItemViewModels = category.MenuItems.Select(menuItem => new MenuItemViewModel
+            {
+                Id = menuItem.Id,
+                Name = menuItem.Name,
+                Price = menuItem.Price,
+                ImageUrl = menuItem.ImageUrl
+            }).ToList()
+        }).ToList();
+
+        return Ok(categoryViewModels);
+    }
+
 }
