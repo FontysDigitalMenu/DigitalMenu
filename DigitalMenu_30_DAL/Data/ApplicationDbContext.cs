@@ -27,6 +27,8 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+        
         modelBuilder.Entity<OrderMenuItem>()
             .HasKey(om => new { om.OrderId, om.MenuItemId });
 
