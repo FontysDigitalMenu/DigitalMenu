@@ -39,5 +39,10 @@ namespace DigitalMenu_20_BLL.Services
         {
             return _menuItemRepository.GetNextMenuItems(lastId, amount);
         }
+
+        public MenuItem GetMenuItemBy(int id)
+        {
+            return _menuItemRepository.GetMenuItemBy(id);
+        }
     }
 }

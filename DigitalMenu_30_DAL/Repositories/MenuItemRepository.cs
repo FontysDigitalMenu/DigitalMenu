@@ -46,7 +46,7 @@ namespace DigitalMenu_30_DAL.Repositories
 
         public MenuItem GetMenuItemBy(int id)
         {
-            return _dbContext.MenuItems.Find(id);  
+            return _dbContext.MenuItems.Find(id)!;  
         }
     }
 }

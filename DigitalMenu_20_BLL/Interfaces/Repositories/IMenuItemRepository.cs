@@ -13,5 +13,6 @@ namespace DigitalMenu_20_BLL.Interfaces.Repositories
         public IEnumerable<MenuItem> GetNextMenuItemsWithCategory(int lastId, int amount);
 
         public IEnumerable<Category> GetCategories();
+        public MenuItem GetMenuItemBy(int id);
     }
 }

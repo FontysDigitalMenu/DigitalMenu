@@ -16,7 +16,7 @@ public class MenuItemController : ControllerBase
         _menuItemService = menuItemService;
     }
 
-    [HttpGet("{amount:int}")]
+    [HttpGet("Paged")]
     public IActionResult Get(int lastId, int amount)
     {
         List<MenuItem> menuItems = (List<MenuItem>)_menuItemService.GetNextMenuItems(lastId, amount);
@@ -35,7 +35,7 @@ public class MenuItemController : ControllerBase
         return Ok(menuItemViewModels);
     }
 
-    [HttpGet("GetCategories")]
+    [HttpGet("Paged/GetCategories")]
     public IActionResult GetCategories(int lastId, int amount)
     {
         List<Category> categories = (List<Category>)_menuItemService.GetCategoriesWithNextMenuItems(lastId, amount);
@@ -56,4 +56,10 @@ public class MenuItemController : ControllerBase
         return Ok(categoryViewModels);
     }
 
+    [HttpGet("{id:int}")]
+    public IActionResult GetMenuItem(int id)
+    {
+        var menuitem = _menuItemService.GetMenuItemBy(id);
+        return Ok(menuitem);
+    }
 }
