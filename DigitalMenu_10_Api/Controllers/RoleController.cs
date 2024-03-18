@@ -4,53 +4,52 @@ using DigitalMenu_20_BLL.Interfaces.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DigitalMenu_10_Api.Controllers
+namespace DigitalMenu_10_Api.Controllers;
+
+[Route("api/v1/[controller]")]
+[ApiController]
+public class RoleController : Controller
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class RoleController : Controller
+    private readonly SignInManager<IdentityUser> _signInManager;
+
+    private readonly IRoleService _roleService;
+
+    public RoleController(IRoleService roleService, SignInManager<IdentityUser> signInManager)
     {
-        private readonly SignInManager<IdentityUser> _signInManager;
+        _roleService = roleService;
+        _signInManager = signInManager;
+    }
 
-        private readonly IRoleService _roleService;
-
-        public RoleController(IRoleService roleService, SignInManager<IdentityUser> signInManager)
+    [HttpGet]
+    public IEnumerable<RoleViewModel> Get()
+    {
+        return _roleService.GetAll().Select(x => new RoleViewModel
         {
-            _roleService = roleService;
-            _signInManager = signInManager;
+            Name = x.Name
+        });
+    }
+
+    [HttpPost("attachRoleToUser")]
+    public async Task<IActionResult> AttachRoleToUser([FromBody] UserRoleRequest userRoleRequest)
+    {
+        IdentityUser? user = await _roleService.AttachRoleToUser(userRoleRequest.RoleName, userRoleRequest.UserId);
+        if (user == null)
+        {
+            return NotFound(new { Message = "User not found" });
         }
 
-        [HttpGet]
-        public IEnumerable<RoleViewModel> Get()
-        {
-            return _roleService.GetAll().Select(x => new RoleViewModel
-            {
-                Name = x.Name
-            });
-        }
+        await _signInManager.RefreshSignInAsync(user);
 
-        [HttpPost("attachRoleToUser")]
-        public async Task<IActionResult> AttachRoleToUser([FromBody] UserRoleRequest userRoleRequest)
-        {
-            IdentityUser? user = await _roleService.AttachRoleToUser(userRoleRequest.RoleName, userRoleRequest.UserId);
-            if (user == null)
-            {
-                return NotFound(new { Message = "User not found" });
-            }
+        return Ok();
+    }
 
+    [HttpPost("revokeRoleFromUser")]
+    public async Task RevokeRoleFromUser(UserRoleRequest userRoleRequest)
+    {
+        IdentityUser? user = await _roleService.RevokeRoleFromUser(userRoleRequest.RoleName, userRoleRequest.UserId);
+        if (user != null)
+        {
             await _signInManager.RefreshSignInAsync(user);
-
-            return Ok();
-        }
-
-        [HttpPost("revokeRoleFromUser")]
-        public async Task RevokeRoleFromUser(UserRoleRequest userRoleRequest)
-        {
-            IdentityUser? user = await _roleService.RevokeRoleFromUser(userRoleRequest.RoleName, userRoleRequest.UserId);
-            if (user != null)
-            {
-                await _signInManager.RefreshSignInAsync(user);
-            }
         }
     }
 }
