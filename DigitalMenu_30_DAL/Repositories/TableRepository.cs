@@ -24,7 +24,7 @@ public class TableRepository : ITableRepository
         return _dbContext.SaveChanges() > 0;
     }
 
-    public Table? GetById(int id)
+    public Table? GetById(string id)
     {
         return _dbContext.Tables.Find(id);
     }
@@ -35,7 +35,7 @@ public class TableRepository : ITableRepository
         return _dbContext.SaveChanges() > 0;
     }
 
-    public bool Delete(int id)
+    public bool Delete(string id)
     {
         Table? table = _dbContext.Tables.Find(id);
         if (table == null)

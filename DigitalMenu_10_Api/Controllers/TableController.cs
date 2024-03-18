@@ -27,12 +27,12 @@ public class TableController : ControllerBase
         {
             Id = t.Id,
             Name = t.Name,
-            QrCode = t.GetQrCode(_configuration["BackendUrl"])
+            QrCode = t.QrCode,
         });
     }
 
-    [HttpGet("{id:int}")]
-    public TableViewModel? Get(int id)
+    [HttpGet("{id}")]
+    public TableViewModel? Get(string id)
     {
         Table? table = _tableService.GetById(id);
         if (table == null)
@@ -44,38 +44,55 @@ public class TableController : ControllerBase
         {
             Id = table.Id,
             Name = table.Name,
-            QrCode = table.GetQrCode(_configuration["BackendUrl"])
+            QrCode = table.QrCode
         };
 
         return tableViewModel;
     }
 
     [HttpPost]
-    public void Post([FromBody] TableRequest tableRequest)
+    public IActionResult Post([FromBody] TableRequest tableRequest)
     {
-        Table table = new()
-        {
-            Name = tableRequest.Name
-        };
-
-        _tableService.Create(table);
-    }
-
-    [HttpPut("{id:int}")]
-    public void Put(int id, [FromBody] TableRequest tableRequest)
-    {
+        string id = Guid.NewGuid().ToString();
+        string qrCode = _tableService.GenerateQrCode(_configuration["BackendUrl"], id);
+        
         Table table = new()
         {
             Id = id,
-            Name = tableRequest.Name
+            Name = tableRequest.Name,
+            QrCode = qrCode,
+        };
+
+        _tableService.Create(table);
+
+        return NoContent();
+    }
+
+    [HttpPut("{id}")]
+    public IActionResult Put(string id, [FromBody] TableRequest tableRequest)
+    {
+        Table? tableFromDb = _tableService.GetById(id);
+        if (tableFromDb == null)
+        {
+            return NotFound();
+        }
+
+        Table table = new()
+        {
+            Id = id,
+            Name = tableRequest.Name,
         };
 
         _tableService.Update(table);
+        
+        return NoContent();
     }
 
-    [HttpDelete("{id:int}")]
-    public void Delete(int id)
+    [HttpDelete("{id}")]
+    public IActionResult Delete(string id)
     {
         _tableService.Delete(id);
+
+        return NoContent();
     }
 }
