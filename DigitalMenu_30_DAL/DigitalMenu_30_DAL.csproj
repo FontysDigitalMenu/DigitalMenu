@@ -20,4 +20,8 @@
     <ProjectReference Include="..\DigitalMenu_20_BLL\DigitalMenu_20_BLL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>
