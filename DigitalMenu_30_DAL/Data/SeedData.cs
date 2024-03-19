@@ -169,13 +169,16 @@ public static class SeedData
 
                 await dbContext.SaveChangesAsync();
 
-                List<MenuItem> menuItems1 = dbContext.MenuItems.Where(mi => mi.Id == 2 || mi.Id == 3).ToList();
+                List<int> ids1 = [2,3];
+                List<MenuItem> menuItems1 = dbContext.MenuItems.Where(mi => ids1.Contains(mi.Id)).ToList();
                 dbContext.Categories.First(c => c.Id == 1).MenuItems = [..menuItems1];
                 
-                List<MenuItem> menuItems2 = dbContext.MenuItems.Where(mi => mi.Id == 1 || mi.Id == 4).ToList();
+                List<int> ids2 = [1,4];
+                List<MenuItem> menuItems2 = dbContext.MenuItems.Where(mi => ids2.Contains(mi.Id)).ToList();
                 dbContext.Categories.First(c => c.Id == 2).MenuItems = [..menuItems2];
-                
-                List<MenuItem> menuItems3 = dbContext.MenuItems.Where(mi => mi.Id == 5 || mi.Id == 6).ToList();
+
+                List<int> ids3 = [5, 6, 7, 8, 9, 10];
+                List<MenuItem> menuItems3 = dbContext.MenuItems.Where(mi => ids3.Contains(mi.Id)).ToList();
                 dbContext.Categories.First(c => c.Id == 3).MenuItems = [..menuItems3];
             }
 

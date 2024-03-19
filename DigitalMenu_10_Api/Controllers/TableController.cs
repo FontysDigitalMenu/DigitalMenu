@@ -2,10 +2,12 @@ using DigitalMenu_10_Api.RequestModels;
 using DigitalMenu_10_Api.ViewModels;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DigitalMenu_10_Api.Controllers;
 
+[Authorize(Roles = "Admin")]
 [Route("api/v1/[controller]")]
 [ApiController]
 public class TableController : ControllerBase
@@ -53,7 +55,7 @@ public class TableController : ControllerBase
     {
         string id = Guid.NewGuid().ToString();
         string qrCode = _tableService.GenerateQrCode(_configuration["BackendUrl"], id);
-        
+
         Table table = new()
         {
             Id = id,
@@ -70,7 +72,7 @@ public class TableController : ControllerBase
     public IActionResult Put(string id, [FromBody] TableRequest tableRequest)
     {
         Table? table = _tableService.GetById(id);
-        if (table== null)
+        if (table == null)
         {
             return NotFound();
         }
@@ -78,7 +80,7 @@ public class TableController : ControllerBase
         table.Name = tableRequest.Name;
 
         _tableService.Update(table);
-        
+
         return NoContent();
     }
 
