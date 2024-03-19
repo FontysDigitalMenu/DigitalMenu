@@ -28,3 +28,12 @@ README.md
 !.git/config
 !.git/packed-refs
 !.git/refs/heads/**
+.gitignore
+.github
+.git
+.idea
+.vs
+.env
+docker-compose.yml
+Dockerfile
+.dockerignore

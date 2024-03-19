@@ -27,7 +27,6 @@ public class TableController : ControllerBase
         {
             Id = t.Id,
             Name = t.Name,
-            QrCode = t.QrCode,
         });
     }
 
@@ -44,7 +43,6 @@ public class TableController : ControllerBase
         {
             Id = table.Id,
             Name = table.Name,
-            QrCode = table.QrCode
         };
 
         return tableViewModel;
@@ -71,17 +69,13 @@ public class TableController : ControllerBase
     [HttpPut("{id}")]
     public IActionResult Put(string id, [FromBody] TableRequest tableRequest)
     {
-        Table? tableFromDb = _tableService.GetById(id);
-        if (tableFromDb == null)
+        Table? table = _tableService.GetById(id);
+        if (table== null)
         {
             return NotFound();
         }
 
-        Table table = new()
-        {
-            Id = id,
-            Name = tableRequest.Name,
-        };
+        table.Name = tableRequest.Name;
 
         _tableService.Update(table);
         
