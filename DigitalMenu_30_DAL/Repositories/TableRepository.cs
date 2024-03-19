@@ -15,11 +15,12 @@ public class TableRepository : ITableRepository
 
     public List<Table> GetAll()
     {
-        return _dbContext.Tables.ToList();
+        return _dbContext.Tables.OrderBy(t => t.CreatedAt).ToList();
     }
 
     public bool Create(Table table)
     {
+        table.CreatedAt = DateTime.Now;
         _dbContext.Tables.Add(table);
         return _dbContext.SaveChanges() > 0;
     }
