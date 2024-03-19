@@ -34,7 +34,7 @@ namespace DigitalMenu_30_DAL.Migrations
 
                     b.HasIndex("MenuItemsId");
 
-                    b.ToTable("CategoryMenuItem");
+                    b.ToTable("CategoryMenuItem", (string)null);
                 });
 
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.Category", b =>
@@ -51,7 +51,7 @@ namespace DigitalMenu_30_DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.Ingredient", b =>
@@ -73,7 +73,7 @@ namespace DigitalMenu_30_DAL.Migrations
 
                     b.HasIndex("MenuItemId");
 
-                    b.ToTable("Ingredients");
+                    b.ToTable("Ingredients", (string)null);
                 });
 
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.MenuItem", b =>
@@ -101,7 +101,7 @@ namespace DigitalMenu_30_DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("MenuItems");
+                    b.ToTable("MenuItems", (string)null);
                 });
 
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.Order", b =>
@@ -139,7 +139,7 @@ namespace DigitalMenu_30_DAL.Migrations
 
                     b.HasIndex("TableId");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.OrderMenuItem", b =>
@@ -154,7 +154,7 @@ namespace DigitalMenu_30_DAL.Migrations
 
                     b.HasIndex("MenuItemId");
 
-                    b.ToTable("OrderMenuItems");
+                    b.ToTable("OrderMenuItems", (string)null);
                 });
 
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.Table", b =>
@@ -175,7 +175,7 @@ namespace DigitalMenu_30_DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tables");
+                    b.ToTable("Tables", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

@@ -31,12 +31,12 @@ public class TableController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public TableViewModel? Get(string id)
+    public IActionResult Get(string id)
     {
         Table? table = _tableService.GetById(id);
         if (table == null)
         {
-            return null;
+            return NotFound();
         }
 
         TableViewModel tableViewModel = new()
@@ -45,7 +45,7 @@ public class TableController : ControllerBase
             Name = table.Name,
         };
 
-        return tableViewModel;
+        return Ok(tableViewModel);
     }
 
     [HttpPost]

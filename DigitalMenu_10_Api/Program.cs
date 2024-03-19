@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using DigitalMenu_30_DAL.Data;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
-using MySqlConnector;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -94,31 +93,9 @@ app.MapControllers();
 
 using (IServiceScope scope = app.Services.CreateScope())
 {
-    RoleManager<IdentityRole> roleManager =
-        scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-
-    string[] roles = { "Admin", "Employee" };
-
-    foreach (string role in roles)
-    {
-        try
-        {
-            if (!await roleManager.RoleExistsAsync(role))
-            {
-                await roleManager.CreateAsync(new IdentityRole(role));
-            }
-        }
-        catch (MySqlException e)
-        {
-        }
-    }
-}
-
-using (IServiceScope scope = app.Services.CreateScope())
-{
     IServiceProvider services = scope.ServiceProvider;
 
-    SeedData.Initialize(services);
+    await SeedData.Initialize(services);
 }
 
 app.UseCors();
