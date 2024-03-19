@@ -13,7 +13,7 @@ public class TableService : ITableService
     {
         _tableRepository = tableRepository;
     }
-    
+
     public string GenerateQrCode(string backendUrl, string id)
     {
         QRCodeGenerator qrCodeGenerator = new();
@@ -28,7 +28,7 @@ public class TableService : ITableService
     {
         return _tableRepository.GetAll();
     }
-    
+
     public bool Create(Table table)
     {
         return _tableRepository.Create(table);
@@ -38,12 +38,12 @@ public class TableService : ITableService
     {
         return _tableRepository.GetById(id);
     }
-    
+
     public bool Update(Table table)
     {
         return _tableRepository.Update(table);
     }
-    
+
     public bool Delete(string id)
     {
         return _tableRepository.Delete(id);
