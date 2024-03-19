@@ -2,10 +2,12 @@ using DigitalMenu_10_Api.RequestModels;
 using DigitalMenu_10_Api.ViewModels;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DigitalMenu_10_Api.Controllers;
 
+[Authorize(Roles = "Admin")]
 [Route("api/v1/[controller]")]
 [ApiController]
 public class TableController : ControllerBase
@@ -27,55 +29,66 @@ public class TableController : ControllerBase
         {
             Id = t.Id,
             Name = t.Name,
-            QrCode = t.GetQrCode(_configuration["BackendUrl"])
         });
     }
 
-    [HttpGet("{id:int}")]
-    public TableViewModel? Get(int id)
+    [HttpGet("{id}")]
+    public IActionResult Get(string id)
     {
         Table? table = _tableService.GetById(id);
         if (table == null)
         {
-            return null;
+            return NotFound();
         }
 
         TableViewModel tableViewModel = new()
         {
             Id = table.Id,
             Name = table.Name,
-            QrCode = table.GetQrCode(_configuration["BackendUrl"])
         };
 
-        return tableViewModel;
+        return Ok(tableViewModel);
     }
 
     [HttpPost]
-    public void Post([FromBody] TableRequest tableRequest)
+    public IActionResult Post([FromBody] TableRequest tableRequest)
     {
-        Table table = new()
-        {
-            Name = tableRequest.Name
-        };
+        string id = Guid.NewGuid().ToString();
+        string qrCode = _tableService.GenerateQrCode(_configuration["BackendUrl"], id);
 
-        _tableService.Create(table);
-    }
-
-    [HttpPut("{id:int}")]
-    public void Put(int id, [FromBody] TableRequest tableRequest)
-    {
         Table table = new()
         {
             Id = id,
-            Name = tableRequest.Name
+            Name = tableRequest.Name,
+            QrCode = qrCode,
         };
 
-        _tableService.Update(table);
+        _tableService.Create(table);
+
+        return NoContent();
     }
 
-    [HttpDelete("{id:int}")]
-    public void Delete(int id)
+    [HttpPut("{id}")]
+    public IActionResult Put(string id, [FromBody] TableRequest tableRequest)
+    {
+        Table? table = _tableService.GetById(id);
+        if (table == null)
+        {
+            return NotFound();
+        }
+
+        table.Name = tableRequest.Name;
+
+        _tableService.Update(table);
+
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
+    public IActionResult Delete(string id)
     {
         _tableService.Delete(id);
+
+        return NoContent();
     }
 }
