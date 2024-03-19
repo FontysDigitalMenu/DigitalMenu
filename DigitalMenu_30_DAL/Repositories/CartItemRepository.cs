@@ -18,6 +18,11 @@ namespace DigitalMenu_30_DAL.Repositories
 			_dbContext = dbContext;
 		}
 
+		public List<CartItem> GetAll()
+		{
+			return _dbContext.CartItems.ToList();
+		}
+
 		public CartItem GetById(int id)
 		{
 			return _dbContext.CartItems.Find(id);

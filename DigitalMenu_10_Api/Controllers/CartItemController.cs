@@ -13,20 +13,18 @@ namespace DigitalMenu_10_Api.Controllers
 	{
 		private readonly ICartItemService _cartItemService;
 		private readonly IMenuItemService _menuItemService;
-		private readonly List<CartItem> _cartItems;
 
 		public CartItemController(ICartItemService cartItemService, IMenuItemService menuItemService)
 		{
 			_cartItemService = cartItemService;
 			_menuItemService = menuItemService;
-			_cartItems = [];
 		}
 
 		[HttpPost]
 		public IActionResult AddToCart(int id, string note)
 		{
-			var itemToAdd = _cartItemService.GetById(id);
-			var existingCartItem = _cartItems.FirstOrDefault(item => item.Id == id);
+			var cartItems = _cartItemService.GetAll();
+			var existingCartItem = cartItems.FirstOrDefault(item => item.Id == id);
 
 			if (existingCartItem != null)
 			{
@@ -34,17 +32,19 @@ namespace DigitalMenu_10_Api.Controllers
 			}
 			else
 			{
-				// var menuItem = _menuItemService.GetById(id);
-				// if (menuItem != null)
+				var menuItem = _menuItemService.GetMenuItemBy(id);
+
+				if (menuItem != null)
 				{
 					var newCartItem = new CartItem
 					{
 						Id = id,
+						MenuItem = menuItem,
 						Quantity = 1,
 						Note = note
 					};
 
-					_cartItems.Add(newCartItem);
+					_cartItemService.Create(newCartItem);
 				}
 			}
 
@@ -54,10 +54,12 @@ namespace DigitalMenu_10_Api.Controllers
 		[HttpGet]
 		public IActionResult ViewCart()
 		{
+			var cartItems = _cartItemService.GetAll();
+
 			var cartViewModel = new CartItemViewModel
 			{
-				CartItems = _cartItems,
-				TotalAmount = _cartItems.Sum(item => item.MenuItem.Price * item.Quantity)
+				CartItems = cartItems,
+				TotalAmount = cartItems.Sum(item => item.MenuItem.Price * item.Quantity)
 			};
 
 			return Ok(cartViewModel);
@@ -66,7 +68,8 @@ namespace DigitalMenu_10_Api.Controllers
 		[HttpDelete]
 		public IActionResult RemoveFromCart(int id)
 		{
-			var itemToRemove = _cartItems.FirstOrDefault(item => item.Id == id);
+			var cartItems = _cartItemService.GetAll();
+			var itemToRemove = cartItems.FirstOrDefault(item => item.Id == id);
 
 			if (itemToRemove != null)
 			{
@@ -76,7 +79,7 @@ namespace DigitalMenu_10_Api.Controllers
 				}
 				else
 				{
-					_cartItems.Remove(itemToRemove);
+					cartItems.Remove(itemToRemove);
 				}
 			}
 

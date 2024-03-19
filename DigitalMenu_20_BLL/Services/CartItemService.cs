@@ -18,6 +18,11 @@ namespace DigitalMenu_20_BLL.Services
 			_cartItemRepository = cartItemRepository;
 		}
 
+		public List<CartItem> GetAll()
+		{
+			return _cartItemRepository.GetAll();
+		}
+
 		public CartItem GetById(int id)
 		{
 			return _cartItemRepository.GetById(id);
