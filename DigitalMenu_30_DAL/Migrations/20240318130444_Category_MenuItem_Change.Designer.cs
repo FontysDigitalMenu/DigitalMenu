@@ -4,6 +4,7 @@ using DigitalMenu_30_DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DigitalMenu_30_DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240318130444_Category_MenuItem_Change")]
+    partial class Category_MenuItem_Change
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -131,15 +134,12 @@ namespace DigitalMenu_30_DAL.Migrations
                     b.Property<int>("TableId")
                         .HasColumnType("int");
 
-                    b.Property<string>("TableId1")
-                        .HasColumnType("varchar(255)");
-
                     b.Property<int>("TotalAmount")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TableId1");
+                    b.HasIndex("TableId");
 
                     b.ToTable("Orders");
                 });
@@ -161,14 +161,13 @@ namespace DigitalMenu_30_DAL.Migrations
 
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.Table", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("varchar(255)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("QrCode")
                         .IsRequired()
                         .HasColumnType("longtext");
 
@@ -403,7 +402,9 @@ namespace DigitalMenu_30_DAL.Migrations
                 {
                     b.HasOne("DigitalMenu_20_BLL.Models.Table", "Table")
                         .WithMany("Orders")
-                        .HasForeignKey("TableId1");
+                        .HasForeignKey("TableId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Table");
                 });
