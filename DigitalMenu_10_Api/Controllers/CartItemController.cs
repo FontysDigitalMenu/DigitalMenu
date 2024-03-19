@@ -1,4 +1,5 @@
-﻿using DigitalMenu_20_BLL.Interfaces.Services;
+﻿using DigitalMenu_10_Api.ViewModels;
+using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
 using DigitalMenu_20_BLL.Services;
 using Microsoft.AspNetCore.Http;
@@ -44,6 +45,38 @@ namespace DigitalMenu_10_Api.Controllers
 					};
 
 					_cartItems.Add(newCartItem);
+				}
+			}
+
+			return Ok();
+		}
+
+		[HttpGet]
+		public IActionResult ViewCart()
+		{
+			var cartViewModel = new CartItemViewModel
+			{
+				CartItems = _cartItems,
+				TotalAmount = _cartItems.Sum(item => item.MenuItem.Price * item.Quantity)
+			};
+
+			return Ok();
+		}
+
+		[HttpDelete]
+		public IActionResult RemoveFromCart(int id)
+		{
+			var itemToRemove = _cartItems.FirstOrDefault(item => item.Id == id);
+
+			if (itemToRemove != null)
+			{
+				if (itemToRemove.Quantity > 1)
+				{
+					itemToRemove.Quantity--;
+				}
+				else
+				{
+					_cartItems.Remove(itemToRemove);
 				}
 			}
 
