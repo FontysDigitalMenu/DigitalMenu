@@ -7,6 +7,8 @@ services:
     restart: unless-stopped
     environment:
       - ConnectionStrings__DefaultConnection=Server=digitalmenu-mysql;Port=3306;Database=digitalmenu;User ID=user;Password=password;
+    volumes:
+      - ./:/app
     networks:
       - digitalmenu_network
   

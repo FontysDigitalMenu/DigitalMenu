@@ -128,10 +128,8 @@ namespace DigitalMenu_30_DAL.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int>("TableId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("TableId1")
+                    b.Property<string>("TableId")
+                        .IsRequired()
                         .HasColumnType("varchar(255)");
 
                     b.Property<int>("TotalAmount")
@@ -139,7 +137,7 @@ namespace DigitalMenu_30_DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TableId1");
+                    b.HasIndex("TableId");
 
                     b.ToTable("Orders");
                 });
@@ -163,6 +161,9 @@ namespace DigitalMenu_30_DAL.Migrations
                 {
                     b.Property<string>("Id")
                         .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -403,7 +404,9 @@ namespace DigitalMenu_30_DAL.Migrations
                 {
                     b.HasOne("DigitalMenu_20_BLL.Models.Table", "Table")
                         .WithMany("Orders")
-                        .HasForeignKey("TableId1");
+                        .HasForeignKey("TableId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Table");
                 });
