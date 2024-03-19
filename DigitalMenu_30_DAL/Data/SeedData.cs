@@ -11,8 +11,11 @@ public static class SeedData
     {
         await using ApplicationDbContext dbContext = new(serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>());
 
-        using IServiceScope scope = serviceProvider.CreateScope();
-
+        await ResetDatabaseAndSeed(dbContext);
+    }
+    
+    public static async Task ResetDatabaseAndSeed(ApplicationDbContext dbContext)
+    {
         await dbContext.Database.EnsureDeletedAsync();
         await dbContext.Database.MigrateAsync();
         dbContext.ChangeTracker.Clear();
