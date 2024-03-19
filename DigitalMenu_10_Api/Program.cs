@@ -75,7 +75,7 @@ builder.Services.AddCors(options =>
 
 WebApplication app = builder.Build();
 
-app.MapIdentityApi<IdentityUser>();
+app.MapGroup("/api").MapIdentityApi<IdentityUser>();
 
 // Configure the HTTP request pipeline.
 // if (app.Environment.IsDevelopment())
