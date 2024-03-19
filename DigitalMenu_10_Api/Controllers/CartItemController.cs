@@ -60,7 +60,7 @@ namespace DigitalMenu_10_Api.Controllers
 				TotalAmount = _cartItems.Sum(item => item.MenuItem.Price * item.Quantity)
 			};
 
-			return Ok();
+			return Ok(cartViewModel);
 		}
 
 		[HttpDelete]
