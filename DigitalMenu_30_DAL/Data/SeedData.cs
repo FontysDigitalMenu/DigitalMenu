@@ -194,28 +194,28 @@ public static class SeedData
                         Id = "C158F7B2-3F05-4C9F-BC95-3246D20A8A45",
                         Name = "Table 2",
                         QrCode = "n/a",
-                        CreatedAt = DateTime.Now,
+                        CreatedAt = DateTime.Now.AddMinutes(10),
                     },
                     new Table
                     {
                         Id = "46673854-0888-4309-AD33-71A306C1D026",
                         Name = "Table 3",
                         QrCode = "n/a",
-                        CreatedAt = DateTime.Now,
+                        CreatedAt = DateTime.Now.AddMinutes(20),
                     },
                     new Table
                     {
                         Id = "493FAF89-7344-403C-8D89-C9DF5BDFCB0F",
                         Name = "Table 4",
                         QrCode = "n/a",
-                        CreatedAt = DateTime.Now,
+                        CreatedAt = DateTime.Now.AddMinutes(30),
                     },
                     new Table
                     {
                         Id = "AE15A89C-0CF0-47DA-83F0-6E232B819BBD",
                         Name = "Table 5",
                         QrCode = "n/a",
-                        CreatedAt = DateTime.Now,
+                        CreatedAt = DateTime.Now.AddMinutes(30),
                     }
                 );
             }
