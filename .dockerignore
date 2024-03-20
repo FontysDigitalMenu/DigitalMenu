@@ -35,6 +35,7 @@ README.md
 .vs
 .env
 docker-compose.yml
+.editorconfig
 Dockerfile
 .dockerignore
 **/.idea
