@@ -25,13 +25,11 @@ public class MenuItemController : ControllerBase
         {
             MenuItemViewModel menuItemViewModel = new()
             {
-                Id = menuItem.Id,
-                Name = menuItem.Name,
-                Price = menuItem.Price,
-                ImageUrl = menuItem.ImageUrl,
+                Id = menuItem.Id, Name = menuItem.Name, Price = menuItem.Price, ImageUrl = menuItem.ImageUrl,
             };
             menuItemViewModels.Add(menuItemViewModel);
         }
+
         return Ok(menuItemViewModels);
     }
 
@@ -46,11 +44,8 @@ public class MenuItemController : ControllerBase
             Name = category.Name,
             MenuItemViewModels = category.MenuItems.Select(menuItem => new MenuItemViewModel
             {
-                Id = menuItem.Id,
-                Name = menuItem.Name,
-                Price = menuItem.Price,
-                ImageUrl = menuItem.ImageUrl
-            }).ToList()
+                Id = menuItem.Id, Name = menuItem.Name, Price = menuItem.Price, ImageUrl = menuItem.ImageUrl,
+            }).ToList(),
         }).ToList();
 
         return Ok(categoryViewModels);
@@ -59,7 +54,7 @@ public class MenuItemController : ControllerBase
     [HttpGet("{id:int}")]
     public IActionResult GetMenuItem(int id)
     {
-        var menuitem = _menuItemService.GetMenuItemBy(id);
+        MenuItem menuitem = _menuItemService.GetMenuItemBy(id);
         return Ok(menuitem);
     }
 }

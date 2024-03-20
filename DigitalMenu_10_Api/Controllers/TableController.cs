@@ -12,9 +12,9 @@ namespace DigitalMenu_10_Api.Controllers;
 [ApiController]
 public class TableController : ControllerBase
 {
-    private readonly ITableService _tableService;
-
     private readonly IConfiguration _configuration;
+
+    private readonly ITableService _tableService;
 
     public TableController(ITableService tableService, IConfiguration configuration)
     {
@@ -25,11 +25,7 @@ public class TableController : ControllerBase
     [HttpGet]
     public IEnumerable<TableViewModel> Get()
     {
-        return _tableService.GetAll().Select(t => new TableViewModel
-        {
-            Id = t.Id,
-            Name = t.Name,
-        });
+        return _tableService.GetAll().Select(t => new TableViewModel { Id = t.Id, Name = t.Name });
     }
 
     [HttpGet("{id}")]
@@ -41,11 +37,7 @@ public class TableController : ControllerBase
             return NotFound();
         }
 
-        TableViewModel tableViewModel = new()
-        {
-            Id = table.Id,
-            Name = table.Name,
-        };
+        TableViewModel tableViewModel = new() { Id = table.Id, Name = table.Name };
 
         return Ok(tableViewModel);
     }
@@ -56,12 +48,7 @@ public class TableController : ControllerBase
         string id = Guid.NewGuid().ToString();
         string qrCode = _tableService.GenerateQrCode(_configuration["BackendUrl"], id);
 
-        Table table = new()
-        {
-            Id = id,
-            Name = tableRequest.Name,
-            QrCode = qrCode,
-        };
+        Table table = new() { Id = id, Name = tableRequest.Name, QrCode = qrCode };
 
         _tableService.Create(table);
 

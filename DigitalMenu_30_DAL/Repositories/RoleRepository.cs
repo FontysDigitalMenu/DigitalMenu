@@ -1,50 +1,44 @@
 ﻿using DigitalMenu_20_BLL.Interfaces.Repositories;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace DigitalMenu_30_DAL.Repositories
+namespace DigitalMenu_30_DAL.Repositories;
+
+public class RoleRepository : IRoleRepository
 {
-    public class RoleRepository : IRoleRepository
+    private readonly RoleManager<IdentityRole> _roleManager;
+
+    private readonly UserManager<IdentityUser> _userManager;
+
+    public RoleRepository(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        _userManager = userManager;
+        _roleManager = roleManager;
+    }
 
-        private readonly RoleManager<IdentityRole> _roleManager;
+    public IEnumerable<IdentityRole> GetAll()
+    {
+        return _roleManager.Roles;
+    }
 
-        public RoleRepository(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
+    public async Task<IdentityUser?> AttachRoleToUser(string roleName, string userId)
+    {
+        IdentityUser? user = await _userManager.FindByIdAsync(userId);
+        if (user != null)
         {
-            _userManager = userManager;
-            _roleManager = roleManager;
+            await _userManager.AddToRoleAsync(user, roleName);
         }
 
-        public IEnumerable<IdentityRole> GetAll()
+        return user;
+    }
+
+    public async Task<IdentityUser?> RevokeRoleFromUser(string roleName, string userId)
+    {
+        IdentityUser? user = await _userManager.FindByIdAsync(userId);
+        if (user != null)
         {
-            return _roleManager.Roles;
+            await _userManager.RemoveFromRoleAsync(user, roleName);
         }
 
-        public async Task<IdentityUser?> AttachRoleToUser(string roleName, string userId)
-        {
-            IdentityUser? user = await _userManager.FindByIdAsync(userId);
-            if (user != null)
-            {
-                await _userManager.AddToRoleAsync(user, roleName);
-            }
-
-            return user;
-        }
-
-        public async Task<IdentityUser?> RevokeRoleFromUser(string roleName, string userId)
-        {
-            IdentityUser? user = await _userManager.FindByIdAsync(userId);
-            if (user != null)
-            {
-                await _userManager.RemoveFromRoleAsync(user, roleName);
-            }
-
-            return user;
-        }
+        return user;
     }
 }

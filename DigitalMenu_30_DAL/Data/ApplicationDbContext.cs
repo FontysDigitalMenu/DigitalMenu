@@ -1,6 +1,6 @@
 ﻿using DigitalMenu_20_BLL.Models;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace DigitalMenu_30_DAL.Data;
@@ -12,9 +12,9 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     }
 
     public DbSet<Category> Categories { get; set; }
-    
+
     public DbSet<Ingredient> Ingredients { get; set; }
-  
+
     public DbSet<MenuItem> MenuItems { get; set; }
 
     public DbSet<Order> Orders { get; set; }
@@ -26,7 +26,7 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        
+
         modelBuilder.Entity<OrderMenuItem>()
             .HasKey(om => new { om.OrderId, om.MenuItemId });
 

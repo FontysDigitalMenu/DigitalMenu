@@ -10,9 +10,9 @@ namespace DigitalMenu_10_Api.Controllers;
 [ApiController]
 public class RoleController : Controller
 {
-    private readonly SignInManager<IdentityUser> _signInManager;
-
     private readonly IRoleService _roleService;
+
+    private readonly SignInManager<IdentityUser> _signInManager;
 
     public RoleController(IRoleService roleService, SignInManager<IdentityUser> signInManager)
     {
@@ -23,10 +23,7 @@ public class RoleController : Controller
     [HttpGet]
     public IEnumerable<RoleViewModel> Get()
     {
-        return _roleService.GetAll().Select(x => new RoleViewModel
-        {
-            Name = x.Name
-        });
+        return _roleService.GetAll().Select(x => new RoleViewModel { Name = x.Name });
     }
 
     [HttpPost("attachRoleToUser")]

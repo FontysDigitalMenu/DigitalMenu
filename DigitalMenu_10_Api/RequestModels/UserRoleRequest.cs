@@ -1,10 +1,8 @@
-﻿namespace DigitalMenu_10_Api.RequestModels
+﻿namespace DigitalMenu_10_Api.RequestModels;
+
+public class UserRoleRequest
 {
-    public class UserRoleRequest
-    {
-        public string UserId { get; set; }
+    public string UserId { get; set; }
 
-        public string RoleName { get; set; }
-    }
-
+    public string RoleName { get; set; }
 }
