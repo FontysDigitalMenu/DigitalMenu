@@ -46,7 +46,7 @@ public class TableController : ControllerBase
     public IActionResult Post([FromBody] TableRequest tableRequest)
     {
         string id = Guid.NewGuid().ToString();
-        string qrCode = _tableService.GenerateQrCode(_configuration["BackendUrl"], id);
+        string qrCode = "n/a"; // _tableService.GenerateQrCode(_configuration["BackendUrl"], id);
 
         Table table = new() { Id = id, Name = tableRequest.Name, QrCode = qrCode };
 

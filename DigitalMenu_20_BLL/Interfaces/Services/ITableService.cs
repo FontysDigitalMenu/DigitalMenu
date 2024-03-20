@@ -4,7 +4,7 @@ namespace DigitalMenu_20_BLL.Interfaces.Services;
 
 public interface ITableService
 {
-    public string GenerateQrCode(string backendUrl, string id);
+    // public string GenerateQrCode(string backendUrl, string id);
 
     public List<Table> GetAll();
 
