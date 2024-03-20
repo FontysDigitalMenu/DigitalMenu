@@ -15,7 +15,7 @@ public static class SeedData
 
         await ResetDatabaseAndSeed(dbContext);
     }
-    
+
     public static async Task ResetDatabaseAndSeed(ApplicationDbContext dbContext)
     {
         await dbContext.Database.EnsureDeletedAsync();
