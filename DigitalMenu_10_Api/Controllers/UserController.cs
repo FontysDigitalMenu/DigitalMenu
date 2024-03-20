@@ -1,8 +1,8 @@
-﻿using DigitalMenu_10_Api.ViewModels;
+﻿using System.Security.Claims;
+using DigitalMenu_10_Api.ViewModels;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace DigitalMenu_10_Api.Controllers;
 
@@ -22,9 +22,7 @@ public class UserController : Controller
     {
         return _userService.SearchByEmail(email).Select(x => new UserViewModel
         {
-            Id = x.Id,
-            Name = x.UserName,
-            Email = x.Email
+            Id = x.Id, Name = x.UserName, Email = x.Email,
         });
     }
 
