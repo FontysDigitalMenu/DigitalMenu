@@ -1,4 +1,4 @@
-using DigitalMenu_20_BLL.Interfaces.Repositories;
+﻿using DigitalMenu_20_BLL.Interfaces.Repositories;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Services;
 using DigitalMenu_30_DAL.Data;
@@ -90,13 +90,6 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-
-using (IServiceScope scope = app.Services.CreateScope())
-{
-    IServiceProvider services = scope.ServiceProvider;
-
-    await SeedData.Initialize(services);
-}
 
 app.UseCors();
 
