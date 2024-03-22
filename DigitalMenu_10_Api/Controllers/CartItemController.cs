@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DigitalMenu_10_Api.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/v1/[controller]")]
 [ApiController]
 public class CartItemController : ControllerBase
 {
@@ -21,7 +21,7 @@ public class CartItemController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult AddToCart(CartRequest cartRequest)
+    public IActionResult AddToCart([FromBody] CartRequest cartRequest)
     {
         CartItem? cartItem = _cartItemService.GetByMenuItemIdAndDeviceId(cartRequest.MenuItemId, cartRequest.DeviceId);
 
@@ -41,8 +41,7 @@ public class CartItemController : ControllerBase
             }
 
             CartItem newCartItem = new()
-            {
-                Id = cartRequest.MenuItemId,
+            { 
                 Note = cartRequest.Note,
                 Quantity = 1,
                 DeviceId = cartRequest.DeviceId,
@@ -55,8 +54,8 @@ public class CartItemController : ControllerBase
         return NoContent();
     }
 
-    [HttpGet]
-    public IActionResult ViewCart(string deviceId)
+    [HttpGet("{deviceId}")]
+    public IActionResult ViewCart([FromRoute] string deviceId)
     {
         bool cartItemsExists = _cartItemService.ExistsByDeviceId(deviceId);
         if (!cartItemsExists)
@@ -76,7 +75,7 @@ public class CartItemController : ControllerBase
     }
 
     [HttpPut]
-    public IActionResult RemoveFromCart(CartUpdateRequest cartRequest)
+    public IActionResult RemoveFromCart([FromBody] CartUpdateRequest cartRequest)
     {
         CartItem? cartItem = _cartItemService.GetByMenuItemIdAndDeviceId(cartRequest.MenuItemId, cartRequest.DeviceId);
 

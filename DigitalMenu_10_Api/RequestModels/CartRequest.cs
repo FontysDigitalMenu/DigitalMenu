@@ -6,5 +6,5 @@ public class CartRequest
     
     public int MenuItemId { get; set; }
     
-    public string Note { get; set; }
+    public string? Note { get; set; }
 }

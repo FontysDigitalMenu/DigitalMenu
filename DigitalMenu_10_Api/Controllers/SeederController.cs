@@ -17,6 +17,6 @@ public class SeederController : ControllerBase
     [HttpGet]
     public async Task Seed()
     {
-        await SeedData.ResetDatabaseAndSeed(_dbContext);
+        await new SeedData(_dbContext).ResetDatabaseAndSeed();
     }
 }

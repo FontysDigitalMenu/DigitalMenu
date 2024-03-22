@@ -17,7 +17,7 @@ public class MenuItemService : IMenuItemService
     {
         IEnumerable<MenuItem> menuItems = _menuItemRepository.GetNextMenuItemsWithCategory(lastId, amount);
         IEnumerable<Category> categories = _menuItemRepository.GetCategories();
-
+        
         List<Category> categoriesWithMenuItems = categories
             .Select(c => new Category
             {
