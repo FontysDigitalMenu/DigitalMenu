@@ -23,7 +23,10 @@ public class RoleController : Controller
     [HttpGet]
     public IEnumerable<RoleViewModel> Get()
     {
-        return _roleService.GetAll().Select(x => new RoleViewModel { Name = x.Name });
+        return _roleService.GetAll().Select(x => new RoleViewModel
+        {
+            Name = x.Name,
+        });
     }
 
     [HttpPost("attachRoleToUser")]
