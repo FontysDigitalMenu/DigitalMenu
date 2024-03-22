@@ -10,6 +10,8 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["DigitalMenu_10_Api/DigitalMenu_10_Api.csproj", "DigitalMenu_10_Api/"]
+COPY ["DigitalMenu_30_DAL/DigitalMenu_30_DAL.csproj", "DigitalMenu_30_DAL/"]
+COPY ["DigitalMenu_20_BLL/DigitalMenu_20_BLL.csproj", "DigitalMenu_20_BLL/"]
 RUN dotnet restore "./DigitalMenu_10_Api/DigitalMenu_10_Api.csproj"
 COPY . .
 WORKDIR "/src/DigitalMenu_10_Api"

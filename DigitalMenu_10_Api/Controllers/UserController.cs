@@ -22,9 +22,7 @@ public class UserController : Controller
     {
         return _userService.SearchByEmail(email).Select(x => new UserViewModel
         {
-            Id = x.Id,
-            Name = x.UserName,
-            Email = x.Email,
+            Id = x.Id, Name = x.UserName, Email = x.Email,
         });
     }
 

@@ -6,7 +6,6 @@ using DigitalMenu_30_DAL.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using MySqlConnector;
 using Swashbuckle.AspNetCore.Filters;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -78,7 +77,7 @@ builder.Services.AddCors(options =>
 
 WebApplication app = builder.Build();
 
-app.MapIdentityApi<IdentityUser>();
+app.MapGroup("/api").MapIdentityApi<IdentityUser>();
 
 // Configure the HTTP request pipeline.
 // if (app.Environment.IsDevelopment())
@@ -94,35 +93,6 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-
-using (IServiceScope scope = app.Services.CreateScope())
-{
-    RoleManager<IdentityRole> roleManager =
-        scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-
-    string[] roles = { "Admin", "Employee" };
-
-    foreach (string role in roles)
-    {
-        try
-        {
-            if (!await roleManager.RoleExistsAsync(role))
-            {
-                await roleManager.CreateAsync(new IdentityRole(role));
-            }
-        }
-        catch (MySqlException e)
-        {
-        }
-    }
-}
-
-using (IServiceScope scope = app.Services.CreateScope())
-{
-    IServiceProvider services = scope.ServiceProvider;
-
-    SeedData.Initialize(services);
-}
 
 app.UseCors();
 
