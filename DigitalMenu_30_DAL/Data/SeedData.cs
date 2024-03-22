@@ -104,7 +104,7 @@ public class SeedData
                 MenuItemId = 9,
                 Quantity = 1,
                 DeviceId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
-                Note = "No ice and no sugar"
+                Note = "No ice and no sugar",
             },
             new CartItem
             {

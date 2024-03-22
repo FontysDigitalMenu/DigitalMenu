@@ -30,7 +30,7 @@ public class CartItemController : ControllerBase
             cartItem.Quantity++;
             //TODO: Overwrite or append note?
             // cartItem.Note = cartRequest.Note;
-            
+
             _cartItemService.Update(cartItem);
         }
         else
@@ -41,7 +41,7 @@ public class CartItemController : ControllerBase
             }
 
             CartItem newCartItem = new()
-            { 
+            {
                 Note = cartRequest.Note,
                 Quantity = 1,
                 DeviceId = cartRequest.DeviceId,
@@ -62,7 +62,7 @@ public class CartItemController : ControllerBase
         {
             return NotFound();
         }
-        
+
         List<CartItem> cartItems = _cartItemService.GetByDeviceId(deviceId);
 
         CartItemViewModel cartViewModel = new()
@@ -83,11 +83,11 @@ public class CartItemController : ControllerBase
         {
             return NotFound();
         }
-        
+
         if (cartItem.Quantity > 1)
         {
             cartItem.Quantity--;
-            
+
             _cartItemService.Update(cartItem);
         }
         else
