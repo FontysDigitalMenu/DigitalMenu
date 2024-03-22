@@ -1,8 +1,8 @@
-﻿using DigitalMenu_10_Api.ViewModels;
+﻿using System.Security.Claims;
+using DigitalMenu_10_Api.ViewModels;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace DigitalMenu_10_Api.Controllers;
 
@@ -24,7 +24,7 @@ public class UserController : Controller
         {
             Id = x.Id,
             Name = x.UserName,
-            Email = x.Email
+            Email = x.Email,
         });
     }
 

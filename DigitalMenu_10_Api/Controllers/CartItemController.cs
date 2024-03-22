@@ -1,89 +1,87 @@
 ﻿using DigitalMenu_10_Api.ViewModels;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
-using DigitalMenu_20_BLL.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DigitalMenu_10_Api.Controllers
+namespace DigitalMenu_10_Api.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class CartItemController : ControllerBase
 {
-	[Route("api/[controller]")]
-	[ApiController]
-	public class CartItemController : ControllerBase
-	{
-		private readonly ICartItemService _cartItemService;
-		private readonly IMenuItemService _menuItemService;
+    private readonly ICartItemService _cartItemService;
 
-		public CartItemController(ICartItemService cartItemService, IMenuItemService menuItemService)
-		{
-			_cartItemService = cartItemService;
-			_menuItemService = menuItemService;
-		}
+    private readonly IMenuItemService _menuItemService;
 
-		[HttpPost]
-		public IActionResult AddToCart(int id, string note)
-		{
-			var cartItems = _cartItemService.GetAll();
-			var existingCartItem = cartItems.FirstOrDefault(item => item.Id == id);
+    public CartItemController(ICartItemService cartItemService, IMenuItemService menuItemService)
+    {
+        _cartItemService = cartItemService;
+        _menuItemService = menuItemService;
+    }
 
-			if (existingCartItem != null)
-			{
-				existingCartItem.Quantity++;
-			}
-			else
-			{
-				var menuItem = _menuItemService.GetMenuItemBy(id);
+    [HttpPost]
+    public IActionResult AddToCart(int id, string note)
+    {
+        List<CartItem> cartItems = _cartItemService.GetAll();
+        CartItem? existingCartItem = cartItems.FirstOrDefault(item => item.Id == id);
 
-				if (menuItem != null)
-				{
-					var newCartItem = new CartItem
-					{
-						Id = id,
-						MenuItem = menuItem,
-						Quantity = 1,
-						Note = note
-					};
+        if (existingCartItem != null)
+        {
+            existingCartItem.Quantity++;
+        }
+        else
+        {
+            MenuItem? menuItem = _menuItemService.GetMenuItemBy(id);
 
-					_cartItemService.Create(newCartItem);
-				}
-			}
+            if (menuItem != null)
+            {
+                CartItem newCartItem = new CartItem
+                {
+                    Id = id,
+                    MenuItem = menuItem,
+                    Quantity = 1,
+                    Note = note,
+                };
 
-			return Ok();
-		}
+                _cartItemService.Create(newCartItem);
+            }
+        }
 
-		[HttpGet]
-		public IActionResult ViewCart()
-		{
-			var cartItems = _cartItemService.GetAll();
+        return Ok();
+    }
 
-			var cartViewModel = new CartItemViewModel
-			{
-				CartItems = cartItems,
-				TotalAmount = cartItems.Sum(item => item.MenuItem.Price * item.Quantity)
-			};
+    [HttpGet]
+    public IActionResult ViewCart()
+    {
+        List<CartItem> cartItems = _cartItemService.GetAll();
 
-			return Ok(cartViewModel);
-		}
+        CartItemViewModel cartViewModel = new CartItemViewModel
+        {
+            CartItems = cartItems,
+            TotalAmount = cartItems.Sum(item => item.MenuItem.Price * item.Quantity),
+        };
 
-		[HttpDelete]
-		public IActionResult RemoveFromCart(int id)
-		{
-			var cartItems = _cartItemService.GetAll();
-			var itemToRemove = cartItems.FirstOrDefault(item => item.Id == id);
+        return Ok(cartViewModel);
+    }
 
-			if (itemToRemove != null)
-			{
-				if (itemToRemove.Quantity > 1)
-				{
-					itemToRemove.Quantity--;
-				}
-				else
-				{
-					cartItems.Remove(itemToRemove);
-				}
-			}
+    [HttpDelete]
+    public IActionResult RemoveFromCart(int id)
+    {
+        List<CartItem> cartItems = _cartItemService.GetAll();
+        CartItem? itemToRemove = cartItems.FirstOrDefault(item => item.Id == id);
 
-			return Ok();
-		}
-	}
+        if (itemToRemove != null)
+        {
+            if (itemToRemove.Quantity > 1)
+            {
+                itemToRemove.Quantity--;
+            }
+            else
+            {
+                cartItems.Remove(itemToRemove);
+            }
+        }
+
+        return Ok();
+    }
 }
