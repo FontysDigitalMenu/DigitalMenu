@@ -35,7 +35,7 @@ public class CartItemController : ControllerBase
 
             if (menuItem != null)
             {
-                CartItem newCartItem = new CartItem
+                CartItem newCartItem = new()
                 {
                     Id = id,
                     MenuItem = menuItem,
@@ -47,7 +47,7 @@ public class CartItemController : ControllerBase
             }
         }
 
-        return Ok();
+        return NoContent();
     }
 
     [HttpGet]
@@ -55,7 +55,7 @@ public class CartItemController : ControllerBase
     {
         List<CartItem> cartItems = _cartItemService.GetAll();
 
-        CartItemViewModel cartViewModel = new CartItemViewModel
+        CartItemViewModel cartViewModel = new()
         {
             CartItems = cartItems,
             TotalAmount = cartItems.Sum(item => item.MenuItem.Price * item.Quantity),
@@ -70,18 +70,19 @@ public class CartItemController : ControllerBase
         List<CartItem> cartItems = _cartItemService.GetAll();
         CartItem? itemToRemove = cartItems.FirstOrDefault(item => item.Id == id);
 
-        if (itemToRemove != null)
+        if (itemToRemove == null)
         {
-            if (itemToRemove.Quantity > 1)
-            {
-                itemToRemove.Quantity--;
-            }
-            else
-            {
-                cartItems.Remove(itemToRemove);
-            }
+            return NotFound();
+        }
+        if (itemToRemove.Quantity > 1)
+        {
+            itemToRemove.Quantity--;
+        }
+        else
+        {
+            cartItems.Remove(itemToRemove);
         }
 
-        return Ok();
+        return NoContent();
     }
 }

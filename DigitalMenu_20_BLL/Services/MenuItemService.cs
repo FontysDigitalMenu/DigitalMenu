@@ -36,7 +36,7 @@ public class MenuItemService : IMenuItemService
         return _menuItemRepository.GetNextMenuItems(lastId, amount);
     }
 
-    public MenuItem GetMenuItemBy(int id)
+    public MenuItem? GetMenuItemBy(int id)
     {
         return _menuItemRepository.GetMenuItemBy(id);
     }
