@@ -1,4 +1,5 @@
-﻿using DigitalMenu_10_Api.ViewModels;
+﻿using DigitalMenu_10_Api.RequestModels;
+using DigitalMenu_10_Api.ViewModels;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -20,40 +21,50 @@ public class CartItemController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult AddToCart(int id, string note)
+    public IActionResult AddToCart(CartRequest cartRequest)
     {
-        List<CartItem> cartItems = _cartItemService.GetAll();
-        CartItem? existingCartItem = cartItems.FirstOrDefault(item => item.Id == id);
+        CartItem? cartItem = _cartItemService.GetByMenuItemIdAndDeviceId(cartRequest.MenuItemId, cartRequest.DeviceId);
 
-        if (existingCartItem != null)
+        if (cartItem != null)
         {
-            existingCartItem.Quantity++;
+            cartItem.Quantity++;
+            //TODO: Overwrite or append note?
+            // cartItem.Note = cartRequest.Note;
+            
+            _cartItemService.Update(cartItem);
         }
         else
         {
-            MenuItem? menuItem = _menuItemService.GetMenuItemBy(id);
-
-            if (menuItem != null)
+            if (_menuItemService.GetMenuItemById(cartRequest.MenuItemId) == null)
             {
-                CartItem newCartItem = new()
-                {
-                    Id = id,
-                    MenuItem = menuItem,
-                    Quantity = 1,
-                    Note = note,
-                };
-
-                _cartItemService.Create(newCartItem);
+                return NotFound();
             }
+
+            CartItem newCartItem = new()
+            {
+                Id = cartRequest.MenuItemId,
+                Note = cartRequest.Note,
+                Quantity = 1,
+                DeviceId = cartRequest.DeviceId,
+                MenuItemId = cartRequest.MenuItemId,
+            };
+
+            _cartItemService.Create(newCartItem);
         }
 
         return NoContent();
     }
 
     [HttpGet]
-    public IActionResult ViewCart()
+    public IActionResult ViewCart(string deviceId)
     {
-        List<CartItem> cartItems = _cartItemService.GetAll();
+        bool cartItemsExists = _cartItemService.ExistsByDeviceId(deviceId);
+        if (!cartItemsExists)
+        {
+            return NotFound();
+        }
+        
+        List<CartItem> cartItems = _cartItemService.GetByDeviceId(deviceId);
 
         CartItemViewModel cartViewModel = new()
         {
@@ -64,23 +75,25 @@ public class CartItemController : ControllerBase
         return Ok(cartViewModel);
     }
 
-    [HttpDelete]
-    public IActionResult RemoveFromCart(int id)
+    [HttpPut]
+    public IActionResult RemoveFromCart(CartUpdateRequest cartRequest)
     {
-        List<CartItem> cartItems = _cartItemService.GetAll();
-        CartItem? itemToRemove = cartItems.FirstOrDefault(item => item.Id == id);
+        CartItem? cartItem = _cartItemService.GetByMenuItemIdAndDeviceId(cartRequest.MenuItemId, cartRequest.DeviceId);
 
-        if (itemToRemove == null)
+        if (cartItem == null)
         {
             return NotFound();
         }
-        if (itemToRemove.Quantity > 1)
+        
+        if (cartItem.Quantity > 1)
         {
-            itemToRemove.Quantity--;
+            cartItem.Quantity--;
+            
+            _cartItemService.Update(cartItem);
         }
         else
         {
-            cartItems.Remove(itemToRemove);
+            _cartItemService.Delete(cartItem);
         }
 
         return NoContent();

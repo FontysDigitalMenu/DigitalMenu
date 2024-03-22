@@ -22,6 +22,21 @@ namespace DigitalMenu_30_DAL.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
+            modelBuilder.Entity("CategoryMenuItem", b =>
+                {
+                    b.Property<int>("CategoriesId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MenuItemsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CategoriesId", "MenuItemsId");
+
+                    b.HasIndex("MenuItemsId");
+
+                    b.ToTable("CategoryMenuItem");
+                });
+
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.CartItem", b =>
                 {
                     b.Property<int>("Id")
@@ -29,6 +44,10 @@ namespace DigitalMenu_30_DAL.Migrations
                         .HasColumnType("int");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DeviceId")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<int>("MenuItemId")
                         .HasColumnType("int");
@@ -114,21 +133,6 @@ namespace DigitalMenu_30_DAL.Migrations
                     b.ToTable("MenuItems");
                 });
 
-            modelBuilder.Entity("DigitalMenu_20_BLL.Models.MenuItemCategory", b =>
-                {
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MenuItemId")
-                        .HasColumnType("int");
-
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("MenuItemId");
-
-                    b.ToTable("MenuItemCategories");
-                });
-
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.Order", b =>
                 {
                     b.Property<int>("Id")
@@ -136,6 +140,10 @@ namespace DigitalMenu_30_DAL.Migrations
                         .HasColumnType("int");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DeviceId")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Note")
                         .IsRequired()
@@ -394,6 +402,21 @@ namespace DigitalMenu_30_DAL.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("CategoryMenuItem", b =>
+                {
+                    b.HasOne("DigitalMenu_20_BLL.Models.Category", null)
+                        .WithMany()
+                        .HasForeignKey("CategoriesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DigitalMenu_20_BLL.Models.MenuItem", null)
+                        .WithMany()
+                        .HasForeignKey("MenuItemsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.CartItem", b =>
                 {
                     b.HasOne("DigitalMenu_20_BLL.Models.MenuItem", "MenuItem")
@@ -412,25 +435,6 @@ namespace DigitalMenu_30_DAL.Migrations
                         .HasForeignKey("MenuItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("MenuItem");
-                });
-
-            modelBuilder.Entity("DigitalMenu_20_BLL.Models.MenuItemCategory", b =>
-                {
-                    b.HasOne("DigitalMenu_20_BLL.Models.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DigitalMenu_20_BLL.Models.MenuItem", "MenuItem")
-                        .WithMany()
-                        .HasForeignKey("MenuItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
 
                     b.Navigation("MenuItem");
                 });

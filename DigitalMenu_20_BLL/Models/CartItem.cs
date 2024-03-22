@@ -8,5 +8,9 @@ public class CartItem
 
     public int Quantity { get; set; }
 
+    public string DeviceId { get; set; }
+
+    public int MenuItemId { get; set; }
+    
     public MenuItem MenuItem { get; set; }
 }

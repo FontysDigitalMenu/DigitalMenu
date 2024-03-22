@@ -8,5 +8,5 @@ public interface IMenuItemService
 
     public IEnumerable<Category> GetCategoriesWithNextMenuItems(int lastId, int amount);
 
-    public MenuItem? GetMenuItemBy(int id);
+    public MenuItem? GetMenuItemById(int id);
 }

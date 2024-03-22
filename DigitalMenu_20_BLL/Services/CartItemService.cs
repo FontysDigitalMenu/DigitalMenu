@@ -13,18 +13,33 @@ public class CartItemService : ICartItemService
         _cartItemRepository = cartItemRepository;
     }
 
-    public List<CartItem> GetAll()
+    public List<CartItem> GetByDeviceId(string deviceId)
     {
-        return _cartItemRepository.GetAll();
+        return _cartItemRepository.GetByDeviceId(deviceId);
     }
 
-    public CartItem GetById(int id)
+    public CartItem? GetByMenuItemIdAndDeviceId(int menuItemId, string deviceId)
     {
-        return _cartItemRepository.GetById(id);
+        return _cartItemRepository.GetByMenuItemIdAndDeviceId(menuItemId, deviceId);
     }
 
-    public void Create(CartItem cartItem)
+    public bool Create(CartItem cartItem)
     {
-        _cartItemRepository.Create(cartItem);
+        return _cartItemRepository.Create(cartItem);
+    }
+
+    public bool ExistsByDeviceId(string deviceId)
+    {
+        return _cartItemRepository.ExistsByDeviceId(deviceId);
+    }
+
+    public bool Delete(CartItem cartItem)
+    {
+        return _cartItemRepository.Delete(cartItem);
+    }
+
+    public bool Update(CartItem cartItem)
+    {
+        return _cartItemRepository.Update(cartItem);
     }
 }

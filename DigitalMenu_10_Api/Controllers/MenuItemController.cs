@@ -60,7 +60,7 @@ public class MenuItemController : ControllerBase
     [HttpGet("{id:int}")]
     public IActionResult GetMenuItem(int id)
     {
-        MenuItem? menuitem = _menuItemService.GetMenuItemBy(id);
+        MenuItem? menuitem = _menuItemService.GetMenuItemById(id);
         if (menuitem == null)
         {
             return NotFound();

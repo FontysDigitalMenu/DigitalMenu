@@ -1,6 +1,7 @@
 ﻿using DigitalMenu_20_BLL.Interfaces.Repositories;
 using DigitalMenu_20_BLL.Models;
 using DigitalMenu_30_DAL.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace DigitalMenu_30_DAL.Repositories;
 
@@ -13,18 +14,39 @@ public class CartItemRepository : ICartItemRepository
         _dbContext = dbContext;
     }
 
-    public List<CartItem> GetAll()
-    {
-        return _dbContext.CartItems.ToList();
-    }
-
-    public CartItem GetById(int id)
-    {
-        return _dbContext.CartItems.Find(id);
-    }
-
-    public void Create(CartItem cartItem)
+    public bool Create(CartItem cartItem)
     {
         _dbContext.CartItems.Add(cartItem);
+        return _dbContext.SaveChanges() > 0;
+    }
+
+    public CartItem? GetByMenuItemIdAndDeviceId(int menuItemId, string deviceId)
+    {
+        return _dbContext.CartItems.FirstOrDefault(ci => ci.MenuItemId == menuItemId && ci.DeviceId == deviceId);
+    }
+
+    public List<CartItem> GetByDeviceId(string deviceId)
+    {
+        return _dbContext.CartItems
+            .Include(ci => ci.MenuItem)
+            .Where(ci => ci.DeviceId == deviceId)
+            .ToList();
+    }
+
+    public bool ExistsByDeviceId(string deviceId)
+    {
+        return _dbContext.CartItems.Any(ci => ci.DeviceId == deviceId);
+    }
+
+    public bool Delete(CartItem cartItem)
+    {
+        _dbContext.CartItems.Remove(cartItem);
+        return _dbContext.SaveChanges() > 0;
+    }
+
+    public bool Update(CartItem cartItem)
+    {
+        _dbContext.CartItems.Update(cartItem);
+        return _dbContext.SaveChanges() > 0;
     }
 }

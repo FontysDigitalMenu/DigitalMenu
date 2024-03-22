@@ -6,6 +6,8 @@ public class Order
 {
     public int Id { get; set; }
 
+    public string DeviceId { get; set; }
+
     public int TableId { get; set; }
 
     public Table Table { get; set; }
