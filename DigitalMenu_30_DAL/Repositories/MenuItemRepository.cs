@@ -39,8 +39,8 @@ public class MenuItemRepository : IMenuItemRepository
             .ToList();
     }
 
-    public MenuItem GetMenuItemBy(int id)
+    public MenuItem? GetMenuItemBy(int id)
     {
-        return _dbContext.MenuItems.Find(id)!;
+        return _dbContext.MenuItems.Find(id);
     }
 }

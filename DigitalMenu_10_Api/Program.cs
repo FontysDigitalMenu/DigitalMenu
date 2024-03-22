@@ -1,4 +1,4 @@
-﻿using DigitalMenu_20_BLL.Interfaces.Repositories;
+using DigitalMenu_20_BLL.Interfaces.Repositories;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Services;
 using DigitalMenu_30_DAL.Data;
@@ -32,14 +32,17 @@ builder.Services.AddScoped<ITableService, TableService>();
 builder.Services.AddScoped<ITableRepository, TableRepository>();
 builder.Services.AddScoped<IMenuItemService, MenuItemService>();
 builder.Services.AddScoped<IMenuItemRepository, MenuItemRepository>();
+builder.Services.AddScoped<ICartItemService, CartItemService>();
+builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
 
 builder.Services.AddSwaggerGen(options =>
 {
-    options.AddSecurityDefinition("oauth2",
-        new OpenApiSecurityScheme
-        {
-            In = ParameterLocation.Header, Name = "Authorization", Type = SecuritySchemeType.ApiKey,
-        });
+    options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+    });
 
     options.OperationFilter<SecurityRequirementsOperationFilter>();
 });

@@ -6,6 +6,8 @@ public class Order
 {
     public int Id { get; set; }
 
+    public string DeviceId { get; set; }
+
     public string TableId { get; set; }
 
     public Table Table { get; set; }
@@ -22,5 +24,5 @@ public class Order
 
     public DateTime OrderDate { get; set; }
 
-    public List<OrderMenuItem> OrderMenuItems { get; set; } = new();
+    public List<OrderMenuItem> OrderMenuItems { get; set; } = [];
 }
