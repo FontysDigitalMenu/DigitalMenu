@@ -30,7 +30,7 @@ public class CartItemService : ICartItemService
 
     public bool ExistsByDeviceId(string deviceId)
     {
-        return _cartItemRepository.ExistsByDeviceId(deviceId);
+        return _cartItemRepository.ExistsByDeviceId(deviceId) && !string.IsNullOrWhiteSpace(deviceId) && deviceId != "null";
     }
 
     public bool Delete(CartItem cartItem)
