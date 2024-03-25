@@ -20,9 +20,9 @@ public class Order
 
     public OrderStatus Status { get; set; }
 
-    public PaymentStatus PaymentStatus { get; set; }
+    public PaymentStatus PaymentStatus { get; set; } = PaymentStatus.Pending;
 
-    public DateTime OrderDate { get; set; }
+    public DateTime OrderDate { get; set; } = DateTime.Now;
 
     public List<OrderMenuItem> OrderMenuItems { get; set; } = [];
 }
