@@ -42,4 +42,14 @@ public class CartItemService : ICartItemService
     {
         return _cartItemRepository.Update(cartItem);
     }
+
+    public bool AddExcludedIngredientToCartItem(ExcludedIngredientCartItem excludedIngredientCartItem)
+    {
+        return _cartItemRepository.AddExcludedIngredientToCartItem(excludedIngredientCartItem);
+    }
+
+    public List<Ingredient> GetExcludedIngredientsByCartItemId(int cartItemId)
+    {
+        return _cartItemRepository.GetExcludedIngredientsByCartItemId(cartItemId);
+    }
 }

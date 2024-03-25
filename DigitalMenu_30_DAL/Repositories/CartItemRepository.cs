@@ -49,4 +49,27 @@ public class CartItemRepository : ICartItemRepository
         _dbContext.CartItems.Update(cartItem);
         return _dbContext.SaveChanges() > 0;
     }
+
+    public bool AddExcludedIngredientToCartItem(ExcludedIngredientCartItem excludedIngredientCartItem)
+    {
+        try
+        {
+            _dbContext.ExcludedIngredientCartItems.Add(excludedIngredientCartItem);
+            _dbContext.SaveChanges();
+
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public List<Ingredient> GetExcludedIngredientsByCartItemId(int cartItemId)
+    {
+        return _dbContext.ExcludedIngredientCartItems
+            .Where(e => e.CartItemId == cartItemId)
+            .Select(e => e.Ingredient)
+            .ToList();
+    }
 }

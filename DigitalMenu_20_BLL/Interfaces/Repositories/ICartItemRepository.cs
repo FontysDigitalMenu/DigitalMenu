@@ -15,4 +15,8 @@ public interface ICartItemRepository
     public bool Delete(CartItem cartItem);
 
     public bool Update(CartItem cartItem);
+
+    public bool AddExcludedIngredientToCartItem(ExcludedIngredientCartItem excludedIngredientCartItem);
+
+    List<Ingredient> GetExcludedIngredientsByCartItemId(int cartItemId);
 }

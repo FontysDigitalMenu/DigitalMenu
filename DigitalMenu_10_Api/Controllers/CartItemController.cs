@@ -13,15 +13,17 @@ public class CartItemController : ControllerBase
     private readonly ICartItemService _cartItemService;
 
     private readonly IMenuItemService _menuItemService;
+    private readonly IIngredientService _ingredientService;
 
-    public CartItemController(ICartItemService cartItemService, IMenuItemService menuItemService)
+    public CartItemController(ICartItemService cartItemService, IMenuItemService menuItemService, IIngredientService ingredientService)
     {
         _cartItemService = cartItemService;
         _menuItemService = menuItemService;
+        _ingredientService = ingredientService;
     }
 
     [HttpPost]
-    public IActionResult AddToCart([FromBody] CartRequest cartRequest)
+    public async Task<ActionResult> AddToCart([FromBody] CartRequest cartRequest)
     {
         CartItem? cartItem = _cartItemService.GetByMenuItemIdAndDeviceId(cartRequest.MenuItemId, cartRequest.DeviceId);
 
@@ -49,9 +51,49 @@ public class CartItemController : ControllerBase
             };
 
             _cartItemService.Create(newCartItem);
+
+            if (cartRequest.ExcludedIngredients != null && cartRequest.ExcludedIngredients.Count != 0)
+            {
+                foreach (string excludedIngredientName in cartRequest.ExcludedIngredients)
+                {
+                    Ingredient? excludedIngredient = await _ingredientService.GetIngredientByNameAsync(excludedIngredientName);
+                    
+                    if (excludedIngredient != null)
+                    {
+                        ExcludedIngredientCartItem excludedIngredientCartItem = new()
+                        {
+                            IngredientId = excludedIngredient.Id,
+                            CartItemId = newCartItem.Id
+                        };
+
+                        _cartItemService.AddExcludedIngredientToCartItem(excludedIngredientCartItem);
+                    }
+                }
+            }
         }
 
         return NoContent();
+    }
+
+    [HttpGet("{id:int}")]
+    public IActionResult GetCartItem(int id)
+    {
+        // TODO: make it so the cart item gets selected instead of a random menu item
+        MenuItem? menuitem = _menuItemService.GetMenuItemById(id);
+        if (menuitem == null)
+        {
+            return NotFound();
+        }
+
+        List<Ingredient> excludedIngredients = _cartItemService.GetExcludedIngredientsByCartItemId(id);
+
+        CartItemWithIngredientsViewModel cartItem = new()
+        {
+            MenuItem = menuitem,
+            ExcludedIngredients = excludedIngredients
+        };
+
+        return Ok(cartItem);
     }
 
     [HttpGet("{deviceId}")]
