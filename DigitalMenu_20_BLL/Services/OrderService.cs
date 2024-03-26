@@ -58,6 +58,8 @@ public class OrderService(
         {
             MenuItemId = ci.MenuItemId,
             MenuItem = ci.MenuItem,
+            Quantity = ci.Quantity,
+            Note = ci.Note,
         }).ToList();
 
         int totalAmount = GetTotalAmount(deviceId, tableId);

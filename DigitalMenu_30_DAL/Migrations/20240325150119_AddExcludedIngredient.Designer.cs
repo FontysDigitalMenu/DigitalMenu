@@ -4,6 +4,7 @@ using DigitalMenu_30_DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DigitalMenu_30_DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240325150119_AddExcludedIngredient")]
+    partial class AddExcludedIngredient
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -167,14 +170,17 @@ namespace DigitalMenu_30_DAL.Migrations
 
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.Order", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("varchar(255)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("DeviceId")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("ExternalPaymentId")
+                    b.Property<string>("Note")
                         .IsRequired()
                         .HasColumnType("longtext");
 
@@ -182,6 +188,9 @@ namespace DigitalMenu_30_DAL.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<int>("PaymentStatus")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
                         .HasColumnType("int");
 
                     b.Property<int>("Status")
@@ -203,16 +212,10 @@ namespace DigitalMenu_30_DAL.Migrations
 
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.OrderMenuItem", b =>
                 {
-                    b.Property<string>("OrderId")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<int>("MenuItemId")
+                    b.Property<int>("OrderId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Note")
-                        .HasColumnType("longtext");
-
-                    b.Property<int>("Quantity")
+                    b.Property<int>("MenuItemId")
                         .HasColumnType("int");
 
                     b.HasKey("OrderId", "MenuItemId");

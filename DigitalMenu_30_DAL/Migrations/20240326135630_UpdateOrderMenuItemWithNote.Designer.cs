@@ -4,6 +4,7 @@ using DigitalMenu_30_DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DigitalMenu_30_DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240326135630_UpdateOrderMenuItemWithNote")]
+    partial class UpdateOrderMenuItemWithNote
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -167,8 +170,11 @@ namespace DigitalMenu_30_DAL.Migrations
 
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.Order", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("varchar(255)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("DeviceId")
                         .IsRequired()
@@ -203,8 +209,8 @@ namespace DigitalMenu_30_DAL.Migrations
 
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.OrderMenuItem", b =>
                 {
-                    b.Property<string>("OrderId")
-                        .HasColumnType("varchar(255)");
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
 
                     b.Property<int>("MenuItemId")
                         .HasColumnType("int");

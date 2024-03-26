@@ -146,6 +146,8 @@ public class OrderController(IConfiguration configuration, IOrderService orderSe
                 Name = omi.MenuItem.Name,
                 Price = omi.MenuItem.Price,
                 ImageUrl = omi.MenuItem.ImageUrl,
+                Quantity = omi.Quantity,
+                Note = omi.Note,
             }).ToList(),
         });
     }
