@@ -1,20 +1,22 @@
-﻿using DigitalMenu_10_Api.ViewModels;
+﻿using DigitalMenu_10_Api.RequestModels;
+using DigitalMenu_10_Api.ViewModels;
+using DigitalMenu_20_BLL.Interfaces;
 using DigitalMenu_20_BLL.Models;
 using DigitalMenu_30_DAL.Data;
 using Microsoft.AspNetCore.Mvc;
 using Mollie.Api.Client;
 using Mollie.Api.Client.Abstract;
 using Mollie.Api.Models;
+using Mollie.Api.Models.Payment;
 using Mollie.Api.Models.Payment.Request;
 using Mollie.Api.Models.Payment.Response;
-using DigitalMenu_10_Api.RequestModels;
-using DigitalMenu_20_BLL.Interfaces;
 
 namespace DigitalMenu_10_Api.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class OrderController(IConfiguration configuration, ApplicationDbContext dbContext, IOrderService orderService) : ControllerBase
+public class OrderController(IConfiguration configuration, ApplicationDbContext dbContext, IOrderService orderService)
+    : ControllerBase
 {
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] OrderRequest orderRequest)
@@ -39,11 +41,12 @@ public class OrderController(IConfiguration configuration, ApplicationDbContext 
             Amount = new Amount(Currency.EUR, (decimal)totalAmount / 100),
             Description = "Order payment",
             RedirectUrl = redirectUrl,
-            Method = Mollie.Api.Models.Payment.PaymentMethod.Ideal,
+            Method = PaymentMethod.Ideal,
         };
         PaymentResponse paymentResponse = await paymentClient.CreatePaymentAsync(paymentRequest);
 
-        Order? order = orderService.Create(orderRequest.DeviceId, orderRequest.TableId, paymentResponse.Id, totalAmount);
+        Order? order =
+            orderService.Create(orderRequest.DeviceId, orderRequest.TableId, paymentResponse.Id, totalAmount);
         if (order == null)
         {
             return BadRequest("Order could not be created");
@@ -102,7 +105,7 @@ public class OrderController(IConfiguration configuration, ApplicationDbContext 
             Status = order.Status.ToString(),
             TotalAmount = order.TotalAmount,
             OrderDate = order.OrderDate,
-            MenuItems = order.OrderMenuItems.Select(omi => new MenuItemViewModel()
+            MenuItems = order.OrderMenuItems.Select(omi => new MenuItemViewModel
             {
                 Id = omi.MenuItem.Id,
                 Name = omi.MenuItem.Name,

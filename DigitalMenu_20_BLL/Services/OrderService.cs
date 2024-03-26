@@ -4,13 +4,16 @@ using DigitalMenu_20_BLL.Models;
 
 namespace DigitalMenu_20_BLL.Services;
 
-public class OrderService(IOrderRepository orderRepository, ICartItemRepository cartItemRepository, ITableRepository tableRepository) : IOrderService
+public class OrderService(
+    IOrderRepository orderRepository,
+    ICartItemRepository cartItemRepository,
+    ITableRepository tableRepository) : IOrderService
 {
     public int GetTotalAmount()
     {
         return 52377;
     }
-    
+
     public Order? Create(string deviceId, string tableId, string paymentId, int totalAmount)
     {
         if (!cartItemRepository.ExistsByDeviceId(deviceId))
@@ -22,7 +25,7 @@ public class OrderService(IOrderRepository orderRepository, ICartItemRepository 
         {
             return null;
         }
-        
+
         List<CartItem> cartItems = cartItemRepository.GetByDeviceId(deviceId);
         if (cartItems.Count == 0)
         {
@@ -34,7 +37,7 @@ public class OrderService(IOrderRepository orderRepository, ICartItemRepository 
             MenuItemId = ci.MenuItemId,
             MenuItem = ci.MenuItem,
         }).ToList();
-        
+
         Order order = new()
         {
             DeviceId = deviceId,
@@ -43,11 +46,11 @@ public class OrderService(IOrderRepository orderRepository, ICartItemRepository 
             OrderMenuItems = orderMenuItems,
             TotalAmount = totalAmount,
         };
-        
+
         return orderRepository.Create(order);
     }
-    
-    public Order? GetById (int id)
+
+    public Order? GetById(int id)
     {
         return orderRepository.GetById(id);
     }

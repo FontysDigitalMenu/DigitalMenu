@@ -80,7 +80,8 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddMollieApi(options => {
+builder.Services.AddMollieApi(options =>
+{
     options.ApiKey = builder.Configuration["Mollie:ApiKey"];
     options.RetryPolicy = MollieHttpRetryPolicies.TransientHttpErrorRetryPolicy();
 });
