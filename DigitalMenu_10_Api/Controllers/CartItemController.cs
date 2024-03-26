@@ -25,49 +25,53 @@ public class CartItemController : ControllerBase
     [HttpPost]
     public async Task<ActionResult> AddToCart([FromBody] CartRequest cartRequest)
     {
-        CartItem? cartItem = _cartItemService.GetByMenuItemIdAndDeviceId(cartRequest.MenuItemId, cartRequest.DeviceId);
+        List<CartItem?> cartItems = _cartItemService.GetCartItemsByMenuItemIdAndDeviceId(cartRequest.MenuItemId, cartRequest.DeviceId);
 
-        if (cartItem != null)
+        foreach (CartItem? cartItem in cartItems)
         {
-            cartItem.Quantity++;
-            //TODO: Overwrite or append note?
-            // cartItem.Note = cartRequest.Note;
+            List<Ingredient> existingExcludedIngredients = _cartItemService.GetExcludedIngredientsByCartItemId(cartItem.Id);
+            List<string> existingExcludedIngredientNames = existingExcludedIngredients.Select(e => e.Name).ToList();
+            bool sameExcludedIngredients = existingExcludedIngredientNames.OrderBy(n => n).SequenceEqual(cartRequest.ExcludedIngredients.OrderBy(n => n));
 
-            _cartItemService.Update(cartItem);
-        }
-        else
-        {
-            if (_menuItemService.GetMenuItemById(cartRequest.MenuItemId) == null)
+            if (sameExcludedIngredients && cartItem.Note == cartRequest.Note)
             {
-                return NotFound();
+                cartItem.Quantity++;
+                _cartItemService.Update(cartItem);
+
+                return NoContent();
             }
+        }
 
-            CartItem newCartItem = new()
+        if (_menuItemService.GetMenuItemById(cartRequest.MenuItemId) == null)
+        {
+            return NotFound();
+        }
+
+        CartItem newCartItem = new()
+        {
+            Note = cartRequest.Note,
+            Quantity = 1,
+            DeviceId = cartRequest.DeviceId,
+            MenuItemId = cartRequest.MenuItemId,
+        };
+
+        _cartItemService.Create(newCartItem);
+
+        if (cartRequest.ExcludedIngredients != null && cartRequest.ExcludedIngredients.Count != 0)
+        {
+            foreach (string excludedIngredientName in cartRequest.ExcludedIngredients)
             {
-                Note = cartRequest.Note,
-                Quantity = 1,
-                DeviceId = cartRequest.DeviceId,
-                MenuItemId = cartRequest.MenuItemId,
-            };
-
-            _cartItemService.Create(newCartItem);
-
-            if (cartRequest.ExcludedIngredients != null && cartRequest.ExcludedIngredients.Count != 0)
-            {
-                foreach (string excludedIngredientName in cartRequest.ExcludedIngredients)
+                Ingredient? excludedIngredient = await _ingredientService.GetIngredientByNameAsync(excludedIngredientName);
+                
+                if (excludedIngredient != null)
                 {
-                    Ingredient? excludedIngredient = await _ingredientService.GetIngredientByNameAsync(excludedIngredientName);
-                    
-                    if (excludedIngredient != null)
+                    ExcludedIngredientCartItem excludedIngredientCartItem = new()
                     {
-                        ExcludedIngredientCartItem excludedIngredientCartItem = new()
-                        {
-                            IngredientId = excludedIngredient.Id,
-                            CartItemId = newCartItem.Id
-                        };
+                        IngredientId = excludedIngredient.Id,
+                        CartItemId = newCartItem.Id
+                    };
 
-                        _cartItemService.AddExcludedIngredientToCartItem(excludedIngredientCartItem);
-                    }
+                    _cartItemService.AddExcludedIngredientToCartItem(excludedIngredientCartItem);
                 }
             }
         }
@@ -75,25 +79,35 @@ public class CartItemController : ControllerBase
         return NoContent();
     }
 
-    [HttpGet("{id:int}")]
-    public IActionResult GetCartItem(int id)
+    [HttpGet]
+    public IActionResult GetCartItem(int cartItemId, string deviceId)
     {
-        // TODO: make it so the cart item gets selected instead of a random menu item
-        MenuItem? menuitem = _menuItemService.GetMenuItemById(id);
-        if (menuitem == null)
+        CartItem? cartItem = _cartItemService.GetByCartItemIdAndDeviceId(cartItemId, deviceId);
+
+        if (cartItem == null)
         {
             return NotFound();
         }
 
-        List<Ingredient> excludedIngredients = _cartItemService.GetExcludedIngredientsByCartItemId(id);
-
-        CartItemWithIngredientsViewModel cartItem = new()
+        MenuItem? menuitem = _menuItemService.GetMenuItemById(cartItem.MenuItemId);
+        if (menuitem == null)
         {
-            MenuItem = menuitem,
+            return NotFound();
+        }
+        else
+        {
+            cartItem.MenuItem = menuitem;
+        }
+
+        List<Ingredient> excludedIngredients = _cartItemService.GetExcludedIngredientsByCartItemId(cartItemId);
+
+        CartItemWithIngredientsViewModel cartItemWithIngredients = new()
+        {
+            CartItem = cartItem,
             ExcludedIngredients = excludedIngredients
         };
 
-        return Ok(cartItem);
+        return Ok(cartItemWithIngredients);
     }
 
     [HttpGet("{deviceId}")]
@@ -116,10 +130,10 @@ public class CartItemController : ControllerBase
         return Ok(cartViewModel);
     }
 
-    [HttpPut]
+    [HttpPut("minus")]
     public IActionResult RemoveFromCart([FromBody] CartUpdateRequest cartRequest)
     {
-        CartItem? cartItem = _cartItemService.GetByMenuItemIdAndDeviceId(cartRequest.MenuItemId, cartRequest.DeviceId);
+        CartItem? cartItem = _cartItemService.GetByCartItemIdAndDeviceId(cartRequest.CartItemId, cartRequest.DeviceId);
 
         if (cartItem == null)
         {
@@ -135,6 +149,60 @@ public class CartItemController : ControllerBase
         else
         {
             _cartItemService.Delete(cartItem);
+        }
+
+        return NoContent();
+    }
+
+    [HttpPost("plus")]
+    public IActionResult AddCartItem([FromBody] CartUpdateRequest cartRequest)
+    {
+        CartItem? cartItem = _cartItemService.GetByCartItemIdAndDeviceId(cartRequest.CartItemId, cartRequest.DeviceId);
+
+        if (cartItem == null)
+        {
+            return NotFound();
+        }
+
+        cartItem.Quantity++;
+        _cartItemService.Update(cartItem);
+
+        return NoContent();
+    }
+
+    [HttpPut("updateDetails")]
+    public async Task<ActionResult> UpdateCartItem([FromBody] CartItemRequest cartRequest)
+    {
+        CartItem? cartItem = _cartItemService.GetByCartItemIdAndDeviceId(cartRequest.CartItemId, cartRequest.DeviceId);
+
+        if (cartItem == null)
+        {
+            NotFound();
+        }
+        else
+        {
+            cartItem.Note = cartRequest.Note;
+            _cartItemService.Update(cartItem);
+            _cartItemService.DeleteExcludedIngredientsFromCartItem(cartItem.Id);
+
+            if (cartRequest.ExcludedIngredients != null && cartRequest.ExcludedIngredients.Count != 0)
+            {
+                foreach (string excludedIngredientName in cartRequest.ExcludedIngredients)
+                {
+                    Ingredient? excludedIngredient = await _ingredientService.GetIngredientByNameAsync(excludedIngredientName);
+
+                    if (excludedIngredient != null)
+                    {
+                        ExcludedIngredientCartItem excludedIngredientCartItem = new()
+                        {
+                            IngredientId = excludedIngredient.Id,
+                            CartItemId = cartItem.Id
+                        };
+
+                        _cartItemService.AddExcludedIngredientToCartItem(excludedIngredientCartItem);
+                    }
+                }
+            }
         }
 
         return NoContent();

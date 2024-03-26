@@ -25,6 +25,21 @@ public class CartItemRepository : ICartItemRepository
         return _dbContext.CartItems.FirstOrDefault(ci => ci.MenuItemId == menuItemId && ci.DeviceId == deviceId);
     }
 
+    public CartItem? GetByCartItemIdAndDeviceId(int cartItemId, string deviceId)
+    {
+        return _dbContext.CartItems
+            .Include(ci => ci.MenuItem)
+            .FirstOrDefault(ci => ci.Id == cartItemId && ci.DeviceId == deviceId);
+    }
+
+    public List<CartItem?> GetCartItemsByMenuItemIdAndDeviceId(int menuItemId, string deviceId)
+    {
+        return _dbContext.CartItems
+                      .Where(ci => ci.MenuItemId == menuItemId && ci.DeviceId == deviceId)
+                      .ToList();
+    }
+
+
     public List<CartItem> GetByDeviceId(string deviceId)
     {
         return _dbContext.CartItems
@@ -71,5 +86,24 @@ public class CartItemRepository : ICartItemRepository
             .Where(e => e.CartItemId == cartItemId)
             .Select(e => e.Ingredient)
             .ToList();
+    }
+
+    public bool DeleteExcludedIngredientsFromCartItem(int cartItemId)
+    {
+        try
+        {
+            List<ExcludedIngredientCartItem> excludedIngredients = _dbContext.ExcludedIngredientCartItems
+                .Where(eic => eic.CartItemId == cartItemId)
+                .ToList();
+
+            _dbContext.ExcludedIngredientCartItems.RemoveRange(excludedIngredients);
+            _dbContext.SaveChanges();
+
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
     }
 }
