@@ -15,4 +15,6 @@ public interface ICartItemRepository
     public bool Delete(CartItem cartItem);
 
     public bool Update(CartItem cartItem);
+
+    public void ClearByDeviceId(string deviceId);
 }

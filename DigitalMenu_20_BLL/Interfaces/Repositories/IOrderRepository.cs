@@ -7,4 +7,6 @@ public interface IOrderRepository
     public Order? Create(Order order);
 
     public Order? GetById(int id);
+
+    public bool Update(Order order);
 }

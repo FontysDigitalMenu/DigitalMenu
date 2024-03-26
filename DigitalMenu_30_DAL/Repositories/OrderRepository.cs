@@ -20,4 +20,10 @@ public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
             .ThenInclude(omi => omi.MenuItem)
             .FirstOrDefault(o => o.Id == id);
     }
+
+    public bool Update(Order order)
+    {
+        dbContext.Orders.Update(order);
+        return dbContext.SaveChanges() > 0;
+    }
 }

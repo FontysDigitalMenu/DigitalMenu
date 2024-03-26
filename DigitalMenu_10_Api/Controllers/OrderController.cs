@@ -1,6 +1,6 @@
 ﻿using DigitalMenu_10_Api.RequestModels;
 using DigitalMenu_10_Api.ViewModels;
-using DigitalMenu_20_BLL.Interfaces;
+using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
 using DigitalMenu_30_DAL.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -33,7 +33,11 @@ public class OrderController(IConfiguration configuration, ApplicationDbContext 
             return BadRequest("Mollie API key is not set");
         }
 
-        int totalAmount = orderService.GetTotalAmount();
+        int? totalAmount = orderService.GetTotalAmount(orderRequest.DeviceId, orderRequest.TableId);
+        if (totalAmount == null)
+        {
+            return BadRequest("Order could not be created");
+        }
 
         using IPaymentClient paymentClient = new PaymentClient($"{apiKey}", new HttpClient());
         PaymentRequest paymentRequest = new()
@@ -45,8 +49,7 @@ public class OrderController(IConfiguration configuration, ApplicationDbContext 
         };
         PaymentResponse paymentResponse = await paymentClient.CreatePaymentAsync(paymentRequest);
 
-        Order? order =
-            orderService.Create(orderRequest.DeviceId, orderRequest.TableId, paymentResponse.Id, totalAmount);
+        Order? order = orderService.Create(orderRequest.DeviceId, orderRequest.TableId, paymentResponse.Id);
         if (order == null)
         {
             return BadRequest("Order could not be created");
@@ -97,6 +100,15 @@ public class OrderController(IConfiguration configuration, ApplicationDbContext 
 
             return Problem();
         }
+
+        order.PaymentStatus = result.Status switch
+        {
+            PaymentStatus.Paid => DigitalMenu_20_BLL.Enums.PaymentStatus.Paid,
+            PaymentStatus.Canceled => DigitalMenu_20_BLL.Enums.PaymentStatus.Canceled,
+            PaymentStatus.Expired => DigitalMenu_20_BLL.Enums.PaymentStatus.Expired,
+            var _ => DigitalMenu_20_BLL.Enums.PaymentStatus.Pending,
+        };
+        orderService.Update(order);
 
         return Ok(new OrderViewModel
         {
