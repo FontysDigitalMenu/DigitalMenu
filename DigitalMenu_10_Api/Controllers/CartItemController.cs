@@ -135,7 +135,7 @@ public class CartItemController : ControllerBase
     }
 
     [HttpPut("minus")]
-    public IActionResult RemoveFromCart([FromBody] CartUpdateRequest cartRequest)
+    public IActionResult Minus1FromCart([FromBody] CartUpdateRequest cartRequest)
     {
         CartItem? cartItem = _cartItemService.GetByCartItemIdAndDeviceId(cartRequest.CartItemId, cartRequest.DeviceId);
 
@@ -159,7 +159,7 @@ public class CartItemController : ControllerBase
     }
 
     [HttpPost("plus")]
-    public IActionResult AddCartItem([FromBody] CartUpdateRequest cartRequest)
+    public IActionResult Plus1ToCart([FromBody] CartUpdateRequest cartRequest)
     {
         CartItem? cartItem = _cartItemService.GetByCartItemIdAndDeviceId(cartRequest.CartItemId, cartRequest.DeviceId);
 
