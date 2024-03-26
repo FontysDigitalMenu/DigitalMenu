@@ -1,4 +1,5 @@
-﻿using DigitalMenu_20_BLL.Interfaces.Repositories;
+﻿using DigitalMenu_10_Api;
+using DigitalMenu_20_BLL.Interfaces.Repositories;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Services;
 using DigitalMenu_30_DAL.Data;
@@ -6,6 +7,8 @@ using DigitalMenu_30_DAL.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Mollie.Api;
+using Mollie.Api.Framework;
 using Swashbuckle.AspNetCore.Filters;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -36,6 +39,8 @@ builder.Services.AddScoped<ICartItemService, CartItemService>();
 builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
 builder.Services.AddScoped<IIngredientService, IngredientService>();
 builder.Services.AddScoped<IIngredientRepository, IngredientRepository>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -77,6 +82,14 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddMollieApi(options =>
+{
+    options.ApiKey = builder.Configuration["Mollie:ApiKey"];
+    options.RetryPolicy = MollieHttpRetryPolicies.TransientHttpErrorRetryPolicy();
+});
+
+builder.Services.AddSignalR();
+
 WebApplication app = builder.Build();
 
 app.MapGroup("/api").MapIdentityApi<IdentityUser>();
@@ -97,5 +110,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.UseCors();
+
+app.MapHub<OrderHub>("/orderHub");
 
 app.Run();

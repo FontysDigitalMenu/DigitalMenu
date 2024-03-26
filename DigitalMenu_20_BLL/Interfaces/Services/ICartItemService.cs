@@ -7,6 +7,7 @@ public interface ICartItemService
     public List<CartItem> GetByDeviceId(string deviceId);
 
     public CartItem? GetByMenuItemIdAndDeviceId(int menuItemId, string deviceId);
+
     public CartItem? GetByCartItemIdAndDeviceId(int cartItemId, string deviceId);
 
     public List<CartItem?> GetCartItemsByMenuItemIdAndDeviceId(int menuItemId, string deviceId);

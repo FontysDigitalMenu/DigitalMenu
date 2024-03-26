@@ -7,6 +7,7 @@ public interface ICartItemRepository
     public bool Create(CartItem cartItem);
 
     public CartItem? GetByMenuItemIdAndDeviceId(int menuItemId, string deviceId);
+
     public CartItem? GetByCartItemIdAndDeviceId(int cartItemId, string deviceId);
 
     public List<CartItem?> GetCartItemsByMenuItemIdAndDeviceId(int menuItemId, string deviceId);
@@ -18,6 +19,8 @@ public interface ICartItemRepository
     public bool Delete(CartItem cartItem);
 
     public bool Update(CartItem cartItem);
+
+    public bool ClearByDeviceId(string deviceId);
 
     public bool AddExcludedIngredientToCartItem(ExcludedIngredientCartItem excludedIngredientCartItem);
 

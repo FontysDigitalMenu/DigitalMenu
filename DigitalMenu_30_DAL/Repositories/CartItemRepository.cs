@@ -35,8 +35,8 @@ public class CartItemRepository : ICartItemRepository
     public List<CartItem?> GetCartItemsByMenuItemIdAndDeviceId(int menuItemId, string deviceId)
     {
         return _dbContext.CartItems
-                      .Where(ci => ci.MenuItemId == menuItemId && ci.DeviceId == deviceId)
-                      .ToList();
+            .Where(ci => ci.MenuItemId == menuItemId && ci.DeviceId == deviceId)
+            .ToList();
     }
 
 
@@ -105,5 +105,12 @@ public class CartItemRepository : ICartItemRepository
         {
             return false;
         }
+    }
+
+    public bool ClearByDeviceId(string deviceId)
+    {
+        List<CartItem> cartItems = _dbContext.CartItems.Where(ci => ci.DeviceId == deviceId).ToList();
+        _dbContext.CartItems.RemoveRange(cartItems);
+        return _dbContext.SaveChanges() > 0;
     }
 }

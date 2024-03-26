@@ -46,29 +46,26 @@ public class MenuItemRepository : IMenuItemRepository
             .Include(mii => mii.Ingredient)
             .Select(mii => new
             {
-                MenuItem = mii.MenuItem,
-                Ingredient = mii.Ingredient
+                mii.MenuItem, mii.Ingredient,
             })
             .ToList();
 
         if (menuItemWithIngredients.Any())
         {
-            var firstMenuItem = menuItemWithIngredients.First().MenuItem;
-            var menuItem = new MenuItem
+            MenuItem firstMenuItem = menuItemWithIngredients.First().MenuItem;
+            MenuItem menuItem = new()
             {
                 Id = firstMenuItem.Id,
                 Name = firstMenuItem.Name,
                 Description = firstMenuItem.Description,
                 ImageUrl = firstMenuItem.ImageUrl,
                 Price = firstMenuItem.Price,
-                Ingredients = menuItemWithIngredients.Select(m => m.Ingredient).ToList()
+                Ingredients = menuItemWithIngredients.Select(m => m.Ingredient).ToList(),
             };
 
             return menuItem;
         }
-        else
-        {
-            return _dbContext.MenuItems.Find(id);
-        }
+
+        return _dbContext.MenuItems.Find(id);
     }
 }
