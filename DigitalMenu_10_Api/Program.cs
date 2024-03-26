@@ -1,4 +1,4 @@
-using DigitalMenu_20_BLL.Interfaces.Repositories;
+﻿using DigitalMenu_20_BLL.Interfaces.Repositories;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Services;
 using DigitalMenu_30_DAL.Data;
@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
+using DigitalMenu_10_Api;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -75,6 +76,8 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddSignalR();
+
 WebApplication app = builder.Build();
 
 app.MapGroup("/api").MapIdentityApi<IdentityUser>();
@@ -95,5 +98,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.UseCors();
+
+app.MapHub<OrderHub>("/orderHub");
 
 app.Run();
