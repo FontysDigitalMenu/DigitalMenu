@@ -5,20 +5,13 @@ using MySqlConnector;
 
 namespace DigitalMenu_30_DAL.Data;
 
-public class SeedData
+public class SeedData(ApplicationDbContext dbContext)
 {
-    private readonly ApplicationDbContext _dbContext;
-
-    public SeedData(ApplicationDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-
     public async Task ResetDatabaseAndSeed()
     {
-        await _dbContext.Database.EnsureDeletedAsync();
-        await _dbContext.Database.MigrateAsync();
-        _dbContext.ChangeTracker.Clear();
+        await dbContext.Database.EnsureDeletedAsync();
+        await dbContext.Database.MigrateAsync();
+        dbContext.ChangeTracker.Clear();
 
         try
         {
@@ -29,7 +22,7 @@ public class SeedData
             SeedTables();
             SeedCartItems();
 
-            await _dbContext.SaveChangesAsync();
+            await dbContext.SaveChangesAsync();
         }
         catch (MySqlException ex)
         {
@@ -39,7 +32,7 @@ public class SeedData
 
     private void SeedCartItems()
     {
-        _dbContext.CartItems.AddRange(
+        dbContext.CartItems.AddRange(
             new CartItem
             {
                 Id = 1,
@@ -119,7 +112,7 @@ public class SeedData
 
     private void SeedUsers()
     {
-        _dbContext.Users.AddRange(
+        dbContext.Users.AddRange(
             new IdentityUser
             {
                 Id = "0206A018-5AC6-492D-AB99-10105193D384",
@@ -134,7 +127,7 @@ public class SeedData
 
     private void SeedRoles()
     {
-        _dbContext.Roles.AddRange(
+        dbContext.Roles.AddRange(
             new IdentityRole
             {
                 Id = "8977148E-C765-410F-9A58-0C7D054E4536", Name = "Admin", NormalizedName = "ADMIN",
@@ -145,7 +138,7 @@ public class SeedData
             }
         );
 
-        _dbContext.UserRoles.Add(new IdentityUserRole<string>
+        dbContext.UserRoles.Add(new IdentityUserRole<string>
         {
             UserId = "0206A018-5AC6-492D-AB99-10105193D384",
             RoleId = "8977148E-C765-410F-9A58-0C7D054E4536",
@@ -154,7 +147,7 @@ public class SeedData
 
     private void SeedMenuItems()
     {
-        _dbContext.MenuItems.AddRange(
+        dbContext.MenuItems.AddRange(
             new MenuItem
             {
                 Id = 1,
@@ -249,30 +242,30 @@ public class SeedData
 
     private async Task SeedCategories()
     {
-        _dbContext.Categories.AddRange(
+        dbContext.Categories.AddRange(
             new Category { Id = 1, Name = "Italian" },
             new Category { Id = 2, Name = "American" },
             new Category { Id = 3, Name = "Drinks" }
         );
 
-        await _dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesAsync();
 
         List<int> ids1 = [2, 3];
-        List<MenuItem> menuItems1 = _dbContext.MenuItems.Where(mi => ids1.Contains(mi.Id)).ToList();
-        _dbContext.Categories.First(c => c.Id == 1).MenuItems = [..menuItems1];
+        List<MenuItem> menuItems1 = dbContext.MenuItems.Where(mi => ids1.Contains(mi.Id)).ToList();
+        dbContext.Categories.First(c => c.Id == 1).MenuItems = [..menuItems1];
 
         List<int> ids2 = [1, 4];
-        List<MenuItem> menuItems2 = _dbContext.MenuItems.Where(mi => ids2.Contains(mi.Id)).ToList();
-        _dbContext.Categories.First(c => c.Id == 2).MenuItems = [..menuItems2];
+        List<MenuItem> menuItems2 = dbContext.MenuItems.Where(mi => ids2.Contains(mi.Id)).ToList();
+        dbContext.Categories.First(c => c.Id == 2).MenuItems = [..menuItems2];
 
         List<int> ids3 = [5, 6, 7, 8, 9, 10];
-        List<MenuItem> menuItems3 = _dbContext.MenuItems.Where(mi => ids3.Contains(mi.Id)).ToList();
-        _dbContext.Categories.First(c => c.Id == 3).MenuItems = [..menuItems3];
+        List<MenuItem> menuItems3 = dbContext.MenuItems.Where(mi => ids3.Contains(mi.Id)).ToList();
+        dbContext.Categories.First(c => c.Id == 3).MenuItems = [..menuItems3];
     }
 
     private void SeedTables()
     {
-        _dbContext.Tables.AddRange(
+        dbContext.Tables.AddRange(
             new Table
             {
                 Id = "69AC2F65-5DE9-40D4-B930-624CA40D3F13",

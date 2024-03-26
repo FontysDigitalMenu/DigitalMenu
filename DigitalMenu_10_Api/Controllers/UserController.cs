@@ -8,19 +8,12 @@ namespace DigitalMenu_10_Api.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class UserController : Controller
+public class UserController(IUserService userService) : Controller
 {
-    private readonly IUserService _userService;
-
-    public UserController(IUserService userService)
-    {
-        _userService = userService;
-    }
-
     [HttpGet("{email}")]
     public IEnumerable<UserViewModel> Get(string email)
     {
-        return _userService.SearchByEmail(email).Select(x => new UserViewModel
+        return userService.SearchByEmail(email).Select(x => new UserViewModel
         {
             Id = x.Id, Name = x.UserName, Email = x.Email,
         });

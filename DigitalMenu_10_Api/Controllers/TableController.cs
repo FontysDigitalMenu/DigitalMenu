@@ -10,28 +10,20 @@ namespace DigitalMenu_10_Api.Controllers;
 [Authorize(Roles = "Admin")]
 [Route("api/v1/[controller]")]
 [ApiController]
-public class TableController : ControllerBase
+public class TableController(ITableService tableService, IConfiguration configuration) : ControllerBase
 {
-    private readonly IConfiguration _configuration;
-
-    private readonly ITableService _tableService;
-
-    public TableController(ITableService tableService, IConfiguration configuration)
-    {
-        _tableService = tableService;
-        _configuration = configuration;
-    }
+    private readonly IConfiguration _configuration = configuration;
 
     [HttpGet]
     public IEnumerable<TableViewModel> Get()
     {
-        return _tableService.GetAll().Select(t => new TableViewModel { Id = t.Id, Name = t.Name });
+        return tableService.GetAll().Select(t => new TableViewModel { Id = t.Id, Name = t.Name });
     }
 
     [HttpGet("{id}")]
     public IActionResult Get(string id)
     {
-        Table? table = _tableService.GetById(id);
+        Table? table = tableService.GetById(id);
         if (table == null)
         {
             return NotFound();
@@ -50,7 +42,7 @@ public class TableController : ControllerBase
 
         Table table = new() { Id = id, Name = tableRequest.Name, QrCode = qrCode };
 
-        _tableService.Create(table);
+        tableService.Create(table);
 
         return NoContent();
     }
@@ -58,7 +50,7 @@ public class TableController : ControllerBase
     [HttpPut("{id}")]
     public IActionResult Put(string id, [FromBody] TableRequest tableRequest)
     {
-        Table? table = _tableService.GetById(id);
+        Table? table = tableService.GetById(id);
         if (table == null)
         {
             return NotFound();
@@ -66,7 +58,7 @@ public class TableController : ControllerBase
 
         table.Name = tableRequest.Name;
 
-        _tableService.Update(table);
+        tableService.Update(table);
 
         return NoContent();
     }
@@ -74,7 +66,7 @@ public class TableController : ControllerBase
     [HttpDelete("{id}")]
     public IActionResult Delete(string id)
     {
-        _tableService.Delete(id);
+        tableService.Delete(id);
 
         return NoContent();
     }

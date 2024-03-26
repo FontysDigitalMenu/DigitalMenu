@@ -5,18 +5,11 @@ namespace DigitalMenu_10_Api.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class SeederController : ControllerBase
+public class SeederController(ApplicationDbContext dbContext) : ControllerBase
 {
-    private readonly ApplicationDbContext _dbContext;
-
-    public SeederController(ApplicationDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-
     [HttpGet]
     public async Task Seed()
     {
-        await new SeedData(_dbContext).ResetDatabaseAndSeed();
+        await new SeedData(dbContext).ResetDatabaseAndSeed();
     }
 }
