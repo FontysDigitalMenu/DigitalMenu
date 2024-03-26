@@ -47,7 +47,7 @@ public class OrderService(
         {
             throw new NotFoundException("TableId does not exist");
         }
-        
+
         List<CartItem> cartItems = cartItemRepository.GetByDeviceId(deviceId);
         if (cartItems.Count == 0)
         {
@@ -106,7 +106,8 @@ public class OrderService(
         return orderRepository.Update(order);
     }
 
-    public async Task<PaymentResponse> CreateMolliePayment(string apiKey, string redirectUrl, int totalAmount, string orderId)
+    public async Task<PaymentResponse> CreateMolliePayment(string apiKey, string redirectUrl, int totalAmount,
+        string orderId)
     {
         using PaymentClient paymentClient = new($"{apiKey}", new HttpClient());
         PaymentRequest paymentRequest = new()
@@ -135,7 +136,7 @@ public class OrderService(
             {
                 throw new NotFoundException("Payment not found");
             }
-            
+
             throw new MollieApiException(e.Message);
         }
     }
