@@ -5,11 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DigitalMenu_10_Api.Controllers;
 
-[Route("api/v1/[controller]")]
+[Route("api/v1/menuItem")]
 [ApiController]
 public class MenuItemController(IMenuItemService menuItemService) : ControllerBase
 {
-    [HttpGet("Paged")]
+    [HttpGet]
     public IActionResult Get(int lastId, int amount)
     {
         List<MenuItem> menuItems = (List<MenuItem>)menuItemService.GetNextMenuItems(lastId, amount);
@@ -29,7 +29,7 @@ public class MenuItemController(IMenuItemService menuItemService) : ControllerBa
         return Ok(menuItemViewModels);
     }
 
-    [HttpGet("Paged/GetCategories")]
+    [HttpGet("getCategories")]
     public IActionResult GetCategories(int lastId, int amount)
     {
         List<Category> categories = (List<Category>)menuItemService.GetCategoriesWithNextMenuItems(lastId, amount);

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DigitalMenu_10_Api.Controllers;
 
-[Route("api/v1/[controller]")]
+[Route("api/v1/role")]
 [ApiController]
 public class RoleController(IRoleService roleService, SignInManager<IdentityUser> signInManager) : Controller
 {

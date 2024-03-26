@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DigitalMenu_10_Api.Controllers;
 
 [Authorize(Roles = "Admin")]
-[Route("api/v1/[controller]")]
+[Route("api/v1/table")]
 [ApiController]
 public class TableController(ITableService tableService, IConfiguration configuration) : ControllerBase
 {

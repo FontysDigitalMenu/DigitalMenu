@@ -10,7 +10,7 @@ using Mollie.Api.Models.Payment.Response;
 
 namespace DigitalMenu_10_Api.Controllers;
 
-[Route("api/v1/[controller]")]
+[Route("api/v1/order")]
 [ApiController]
 public class OrderController(IConfiguration configuration, IOrderService orderService)
     : ControllerBase
