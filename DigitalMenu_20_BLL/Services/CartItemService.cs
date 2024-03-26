@@ -23,6 +23,11 @@ public class CartItemService : ICartItemService
         return _cartItemRepository.GetByMenuItemIdAndDeviceId(menuItemId, deviceId);
     }
 
+    public List<CartItem?> GetCartItemsByMenuItemIdAndDeviceId(int menuItemId, string deviceId)
+    {
+        return _cartItemRepository.GetCartItemsByMenuItemIdAndDeviceId(menuItemId, deviceId);
+    }
+
     public bool Create(CartItem cartItem)
     {
         return _cartItemRepository.Create(cartItem);
@@ -41,5 +46,25 @@ public class CartItemService : ICartItemService
     public bool Update(CartItem cartItem)
     {
         return _cartItemRepository.Update(cartItem);
+    }
+
+    public bool AddExcludedIngredientToCartItem(ExcludedIngredientCartItem excludedIngredientCartItem)
+    {
+        return _cartItemRepository.AddExcludedIngredientToCartItem(excludedIngredientCartItem);
+    }
+
+    public List<Ingredient> GetExcludedIngredientsByCartItemId(int cartItemId)
+    {
+        return _cartItemRepository.GetExcludedIngredientsByCartItemId(cartItemId);
+    }
+
+    public CartItem? GetByCartItemIdAndDeviceId(int cartItemId, string deviceId)
+    {
+        return _cartItemRepository.GetByCartItemIdAndDeviceId(cartItemId, deviceId);
+    }
+
+    public bool DeleteExcludedIngredientsFromCartItem(int cartItemId)
+    {
+        return _cartItemRepository.DeleteExcludedIngredientsFromCartItem(cartItemId);
     }
 }

@@ -19,9 +19,13 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
 
     public DbSet<MenuItem> MenuItems { get; set; }
 
+    public DbSet<MenuItemIngredient> MenuItemIngredients { get; set; }
+
     public DbSet<Order> Orders { get; set; }
 
     public DbSet<OrderMenuItem> OrderMenuItems { get; set; }
+
+    public DbSet<ExcludedIngredientCartItem> ExcludedIngredientCartItems { get; set; }
 
     public DbSet<Table> Tables { get; set; }
 
@@ -41,5 +45,9 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
             .HasOne(om => om.MenuItem)
             .WithMany()
             .HasForeignKey(om => om.MenuItemId);
+
+
+        modelBuilder.Entity<MenuItemIngredient>()
+            .HasKey(mi => new { mi.MenuItemId, mi.IngredientId });
     }
 }

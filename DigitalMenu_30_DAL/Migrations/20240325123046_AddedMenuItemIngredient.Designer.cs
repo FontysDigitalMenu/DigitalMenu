@@ -4,6 +4,7 @@ using DigitalMenu_30_DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DigitalMenu_30_DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240325123046_AddedMenuItemIngredient")]
+    partial class AddedMenuItemIngredient
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -80,29 +83,6 @@ namespace DigitalMenu_30_DAL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
-                });
-
-            modelBuilder.Entity("DigitalMenu_20_BLL.Models.ExcludedIngredientCartItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CartItemId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("IngredientId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CartItemId");
-
-                    b.HasIndex("IngredientId");
-
-                    b.ToTable("ExcludedIngredientCartItems");
                 });
 
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.Ingredient", b =>
@@ -241,21 +221,6 @@ namespace DigitalMenu_30_DAL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Tables");
-                });
-
-            modelBuilder.Entity("IngredientMenuItem", b =>
-                {
-                    b.Property<int>("IngredientsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MenuItemsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("IngredientsId", "MenuItemsId");
-
-                    b.HasIndex("MenuItemsId");
-
-                    b.ToTable("IngredientMenuItem");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -480,35 +445,16 @@ namespace DigitalMenu_30_DAL.Migrations
                     b.Navigation("MenuItem");
                 });
 
-            modelBuilder.Entity("DigitalMenu_20_BLL.Models.ExcludedIngredientCartItem", b =>
-                {
-                    b.HasOne("DigitalMenu_20_BLL.Models.CartItem", "CartItem")
-                        .WithMany()
-                        .HasForeignKey("CartItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DigitalMenu_20_BLL.Models.Ingredient", "Ingredient")
-                        .WithMany()
-                        .HasForeignKey("IngredientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CartItem");
-
-                    b.Navigation("Ingredient");
-                });
-
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.MenuItemIngredient", b =>
                 {
                     b.HasOne("DigitalMenu_20_BLL.Models.Ingredient", "Ingredient")
-                        .WithMany()
+                        .WithMany("MenuItemIngredients")
                         .HasForeignKey("IngredientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("DigitalMenu_20_BLL.Models.MenuItem", "MenuItem")
-                        .WithMany()
+                        .WithMany("MenuItemIngredients")
                         .HasForeignKey("MenuItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -546,21 +492,6 @@ namespace DigitalMenu_30_DAL.Migrations
                     b.Navigation("MenuItem");
 
                     b.Navigation("Order");
-                });
-
-            modelBuilder.Entity("IngredientMenuItem", b =>
-                {
-                    b.HasOne("DigitalMenu_20_BLL.Models.Ingredient", null)
-                        .WithMany()
-                        .HasForeignKey("IngredientsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DigitalMenu_20_BLL.Models.MenuItem", null)
-                        .WithMany()
-                        .HasForeignKey("MenuItemsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -612,6 +543,16 @@ namespace DigitalMenu_30_DAL.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("DigitalMenu_20_BLL.Models.Ingredient", b =>
+                {
+                    b.Navigation("MenuItemIngredients");
+                });
+
+            modelBuilder.Entity("DigitalMenu_20_BLL.Models.MenuItem", b =>
+                {
+                    b.Navigation("MenuItemIngredients");
                 });
 
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.Order", b =>
