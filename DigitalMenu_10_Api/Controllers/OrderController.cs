@@ -78,11 +78,12 @@ public class OrderController(IConfiguration configuration, IOrderService orderSe
             return BadRequest(new { e.Message });
         }
 
-        return CreatedAtAction("Get", new { id = order.Id, deviceId = orderRequest.DeviceId, orderRequest.TableId }, new OrderCreatedViewModel
-        {
-            RedirectUrl = paymentResponse.Links.Checkout.Href,
-            OrderId = order.Id,
-        });
+        return CreatedAtAction("Get", new { id = order.Id, deviceId = orderRequest.DeviceId, orderRequest.TableId },
+            new OrderCreatedViewModel
+            {
+                RedirectUrl = paymentResponse.Links.Checkout.Href,
+                OrderId = order.Id,
+            });
     }
 
     [HttpGet("{id}/{deviceId}/{tableId}")]
