@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DigitalMenu_30_DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240326102600_UpdatePaymentIdOrderTable")]
-    partial class UpdatePaymentIdOrderTable
+    [Migration("20240326141932_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -137,11 +137,8 @@ namespace DigitalMenu_30_DAL.Migrations
 
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.Order", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("DeviceId")
                         .IsRequired()
@@ -176,8 +173,8 @@ namespace DigitalMenu_30_DAL.Migrations
 
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.OrderMenuItem", b =>
                 {
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
+                    b.Property<string>("OrderId")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<int>("MenuItemId")
                         .HasColumnType("int");

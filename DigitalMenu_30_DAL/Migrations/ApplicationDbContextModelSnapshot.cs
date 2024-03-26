@@ -134,11 +134,8 @@ namespace DigitalMenu_30_DAL.Migrations
 
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.Order", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("DeviceId")
                         .IsRequired()
@@ -173,8 +170,8 @@ namespace DigitalMenu_30_DAL.Migrations
 
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.OrderMenuItem", b =>
                 {
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
+                    b.Property<string>("OrderId")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<int>("MenuItemId")
                         .HasColumnType("int");

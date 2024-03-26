@@ -4,5 +4,5 @@ public class OrderCreatedViewModel
 {
     public string RedirectUrl { get; set; }
 
-    public int OrderId { get; set; }
+    public string OrderId { get; set; }
 }

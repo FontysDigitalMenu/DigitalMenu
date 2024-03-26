@@ -7,11 +7,13 @@ public interface IOrderService
 {
     public int GetTotalAmount(string deviceId, string tableId);
 
-    public Order Create(string deviceId, string tableId, string paymentId);
+    public Order Create(string deviceId, string tableId, string paymentId, string orderId);
 
-    public Order? GetById(int id);
+    public Order? GetBy(string id, string deviceId, string tableId);
 
     public bool Update(Order order);
 
-    public Task<PaymentResponse> CreateMolliePayment(string apiKey, string redirectUrl, int totalAmount);
+    public Task<PaymentResponse> CreateMolliePayment(string apiKey, string redirectUrl, int totalAmount, string orderId);
+
+    public Task<PaymentResponse> GetPaymentFromMollie(string apiKey, string externalPaymentId);
 }

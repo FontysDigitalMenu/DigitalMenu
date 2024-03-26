@@ -5,7 +5,7 @@ namespace DigitalMenu_20_BLL.Models;
 [Keyless]
 public class OrderMenuItem
 {
-    public int OrderId { get; set; }
+    public string OrderId { get; set; }
 
     public Order Order { get; set; }
 
