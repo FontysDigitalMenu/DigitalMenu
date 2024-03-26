@@ -4,5 +4,7 @@ namespace DigitalMenu_20_BLL.Interfaces.Repositories;
 
 public interface IOrderRepository
 {
-    public bool Create(Order order);
+    public Order? Create(Order order);
+
+    public Order? GetById(int id);
 }

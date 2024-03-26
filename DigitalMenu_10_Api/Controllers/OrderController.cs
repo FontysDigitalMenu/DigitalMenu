@@ -42,14 +42,20 @@ public class OrderController(IConfiguration configuration, ApplicationDbContext 
             Method = Mollie.Api.Models.Payment.PaymentMethod.Ideal,
         };
         PaymentResponse paymentResponse = await paymentClient.CreatePaymentAsync(paymentRequest);
-        
-        bool orderCreated = orderService.Create(orderRequest.DeviceId, orderRequest.TableId, paymentResponse.Id, totalAmount);
-        if (!orderCreated)
+
+        Order? order = orderService.Create(orderRequest.DeviceId, orderRequest.TableId, paymentResponse.Id, totalAmount);
+        if (order == null)
         {
             return BadRequest("Order could not be created");
         }
-        
-        return Ok(paymentResponse.Links.Checkout.Href);
+
+        OrderCreatedViewModel orderCreatedViewModel = new()
+        {
+            RedirectUrl = paymentResponse.Links.Checkout.Href,
+            OrderId = order.Id,
+        };
+
+        return CreatedAtAction("Get", new { id = order.Id }, orderCreatedViewModel);
     }
 
     [HttpGet("{id:int}")]
@@ -57,12 +63,12 @@ public class OrderController(IConfiguration configuration, ApplicationDbContext 
     [ProducesResponseType(404)]
     public async Task<IActionResult> Get([FromRoute] int id)
     {
-        Order? order = await dbContext.Orders.FindAsync(id);
+        Order? order = orderService.GetById(id);
         if (order == null)
         {
             return NotFound("Order not found");
         }
-        
+
         string? apiKey = configuration.GetValue<string>("Mollie:ApiKey");
         if (apiKey == null)
         {
@@ -91,8 +97,18 @@ public class OrderController(IConfiguration configuration, ApplicationDbContext 
 
         return Ok(new OrderViewModel
         {
-            PaymentStatus = result.Status,
-            Order = order,
+            Id = order.Id,
+            PaymentStatus = order.PaymentStatus.ToString(),
+            Status = order.Status.ToString(),
+            TotalAmount = order.TotalAmount,
+            OrderDate = order.OrderDate,
+            MenuItems = order.OrderMenuItems.Select(omi => new MenuItemViewModel()
+            {
+                Id = omi.MenuItem.Id,
+                Name = omi.MenuItem.Name,
+                Price = omi.MenuItem.Price,
+                ImageUrl = omi.MenuItem.ImageUrl,
+            }).ToList(),
         });
     }
 }

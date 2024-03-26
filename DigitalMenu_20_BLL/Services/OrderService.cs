@@ -11,20 +11,23 @@ public class OrderService(IOrderRepository orderRepository, ICartItemRepository 
         return 52377;
     }
     
-    public bool Create(string deviceId, string tableId, string paymentId, int totalAmount)
+    public Order? Create(string deviceId, string tableId, string paymentId, int totalAmount)
     {
         if (!cartItemRepository.ExistsByDeviceId(deviceId))
         {
-            return false;
+            return null;
         }
 
         if (tableRepository.GetById(tableId) == null)
         {
-            return false;
+            return null;
         }
         
-        
         List<CartItem> cartItems = cartItemRepository.GetByDeviceId(deviceId);
+        if (cartItems.Count == 0)
+        {
+            return null;
+        }
 
         List<OrderMenuItem> orderMenuItems = cartItems.Select(ci => new OrderMenuItem
         {
@@ -39,9 +42,13 @@ public class OrderService(IOrderRepository orderRepository, ICartItemRepository 
             ExternalPaymentId = paymentId,
             OrderMenuItems = orderMenuItems,
             TotalAmount = totalAmount,
-            
         };
         
         return orderRepository.Create(order);
+    }
+    
+    public Order? GetById (int id)
+    {
+        return orderRepository.GetById(id);
     }
 }
