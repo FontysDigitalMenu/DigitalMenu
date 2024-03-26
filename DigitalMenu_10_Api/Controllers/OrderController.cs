@@ -140,6 +140,8 @@ public class OrderController(IConfiguration configuration, ApplicationDbContext 
                 Name = omi.MenuItem.Name,
                 Price = omi.MenuItem.Price,
                 ImageUrl = omi.MenuItem.ImageUrl,
+                Quantity = omi.Quantity,
+                Note = omi.Note,
             }).ToList(),
         });
     }
