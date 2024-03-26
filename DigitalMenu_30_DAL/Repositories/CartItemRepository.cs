@@ -49,4 +49,11 @@ public class CartItemRepository : ICartItemRepository
         _dbContext.CartItems.Update(cartItem);
         return _dbContext.SaveChanges() > 0;
     }
+
+    public void ClearByDeviceId(string deviceId)
+    {
+        List<CartItem> cartItems = _dbContext.CartItems.Where(ci => ci.DeviceId == deviceId).ToList();
+        _dbContext.CartItems.RemoveRange(cartItems);
+        _dbContext.SaveChanges();
+    }
 }

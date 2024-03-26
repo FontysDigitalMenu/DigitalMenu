@@ -6,6 +6,8 @@ using DigitalMenu_30_DAL.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Mollie.Api;
+using Mollie.Api.Framework;
 using Swashbuckle.AspNetCore.Filters;
 using DigitalMenu_10_Api;
 
@@ -35,6 +37,8 @@ builder.Services.AddScoped<IMenuItemService, MenuItemService>();
 builder.Services.AddScoped<IMenuItemRepository, MenuItemRepository>();
 builder.Services.AddScoped<ICartItemService, CartItemService>();
 builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -74,6 +78,12 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod()
             .AllowCredentials();
     });
+});
+
+builder.Services.AddMollieApi(options =>
+{
+    options.ApiKey = builder.Configuration["Mollie:ApiKey"];
+    options.RetryPolicy = MollieHttpRetryPolicies.TransientHttpErrorRetryPolicy();
 });
 
 builder.Services.AddSignalR();
