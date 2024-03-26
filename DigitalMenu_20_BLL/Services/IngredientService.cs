@@ -1,26 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DigitalMenu_20_BLL.Interfaces.Repositories;
+﻿using DigitalMenu_20_BLL.Interfaces.Repositories;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
 
-namespace DigitalMenu_20_BLL.Services
+namespace DigitalMenu_20_BLL.Services;
+
+public class IngredientService : IIngredientService
 {
-    public class IngredientService : IIngredientService
+    private readonly IIngredientRepository _ingredientRepository;
+
+    public IngredientService(IIngredientRepository ingredientRepository)
     {
-        private readonly IIngredientRepository _ingredientRepository;
+        _ingredientRepository = ingredientRepository;
+    }
 
-        public IngredientService(IIngredientRepository ingredientRepository)
-        {
-            _ingredientRepository = ingredientRepository;
-        }
-
-        public Task<Ingredient?> GetIngredientByNameAsync(string name)
-        {
-            return _ingredientRepository.GetIngredientByNameAsync(name);
-        }
+    public Task<Ingredient?> GetIngredientByNameAsync(string name)
+    {
+        return _ingredientRepository.GetIngredientByNameAsync(name);
     }
 }

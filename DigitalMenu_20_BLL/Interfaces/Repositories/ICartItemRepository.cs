@@ -7,6 +7,7 @@ public interface ICartItemRepository
     public bool Create(CartItem cartItem);
 
     public CartItem? GetByMenuItemIdAndDeviceId(int menuItemId, string deviceId);
+
     public CartItem? GetByCartItemIdAndDeviceId(int cartItemId, string deviceId);
 
     public List<CartItem?> GetCartItemsByMenuItemIdAndDeviceId(int menuItemId, string deviceId);

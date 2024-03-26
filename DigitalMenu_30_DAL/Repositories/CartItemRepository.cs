@@ -35,8 +35,8 @@ public class CartItemRepository : ICartItemRepository
     public List<CartItem?> GetCartItemsByMenuItemIdAndDeviceId(int menuItemId, string deviceId)
     {
         return _dbContext.CartItems
-                      .Where(ci => ci.MenuItemId == menuItemId && ci.DeviceId == deviceId)
-                      .ToList();
+            .Where(ci => ci.MenuItemId == menuItemId && ci.DeviceId == deviceId)
+            .ToList();
     }
 
 

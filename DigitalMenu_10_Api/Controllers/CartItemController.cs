@@ -12,10 +12,12 @@ public class CartItemController : ControllerBase
 {
     private readonly ICartItemService _cartItemService;
 
-    private readonly IMenuItemService _menuItemService;
     private readonly IIngredientService _ingredientService;
 
-    public CartItemController(ICartItemService cartItemService, IMenuItemService menuItemService, IIngredientService ingredientService)
+    private readonly IMenuItemService _menuItemService;
+
+    public CartItemController(ICartItemService cartItemService, IMenuItemService menuItemService,
+        IIngredientService ingredientService)
     {
         _cartItemService = cartItemService;
         _menuItemService = menuItemService;
@@ -25,13 +27,16 @@ public class CartItemController : ControllerBase
     [HttpPost]
     public async Task<ActionResult> AddToCart([FromBody] CartRequest cartRequest)
     {
-        List<CartItem?> cartItems = _cartItemService.GetCartItemsByMenuItemIdAndDeviceId(cartRequest.MenuItemId, cartRequest.DeviceId);
+        List<CartItem?> cartItems =
+            _cartItemService.GetCartItemsByMenuItemIdAndDeviceId(cartRequest.MenuItemId, cartRequest.DeviceId);
 
         foreach (CartItem? cartItem in cartItems)
         {
-            List<Ingredient> existingExcludedIngredients = _cartItemService.GetExcludedIngredientsByCartItemId(cartItem.Id);
+            List<Ingredient> existingExcludedIngredients =
+                _cartItemService.GetExcludedIngredientsByCartItemId(cartItem.Id);
             List<string> existingExcludedIngredientNames = existingExcludedIngredients.Select(e => e.Name).ToList();
-            bool sameExcludedIngredients = existingExcludedIngredientNames.OrderBy(n => n).SequenceEqual(cartRequest.ExcludedIngredients.OrderBy(n => n));
+            bool sameExcludedIngredients = existingExcludedIngredientNames.OrderBy(n => n)
+                .SequenceEqual(cartRequest.ExcludedIngredients.OrderBy(n => n));
 
             if (sameExcludedIngredients && cartItem.Note == cartRequest.Note)
             {
@@ -61,14 +66,15 @@ public class CartItemController : ControllerBase
         {
             foreach (string excludedIngredientName in cartRequest.ExcludedIngredients)
             {
-                Ingredient? excludedIngredient = await _ingredientService.GetIngredientByNameAsync(excludedIngredientName);
-                
+                Ingredient? excludedIngredient =
+                    await _ingredientService.GetIngredientByNameAsync(excludedIngredientName);
+
                 if (excludedIngredient != null)
                 {
                     ExcludedIngredientCartItem excludedIngredientCartItem = new()
                     {
                         IngredientId = excludedIngredient.Id,
-                        CartItemId = newCartItem.Id
+                        CartItemId = newCartItem.Id,
                     };
 
                     _cartItemService.AddExcludedIngredientToCartItem(excludedIngredientCartItem);
@@ -94,17 +100,15 @@ public class CartItemController : ControllerBase
         {
             return NotFound();
         }
-        else
-        {
-            cartItem.MenuItem = menuitem;
-        }
+
+        cartItem.MenuItem = menuitem;
 
         List<Ingredient> excludedIngredients = _cartItemService.GetExcludedIngredientsByCartItemId(cartItemId);
 
         CartItemWithIngredientsViewModel cartItemWithIngredients = new()
         {
             CartItem = cartItem,
-            ExcludedIngredients = excludedIngredients
+            ExcludedIngredients = excludedIngredients,
         };
 
         return Ok(cartItemWithIngredients);
@@ -189,14 +193,15 @@ public class CartItemController : ControllerBase
             {
                 foreach (string excludedIngredientName in cartRequest.ExcludedIngredients)
                 {
-                    Ingredient? excludedIngredient = await _ingredientService.GetIngredientByNameAsync(excludedIngredientName);
+                    Ingredient? excludedIngredient =
+                        await _ingredientService.GetIngredientByNameAsync(excludedIngredientName);
 
                     if (excludedIngredient != null)
                     {
                         ExcludedIngredientCartItem excludedIngredientCartItem = new()
                         {
                             IngredientId = excludedIngredient.Id,
-                            CartItemId = cartItem.Id
+                            CartItemId = cartItem.Id,
                         };
 
                         _cartItemService.AddExcludedIngredientToCartItem(excludedIngredientCartItem);

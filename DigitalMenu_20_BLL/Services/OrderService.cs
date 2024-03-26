@@ -48,7 +48,7 @@ public class OrderService(
         {
             throw new NotFoundException("TableId does not exist");
         }
-        
+
         List<CartItem> cartItems = cartItemRepository.GetByDeviceId(deviceId);
         if (cartItems.Count == 0)
         {
