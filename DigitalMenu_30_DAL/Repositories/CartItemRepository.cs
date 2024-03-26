@@ -50,10 +50,10 @@ public class CartItemRepository : ICartItemRepository
         return _dbContext.SaveChanges() > 0;
     }
 
-    public void ClearByDeviceId(string deviceId)
+    public bool ClearByDeviceId(string deviceId)
     {
         List<CartItem> cartItems = _dbContext.CartItems.Where(ci => ci.DeviceId == deviceId).ToList();
         _dbContext.CartItems.RemoveRange(cartItems);
-        _dbContext.SaveChanges();
+        return _dbContext.SaveChanges() > 0;
     }
 }

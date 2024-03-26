@@ -1,14 +1,13 @@
 ﻿using DigitalMenu_10_Api.RequestModels;
 using DigitalMenu_10_Api.ViewModels;
+using DigitalMenu_20_BLL.Exceptions;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
 using DigitalMenu_30_DAL.Data;
 using Microsoft.AspNetCore.Mvc;
 using Mollie.Api.Client;
 using Mollie.Api.Client.Abstract;
-using Mollie.Api.Models;
 using Mollie.Api.Models.Payment;
-using Mollie.Api.Models.Payment.Request;
 using Mollie.Api.Models.Payment.Response;
 
 namespace DigitalMenu_10_Api.Controllers;
@@ -19,49 +18,67 @@ public class OrderController(IConfiguration configuration, ApplicationDbContext 
     : ControllerBase
 {
     [HttpPost]
+    [ProducesResponseType(201)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
+    [ProducesResponseType(500)]
     public async Task<IActionResult> Post([FromBody] OrderRequest orderRequest)
     {
         string? apiKey = configuration.GetValue<string>("Mollie:ApiKey");
         string? redirectUrl = configuration.GetValue<string>("FrontendUrl");
         if (apiKey == null)
         {
-            return BadRequest("Redirect url is not set");
+            return Problem("Mollie API key is not set");
         }
 
         if (redirectUrl == null)
         {
-            return BadRequest("Mollie API key is not set");
+            return Problem("Redirect url is not set");
         }
 
-        int? totalAmount = orderService.GetTotalAmount(orderRequest.DeviceId, orderRequest.TableId);
-        if (totalAmount == null)
+        int totalAmount;
+        try
         {
-            return BadRequest("Order could not be created");
+            totalAmount = orderService.GetTotalAmount(orderRequest.DeviceId, orderRequest.TableId);
+        }
+        catch (NotFoundException e)
+        {
+            return NotFound(e.Message);
         }
 
-        using IPaymentClient paymentClient = new PaymentClient($"{apiKey}", new HttpClient());
-        PaymentRequest paymentRequest = new()
+        PaymentResponse paymentResponse;
+        try
         {
-            Amount = new Amount(Currency.EUR, (decimal)totalAmount / 100),
-            Description = "Order payment",
-            RedirectUrl = redirectUrl,
-            Method = PaymentMethod.Ideal,
-        };
-        PaymentResponse paymentResponse = await paymentClient.CreatePaymentAsync(paymentRequest);
-
-        Order? order = orderService.Create(orderRequest.DeviceId, orderRequest.TableId, paymentResponse.Id);
-        if (order == null)
+            paymentResponse = await orderService.CreateMolliePayment(apiKey, redirectUrl, totalAmount);
+        }
+        catch (Exception)
         {
-            return BadRequest("Order could not be created");
+            return BadRequest("Payment by Mollie could not be created");
         }
 
-        OrderCreatedViewModel orderCreatedViewModel = new()
+        Order order;
+        try
+        {
+            order = orderService.Create(orderRequest.DeviceId, orderRequest.TableId, paymentResponse.Id);
+        }
+        catch (NotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
+        catch (DatabaseCreationException e)
+        {
+            return BadRequest(e.Message);
+        }
+        catch (DatabaseUpdateException e)
+        {
+            return BadRequest(e.Message);
+        }
+
+        return CreatedAtAction("Get", new { id = order.Id }, new OrderCreatedViewModel
         {
             RedirectUrl = paymentResponse.Links.Checkout.Href,
             OrderId = order.Id,
-        };
-
-        return CreatedAtAction("Get", new { id = order.Id }, orderCreatedViewModel);
+        });
     }
 
     [HttpGet("{id:int}")]
@@ -78,7 +95,7 @@ public class OrderController(IConfiguration configuration, ApplicationDbContext 
         string? apiKey = configuration.GetValue<string>("Mollie:ApiKey");
         if (apiKey == null)
         {
-            return BadRequest("Redirect url is not set");
+            return Problem("Mollie API key is not set");
         }
 
         using IPaymentClient paymentClient = new PaymentClient(apiKey);

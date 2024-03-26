@@ -16,5 +16,5 @@ public interface ICartItemRepository
 
     public bool Update(CartItem cartItem);
 
-    public void ClearByDeviceId(string deviceId);
+    public bool ClearByDeviceId(string deviceId);
 }
