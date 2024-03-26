@@ -41,6 +41,31 @@ public class MenuItemRepository : IMenuItemRepository
 
     public MenuItem? GetMenuItemBy(int id)
     {
+        var menuItemWithIngredients = _dbContext.MenuItemIngredients
+            .Where(mii => mii.MenuItemId == id)
+            .Include(mii => mii.Ingredient)
+            .Select(mii => new
+            {
+                mii.MenuItem, mii.Ingredient,
+            })
+            .ToList();
+
+        if (menuItemWithIngredients.Any())
+        {
+            MenuItem firstMenuItem = menuItemWithIngredients.First().MenuItem;
+            MenuItem menuItem = new()
+            {
+                Id = firstMenuItem.Id,
+                Name = firstMenuItem.Name,
+                Description = firstMenuItem.Description,
+                ImageUrl = firstMenuItem.ImageUrl,
+                Price = firstMenuItem.Price,
+                Ingredients = menuItemWithIngredients.Select(m => m.Ingredient).ToList(),
+            };
+
+            return menuItem;
+        }
+
         return _dbContext.MenuItems.Find(id);
     }
 }

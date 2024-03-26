@@ -1,8 +1,8 @@
 ﻿namespace DigitalMenu_10_Api.RequestModels;
 
-public class CartUpdateRequest
+public class OrderRequest
 {
     public string DeviceId { get; set; }
 
-    public int CartItemId { get; set; }
+    public string TableId { get; set; }
 }
