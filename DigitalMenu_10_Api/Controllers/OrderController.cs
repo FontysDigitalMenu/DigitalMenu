@@ -7,17 +7,17 @@ using Mollie.Api.Client.Abstract;
 using Mollie.Api.Models;
 using Mollie.Api.Models.Payment.Request;
 using Mollie.Api.Models.Payment.Response;
-using System.Text.Json;
-using DigitalMenu_10_Api.JsonObjects;
+using DigitalMenu_10_Api.RequestModels;
+using DigitalMenu_20_BLL.Interfaces;
 
 namespace DigitalMenu_10_Api.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class OrderController(IConfiguration configuration, ApplicationDbContext dbContext) : ControllerBase
+public class OrderController(IConfiguration configuration, ApplicationDbContext dbContext, IOrderService orderService) : ControllerBase
 {
-    [HttpGet]
-    public async Task<IActionResult> Pay()
+    [HttpPost]
+    public async Task<IActionResult> Post([FromBody] OrderRequest orderRequest)
     {
         string? apiKey = configuration.GetValue<string>("Mollie:ApiKey");
         string? redirectUrl = configuration.GetValue<string>("FrontendUrl");
@@ -31,42 +31,38 @@ public class OrderController(IConfiguration configuration, ApplicationDbContext 
             return BadRequest("Mollie API key is not set");
         }
 
-        Order order = new()
-        {
-            DeviceId = "12345",
-            TableId = "1",
-            Note = "Test order",
-            TotalAmount = 100,
-            Quantity = 1,
-            Table = dbContext.Tables.First(),
-        };
-        dbContext.Orders.Add(order);
-        await dbContext.SaveChangesAsync();
+        int totalAmount = orderService.GetTotalAmount();
 
         using IPaymentClient paymentClient = new PaymentClient($"{apiKey}", new HttpClient());
         PaymentRequest paymentRequest = new()
         {
-            Amount = new Amount(Currency.EUR, 100.00m),
-            Description = "Test payment of the example project",
+            Amount = new Amount(Currency.EUR, (decimal)totalAmount / 100),
+            Description = "Order payment",
             RedirectUrl = redirectUrl,
             Method = Mollie.Api.Models.Payment.PaymentMethod.Ideal,
         };
-        paymentRequest.SetMetadata(new
-        {
-            OrderId = order.Id,
-        });
-
         PaymentResponse paymentResponse = await paymentClient.CreatePaymentAsync(paymentRequest);
-        string checkoutUrl = paymentResponse.Links.Checkout.Href;
-
-        return Ok(checkoutUrl);
+        
+        bool orderCreated = orderService.Create(orderRequest.DeviceId, orderRequest.TableId, paymentResponse.Id, totalAmount);
+        if (!orderCreated)
+        {
+            return BadRequest("Order could not be created");
+        }
+        
+        return Ok(paymentResponse.Links.Checkout.Href);
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
-    public async Task<IActionResult> Get([FromRoute] string id)
+    public async Task<IActionResult> Get([FromRoute] int id)
     {
+        Order? order = await dbContext.Orders.FindAsync(id);
+        if (order == null)
+        {
+            return NotFound("Order not found");
+        }
+        
         string? apiKey = configuration.GetValue<string>("Mollie:ApiKey");
         if (apiKey == null)
         {
@@ -74,11 +70,10 @@ public class OrderController(IConfiguration configuration, ApplicationDbContext 
         }
 
         using IPaymentClient paymentClient = new PaymentClient(apiKey);
-        
         PaymentResponse? result;
         try
         {
-            result = await paymentClient.GetPaymentAsync(id);
+            result = await paymentClient.GetPaymentAsync(order.ExternalPaymentId);
             if (result == null)
             {
                 return Problem();
@@ -92,18 +87,6 @@ public class OrderController(IConfiguration configuration, ApplicationDbContext 
             }
 
             return Problem();
-        }
-
-        if (result.Metadata == null)
-        {
-            return NotFound("Order not found");
-        }
-        int orderId = JsonSerializer.Deserialize<OrderJson>(result.Metadata)!.OrderId;
-        
-        Order? order = await dbContext.Orders.FindAsync(orderId);
-        if (order == null)
-        {
-            return NotFound("Order not found");
         }
 
         return Ok(new OrderViewModel
