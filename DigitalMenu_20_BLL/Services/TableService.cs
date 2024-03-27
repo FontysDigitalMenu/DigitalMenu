@@ -23,7 +23,7 @@ public class TableService(ITableRepository tableRepository) : ITableService
         return tableRepository.GetAll();
     }
 
-    public bool Create(Table table)
+    public Table? Create(Table table)
     {
         return tableRepository.Create(table);
     }

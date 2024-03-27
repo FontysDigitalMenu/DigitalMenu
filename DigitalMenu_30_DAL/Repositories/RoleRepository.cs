@@ -3,7 +3,8 @@ using Microsoft.AspNetCore.Identity;
 
 namespace DigitalMenu_30_DAL.Repositories;
 
-public class RoleRepository(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager) : IRoleRepository
+public class RoleRepository(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
+    : IRoleRepository
 {
     public IEnumerable<IdentityRole> GetAll()
     {

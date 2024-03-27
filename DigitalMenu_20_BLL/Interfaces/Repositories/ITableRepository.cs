@@ -6,7 +6,7 @@ public interface ITableRepository
 {
     public List<Table> GetAll();
 
-    public bool Create(Table table);
+    public Table? Create(Table table);
 
     public Table? GetById(string id);
 
