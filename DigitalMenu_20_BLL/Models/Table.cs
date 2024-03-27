@@ -8,7 +8,7 @@ public class Table
 
     public List<Order> Orders { get; set; }
 
-    public string QrCode { get; set; }
+    public string? QrCode { get; set; }
 
     public DateTime CreatedAt { get; set; }
 }

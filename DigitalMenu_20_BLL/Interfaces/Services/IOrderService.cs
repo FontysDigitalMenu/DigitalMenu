@@ -13,8 +13,7 @@ public interface IOrderService
 
     public bool Update(Order order);
 
-    public Task<PaymentResponse>
-        CreateMolliePayment(string apiKey, string redirectUrl, int totalAmount, string orderId);
+    public Task<PaymentResponse> CreateMolliePayment(int totalAmount, string orderId);
 
-    public Task<PaymentResponse> GetPaymentFromMollie(string apiKey, string externalPaymentId);
+    public Task<PaymentResponse> GetPaymentFromMollie(string externalPaymentId);
 }

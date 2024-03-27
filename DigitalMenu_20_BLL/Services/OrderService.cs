@@ -1,11 +1,8 @@
 ﻿using DigitalMenu_20_BLL.Exceptions;
+using DigitalMenu_20_BLL.Helpers;
 using DigitalMenu_20_BLL.Interfaces.Repositories;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
-using Mollie.Api.Client;
-using Mollie.Api.Models;
-using Mollie.Api.Models.Payment;
-using Mollie.Api.Models.Payment.Request;
 using Mollie.Api.Models.Payment.Response;
 
 namespace DigitalMenu_20_BLL.Services;
@@ -13,7 +10,8 @@ namespace DigitalMenu_20_BLL.Services;
 public class OrderService(
     IOrderRepository orderRepository,
     ICartItemRepository cartItemRepository,
-    ITableRepository tableRepository) : IOrderService
+    ITableRepository tableRepository,
+    IMollieHelper mollieHelper) : IOrderService
 {
     public int GetTotalAmount(string deviceId, string tableId)
     {
@@ -108,38 +106,13 @@ public class OrderService(
         return orderRepository.Update(order);
     }
 
-    public async Task<PaymentResponse> CreateMolliePayment(string apiKey, string redirectUrl, int totalAmount,
-        string orderId)
+    public async Task<PaymentResponse> CreateMolliePayment(int totalAmount, string orderId)
     {
-        using PaymentClient paymentClient = new($"{apiKey}", new HttpClient());
-        PaymentRequest paymentRequest = new()
-        {
-            Amount = new Amount(Currency.EUR, (decimal)totalAmount / 100),
-            Description = "Order payment",
-            RedirectUrl = $"{redirectUrl}/{orderId}",
-            Method = PaymentMethod.Ideal,
-            // WebhookUrl = 
-        };
-        PaymentResponse paymentResponse = await paymentClient.CreatePaymentAsync(paymentRequest);
-
-        return paymentResponse;
+        return await mollieHelper.CreatePayment(totalAmount, orderId);
     }
 
-    public async Task<PaymentResponse> GetPaymentFromMollie(string apiKey, string externalPaymentId)
+    public async Task<PaymentResponse> GetPaymentFromMollie(string externalPaymentId)
     {
-        using PaymentClient paymentClient = new(apiKey);
-        try
-        {
-            return await paymentClient.GetPaymentAsync(externalPaymentId);
-        }
-        catch (MollieApiException e)
-        {
-            if (e.Details.Status == 404)
-            {
-                throw new NotFoundException("Payment not found");
-            }
-
-            throw new MollieApiException(e.Message);
-        }
+        return await mollieHelper.GetPayment(externalPaymentId);
     }
 }

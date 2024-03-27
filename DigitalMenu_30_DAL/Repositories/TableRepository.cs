@@ -11,11 +11,11 @@ public class TableRepository(ApplicationDbContext dbContext) : ITableRepository
         return dbContext.Tables.OrderBy(t => t.CreatedAt).ToList();
     }
 
-    public bool Create(Table table)
+    public Table? Create(Table table)
     {
         table.CreatedAt = DateTime.Now;
         dbContext.Tables.Add(table);
-        return dbContext.SaveChanges() > 0;
+        return dbContext.SaveChanges() > 0 ? table : null;
     }
 
     public Table? GetById(string id)
