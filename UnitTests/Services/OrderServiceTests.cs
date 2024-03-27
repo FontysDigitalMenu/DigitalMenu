@@ -1,28 +1,29 @@
 ﻿using DigitalMenu_20_BLL.Exceptions;
+using DigitalMenu_20_BLL.Helpers;
 using DigitalMenu_20_BLL.Interfaces.Repositories;
 using DigitalMenu_20_BLL.Models;
 using DigitalMenu_20_BLL.Services;
+using Mollie.Api.Models.Payment.Response;
 using Moq;
 
 namespace UnitTests.Services;
 
 public class OrderServiceTests
 {
-    private readonly Mock<IOrderRepository> _orderRepositoryMock;
-
     private readonly Mock<ICartItemRepository> _cartItemRepositoryMock = new();
 
-    private readonly Mock<ITableRepository> _tableRepositoryMock = new();
+    private readonly Mock<IMollieHelper> _mollieHelperMock = new();
+
+    private readonly Mock<IOrderRepository> _orderRepositoryMock = new();
 
     private readonly OrderService _orderService;
 
+    private readonly Mock<ITableRepository> _tableRepositoryMock = new();
+
     public OrderServiceTests()
     {
-        _orderRepositoryMock = new Mock<IOrderRepository>();
-        _cartItemRepositoryMock = new Mock<ICartItemRepository>();
-        _tableRepositoryMock = new Mock<ITableRepository>();
-
-        _orderService = new OrderService(_orderRepositoryMock.Object, _cartItemRepositoryMock.Object, _tableRepositoryMock.Object);
+        _orderService = new OrderService(_orderRepositoryMock.Object, _cartItemRepositoryMock.Object,
+            _tableRepositoryMock.Object, _mollieHelperMock.Object);
     }
 
     [Test]
@@ -177,7 +178,7 @@ public class OrderServiceTests
         // Assert
         Assert.Throws<NotFoundException>(() => _orderService.Create(deviceId, tableId, paymentId, orderId));
     }
-    
+
     [Test]
     public void Create_ShouldThrowTableIdNotFoundException()
     {
@@ -242,7 +243,7 @@ public class OrderServiceTests
         // Assert
         Assert.Throws<NotFoundException>(() => _orderService.Create(deviceId, tableId, paymentId, orderId));
     }
-    
+
     [Test]
     public void Create_ShouldThrowDatabaseCreationException()
     {
@@ -269,7 +270,7 @@ public class OrderServiceTests
         // Assert
         Assert.Throws<DatabaseCreationException>(() => _orderService.Create(deviceId, tableId, paymentId, orderId));
     }
-    
+
     [Test]
     public void Create_ShouldThrowDatabaseUpdateException()
     {
@@ -357,7 +358,7 @@ public class OrderServiceTests
         // Assert
         Assert.Throws<NotFoundException>(() => _orderService.GetBy(orderId, deviceId, tableId));
     }
-    
+
     [Test]
     public void GetBy_ShouldThrowTableIdNotFoundException()
     {
@@ -397,11 +398,46 @@ public class OrderServiceTests
         };
         _orderRepositoryMock.Setup(x => x.Update(order))
             .Returns(true);
-        
+
         // Act
         bool result = _orderService.Update(order);
-        
+
         // Assert
         Assert.That(result, Is.True);
+    }
+
+    [Test]
+    public async Task CreateMolliePayment_ShouldReturnPaymentResponse()
+    {
+        // Arrange
+        const int totalAmount = 1259;
+        const string orderId = "F91178CE-FFCE-40ED-955F-3471BC6A0586";
+        PaymentResponse expectedResponse = new();
+
+        _mollieHelperMock.Setup(client => client.CreatePayment(totalAmount, orderId))
+            .ReturnsAsync(expectedResponse);
+
+        // Act
+        PaymentResponse result = await _orderService.CreateMolliePayment(totalAmount, orderId);
+
+        // Assert
+        Assert.That(result, Is.Not.Null);
+    }
+
+    [Test]
+    public async Task GetMolliePayment_ShouldReturnPaymentResponse()
+    {
+        // Arrange
+        const string externalPaymentId = "A54E9D75-50E0-4245-B0A9-A557B2DE5C07";
+        PaymentResponse expectedResponse = new();
+
+        _mollieHelperMock.Setup(client => client.GetPayment(externalPaymentId))
+            .ReturnsAsync(expectedResponse);
+
+        // Act
+        PaymentResponse result = await _orderService.GetPaymentFromMollie(externalPaymentId);
+
+        // Assert
+        Assert.That(result, Is.Not.Null);
     }
 }

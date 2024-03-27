@@ -1,4 +1,5 @@
 ﻿using DigitalMenu_10_Api;
+using DigitalMenu_20_BLL.Helpers;
 using DigitalMenu_20_BLL.Interfaces.Repositories;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Services;
@@ -40,6 +41,10 @@ builder.Services.AddScoped<IIngredientService, IngredientService>();
 builder.Services.AddScoped<IIngredientRepository, IngredientRepository>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IMollieHelper>(_ => new MollieHelper(
+    builder.Configuration.GetValue<string>("Mollie:ApiKey")!,
+    builder.Configuration.GetValue<string>("Mollie:RedirectUrl")!
+));
 
 builder.Services.AddSwaggerGen(options =>
 {
