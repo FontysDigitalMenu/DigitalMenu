@@ -29,7 +29,6 @@ builder.Services.AddIdentityApiEndpoints<IdentityUser>()
     .AddRoleManager<RoleManager<IdentityRole>>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
-builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITableService, TableService>();
 builder.Services.AddScoped<ITableRepository, TableRepository>();
