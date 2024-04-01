@@ -5,7 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DigitalMenu_30_DAL.Data;
 
-public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<IdentityUser>(options)
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+    : IdentityDbContext<IdentityUser>(options)
 {
     public DbSet<CartItem> CartItems { get; set; }
 
