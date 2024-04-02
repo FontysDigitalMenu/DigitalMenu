@@ -2,7 +2,7 @@
 
 namespace DigitalMenu_10_Api.Hub;
 
-public interface IMainHubClient
+public interface IOrderHubClient
 {
     Task ReceiveOrder(OrderViewModel orderViewModel);
 }
