@@ -26,7 +26,7 @@ public class MenuItemController(IMenuItemService menuItemService) : ControllerBa
             };
             menuItemViewModels.Add(menuItemViewModel);
         }
-        
+
         Log.Information("Get menu items {@menuItems}", menuItemViewModels);
 
         return Ok(menuItemViewModels);

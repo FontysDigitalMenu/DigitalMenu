@@ -13,6 +13,8 @@ public interface IOrderService
 
     public Order? GetBy(string id, string deviceId, string tableId);
 
+    public IEnumerable<Order> GetPaidOrders();
+
     public bool Update(Order order);
 
     public Task<PaymentResponse> CreateMolliePayment(int totalAmount, string orderId);
