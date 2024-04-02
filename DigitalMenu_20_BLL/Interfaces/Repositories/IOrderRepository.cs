@@ -8,5 +8,7 @@ public interface IOrderRepository
 
     public Order? GetById(int id);
 
+    public IEnumerable<Order> GetPaidOrders();
+
     public bool Update(Order order);
 }

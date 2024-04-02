@@ -143,4 +143,28 @@ public class OrderController(IConfiguration configuration, ApplicationDbContext 
             }).ToList(),
         });
     }
+
+    [HttpGet("paid")]
+    public IActionResult GetPaidOrders()
+    {
+        List<Order> orders = (List<Order>)orderService.GetPaidOrders();
+
+        List<OrderViewModel> orderViewModels = orders.Select(order => new OrderViewModel
+        {
+            Id = order.Id,
+            PaymentStatus = order.PaymentStatus.ToString(),
+            Status = order.Status.ToString(),
+            TotalAmount = order.TotalAmount,
+            OrderDate = order.OrderDate,
+            MenuItems = order.OrderMenuItems.Select(omi => new MenuItemViewModel
+            {
+                Id = omi.MenuItem.Id,
+                Name = omi.MenuItem.Name,
+                Price = omi.MenuItem.Price,
+                ImageUrl = omi.MenuItem.ImageUrl,
+            }).ToList(),
+        }).ToList();
+
+        return Ok(orderViewModels);
+    }
 }

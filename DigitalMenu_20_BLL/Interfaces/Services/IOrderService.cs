@@ -11,6 +11,8 @@ public interface IOrderService
 
     public Order? GetById(int id);
 
+    public IEnumerable<Order> GetPaidOrders();
+
     public bool Update(Order order);
 
     public Task<PaymentResponse> CreateMolliePayment(string apiKey, string redirectUrl, int totalAmount);
