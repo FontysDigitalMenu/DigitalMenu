@@ -159,7 +159,7 @@ public class OrderController(IOrderService orderService, IHubContext<OrderHub, I
         {
             return BadRequest(new { Message = "Order could not be updated" });
         }
-        
+
         if (order.PaymentStatus == DigitalMenu_20_BLL.Enums.PaymentStatus.Paid)
         {
             await SendOrderToKitchen(order);
@@ -176,12 +176,12 @@ public class OrderController(IOrderService orderService, IHubContext<OrderHub, I
         {
             return NotFound();
         }
-        
+
         await SendOrderToKitchen(order);
-        
+
         return Ok();
     }
-    
+
     private async Task SendOrderToKitchen(Order order)
     {
         OrderViewModel orderViewModel = new()
@@ -199,7 +199,7 @@ public class OrderController(IOrderService orderService, IHubContext<OrderHub, I
                 ImageUrl = omi.MenuItem.ImageUrl,
             }).ToList(),
         };
-                
+
         await hubContext.Clients.All.ReceiveOrder(orderViewModel);
     }
 
