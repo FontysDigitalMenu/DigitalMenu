@@ -60,7 +60,7 @@ namespace UnitTests.Services
             // Arrange
             int menuItemId = 1;
             string deviceId = "testDeviceId";
-            CartItem expectedCartItem = new CartItem { Id = 1, MenuItemId = menuItemId, DeviceId = deviceId };
+            CartItem expectedCartItem = new() { Id = 1, MenuItemId = menuItemId, DeviceId = deviceId };
             _mockCartItemRepository.Setup(repo => repo.GetByMenuItemIdAndDeviceId(menuItemId, deviceId))
                 .Returns(expectedCartItem);
 
@@ -171,7 +171,7 @@ namespace UnitTests.Services
         public void AddExcludedIngredientToCartItem_WhenCalled_ReturnsTrue()
         {
             // Arrange
-            ExcludedIngredientCartItem excludedIngredientCartItem = new ExcludedIngredientCartItem();
+            ExcludedIngredientCartItem excludedIngredientCartItem = new();
 
             _mockCartItemRepository.Setup(repo => repo.AddExcludedIngredientToCartItem(excludedIngredientCartItem))
                 .Returns(true);
@@ -188,16 +188,16 @@ namespace UnitTests.Services
         {
             // Arrange
             int cartItemId = 1;
-            List<Ingredient> expectedIngredients = new List<Ingredient> { new Ingredient(), new Ingredient() };
+            List<Ingredient> expectedIngredients = [new Ingredient(), new Ingredient()];
             _mockCartItemRepository.Setup(repo => repo.GetExcludedIngredientsByCartItemId(cartItemId))
                 .Returns(expectedIngredients);
 
             // Act
-            var result = _cartItemService.GetExcludedIngredientsByCartItemId(cartItemId);
+            List<Ingredient> result = _cartItemService.GetExcludedIngredientsByCartItemId(cartItemId);
 
             // Assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(expectedIngredients, result);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedIngredients));
         }
 
         [Test]
@@ -206,16 +206,16 @@ namespace UnitTests.Services
             // Arrange
             int cartItemId = 1;
             string deviceId = "testDeviceId";
-            CartItem expectedCartItem = new CartItem { Id = cartItemId, DeviceId = deviceId };
+            CartItem expectedCartItem = new() { Id = cartItemId, DeviceId = deviceId };
             _mockCartItemRepository.Setup(repo => repo.GetByCartItemIdAndDeviceId(cartItemId, deviceId))
                 .Returns(expectedCartItem);
 
             // Act
-            var result = _cartItemService.GetByCartItemIdAndDeviceId(cartItemId, deviceId);
+            CartItem? result = _cartItemService.GetByCartItemIdAndDeviceId(cartItemId, deviceId);
 
             // Assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(expectedCartItem, result);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(expectedCartItem));
         }
 
         [Test]
@@ -227,10 +227,10 @@ namespace UnitTests.Services
             _mockCartItemRepository.Setup(repo => repo.DeleteExcludedIngredientsFromCartItem(cartItemId)).Returns(true);
 
             // Act
-            var result = _cartItemService.DeleteExcludedIngredientsFromCartItem(cartItemId);
+            bool result = _cartItemService.DeleteExcludedIngredientsFromCartItem(cartItemId);
 
             // Assert
-            Assert.IsTrue(result);
+            Assert.That(result, Is.True);
         }
     }
 }
