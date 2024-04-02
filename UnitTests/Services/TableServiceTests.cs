@@ -9,9 +9,10 @@ public class TableServiceTests
 {
     private readonly Mock<ITableRepository> _tableRepositoryMock = new();
 
-    private readonly TableService _tableService;
+    private TableService _tableService = null!;
 
-    public TableServiceTests()
+    [SetUp]
+    public void Setup()
     {
         _tableService = new TableService(_tableRepositoryMock.Object);
     }

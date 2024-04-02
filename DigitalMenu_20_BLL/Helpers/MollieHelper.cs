@@ -7,7 +7,7 @@ using Mollie.Api.Models.Payment.Response;
 
 namespace DigitalMenu_20_BLL.Helpers;
 
-public class MollieHelper(string apiKey, string redirectUrl) : IMollieHelper
+public class MollieHelper(string apiKey, string redirectUrl, string backendUrl) : IMollieHelper
 {
     public async Task<PaymentResponse> CreatePayment(int totalAmount, string orderId)
     {
@@ -18,7 +18,7 @@ public class MollieHelper(string apiKey, string redirectUrl) : IMollieHelper
             Description = "Order payment",
             RedirectUrl = $"{redirectUrl}/{orderId}",
             Method = PaymentMethod.Ideal,
-            // WebhookUrl = 
+            WebhookUrl = backendUrl.Contains("localhost") ? null : $"{backendUrl}/api/v1/order/webhook",
         };
         PaymentResponse paymentResponse = await paymentClient.CreatePaymentAsync(paymentRequest);
 

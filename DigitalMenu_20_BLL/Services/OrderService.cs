@@ -86,6 +86,11 @@ public class OrderService(
         return createdOrder;
     }
 
+    public Order? GetByExternalPaymentId(string id)
+    {
+        return orderRepository.GetByExternalPaymentId(id);
+    }
+
     public Order? GetBy(string id, string deviceId, string tableId)
     {
         if (!orderRepository.ExistsByDeviceId(deviceId))
