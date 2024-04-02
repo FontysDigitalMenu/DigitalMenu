@@ -43,7 +43,8 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IMollieHelper>(_ => new MollieHelper(
     builder.Configuration.GetValue<string>("Mollie:ApiKey")!,
-    builder.Configuration.GetValue<string>("Mollie:RedirectUrl")!
+    builder.Configuration.GetValue<string>("Mollie:RedirectUrl")!,
+    builder.Configuration.GetValue<string>("BackendUrl")!
 ));
 
 builder.Services.AddSwaggerGen(options =>

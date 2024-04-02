@@ -86,6 +86,11 @@ public class OrderService(
         return createdOrder;
     }
 
+    public Order? GetBy(string id)
+    {
+        return orderRepository.GetBy(id);
+    }
+
     public Order? GetBy(string id, string deviceId, string tableId)
     {
         if (!orderRepository.ExistsByDeviceId(deviceId))
