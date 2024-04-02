@@ -7,14 +7,13 @@ namespace UnitTests.Services;
 
 public class CartItemServiceTests
 {
-    private CartItemService _cartItemService;
+    private readonly Mock<ICartItemRepository> _mockCartItemRepository = new();
 
-    private Mock<ICartItemRepository> _mockCartItemRepository;
+    private CartItemService _cartItemService = null!;
 
     [SetUp]
     public void Setup()
     {
-        _mockCartItemRepository = new Mock<ICartItemRepository>();
         _cartItemService = new CartItemService(_mockCartItemRepository.Object);
     }
 
@@ -22,7 +21,7 @@ public class CartItemServiceTests
     public void GetByDeviceId_WhenCalled_ReturnsListOfCartItems()
     {
         // Arrange
-        string deviceId = "testDeviceId";
+        const string deviceId = "testDeviceId";
         List<CartItem> expectedCartItems =
         [
             new CartItem
@@ -56,8 +55,8 @@ public class CartItemServiceTests
     public void GetByMenuItemIdAndDeviceId_WhenCalled_ReturnsCartItemOrNull()
     {
         // Arrange
-        int menuItemId = 1;
-        string deviceId = "testDeviceId";
+        const int menuItemId = 1;
+        const string deviceId = "testDeviceId";
         CartItem expectedCartItem = new() { Id = 1, MenuItemId = menuItemId, DeviceId = deviceId };
         _mockCartItemRepository.Setup(repo => repo.GetByMenuItemIdAndDeviceId(menuItemId, deviceId))
             .Returns(expectedCartItem);
@@ -74,8 +73,8 @@ public class CartItemServiceTests
     public void GetCartItemsByMenuItemIdAndDeviceId_WhenCalled_ReturnsListOfCartItems()
     {
         // Arrange
-        int menuItemId = 1;
-        string deviceId = "testDeviceId";
+        const int menuItemId = 1;
+        const string deviceId = "testDeviceId";
         List<CartItem?> expectedCartItems =
         [
             new CartItem
@@ -124,7 +123,7 @@ public class CartItemServiceTests
     public void ExistsByDeviceId_WhenCalled_ReturnsTrue()
     {
         // Arrange
-        string deviceId = "testDeviceId";
+        const string deviceId = "testDeviceId";
 
         _mockCartItemRepository.Setup(repo => repo.ExistsByDeviceId(deviceId)).Returns(true);
 
@@ -185,7 +184,7 @@ public class CartItemServiceTests
     public void GetExcludedIngredientsByCartItemId_WhenCalled_ReturnsListOfIngredients()
     {
         // Arrange
-        int cartItemId = 1;
+        const int cartItemId = 1;
         List<Ingredient> expectedIngredients =
         [
             new Ingredient(),
@@ -206,8 +205,8 @@ public class CartItemServiceTests
     public void GetByCartItemIdAndDeviceId_WhenCalled_ReturnsCartItemOrNull()
     {
         // Arrange
-        int cartItemId = 1;
-        string deviceId = "testDeviceId";
+        const int cartItemId = 1;
+        const string deviceId = "testDeviceId";
         CartItem expectedCartItem = new() { Id = cartItemId, DeviceId = deviceId };
         _mockCartItemRepository.Setup(repo => repo.GetByCartItemIdAndDeviceId(cartItemId, deviceId))
             .Returns(expectedCartItem);
@@ -224,7 +223,7 @@ public class CartItemServiceTests
     public void DeleteExcludedIngredientsFromCartItem_WhenCalled_ReturnsTrue()
     {
         // Arrange
-        int cartItemId = 1;
+        const int cartItemId = 1;
 
         _mockCartItemRepository.Setup(repo => repo.DeleteExcludedIngredientsFromCartItem(cartItemId)).Returns(true);
 
