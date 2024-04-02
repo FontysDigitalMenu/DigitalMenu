@@ -9,7 +9,7 @@ public interface IOrderService
 
     public Order Create(string deviceId, string tableId, string paymentId, string orderId);
 
-    public Order? GetBy(string id);
+    public Order? GetByExternalPaymentId(string id);
     
     public Order? GetBy(string id, string deviceId, string tableId);
 
