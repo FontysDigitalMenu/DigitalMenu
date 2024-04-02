@@ -9,9 +9,10 @@ public class TableServiceTests
 {
     private readonly Mock<ITableRepository> _tableRepositoryMock = new();
 
-    private readonly TableService _tableService;
+    private TableService _tableService = null!;
 
-    public TableServiceTests()
+    [SetUp]
+    public void Setup()
     {
         _tableService = new TableService(_tableRepositoryMock.Object);
     }
@@ -34,7 +35,7 @@ public class TableServiceTests
         // Assert
         Assert.That(result, Is.EqualTo(tables));
     }
-    
+
     [Test]
     public void Create_ShouldReturnCreatedTable()
     {
@@ -49,7 +50,7 @@ public class TableServiceTests
         // Assert
         Assert.That(result, Is.EqualTo(table));
     }
-    
+
     [Test]
     public void GetById_ShouldReturnTableById()
     {
@@ -64,7 +65,7 @@ public class TableServiceTests
         // Assert
         Assert.That(result, Is.EqualTo(table));
     }
-    
+
     [Test]
     public void Update_ShouldReturnTrue()
     {
@@ -79,7 +80,7 @@ public class TableServiceTests
         // Assert
         Assert.That(result, Is.True);
     }
-    
+
     [Test]
     public void Delete_ShouldReturnTrue()
     {
