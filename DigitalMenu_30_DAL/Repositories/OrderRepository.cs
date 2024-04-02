@@ -1,4 +1,5 @@
-﻿using DigitalMenu_20_BLL.Interfaces.Repositories;
+﻿using DigitalMenu_20_BLL.Enums;
+using DigitalMenu_20_BLL.Interfaces.Repositories;
 using DigitalMenu_20_BLL.Models;
 using DigitalMenu_30_DAL.Data;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +25,17 @@ public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
             .Include(o => o.OrderMenuItems)
             .ThenInclude(omi => omi.MenuItem)
             .FirstOrDefault(o => o.Id == id && o.DeviceId == deviceId && o.TableId == tableId);
+    }
+
+    public IEnumerable<Order> GetPaidOrders()
+    {
+        return dbContext.Orders
+            .Include(o => o.OrderMenuItems)
+            .ThenInclude(omi => omi.MenuItem)
+            .Where(o => o.PaymentStatus == PaymentStatus.Paid)
+            .Where(o => o.Status == OrderStatus.Pending || o.Status == OrderStatus.Processing ||
+                        o.Status == OrderStatus.Completed)
+            .ToList();
     }
 
     public bool Update(Order order)

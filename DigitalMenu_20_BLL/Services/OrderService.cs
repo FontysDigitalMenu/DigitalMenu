@@ -120,4 +120,9 @@ public class OrderService(
     {
         return await mollieHelper.GetPayment(externalPaymentId);
     }
+
+    public IEnumerable<Order> GetPaidOrders()
+    {
+        return orderRepository.GetPaidOrders();
+    }
 }
