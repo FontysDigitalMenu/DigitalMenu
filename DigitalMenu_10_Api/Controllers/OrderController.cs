@@ -101,27 +101,27 @@ public class OrderController(IOrderService orderService)
             return NotFound(new { Message = "Order not found" });
         }
 
-        PaymentResponse paymentResponse;
-        try
-        {
-            paymentResponse = await orderService.GetPaymentFromMollie(order.ExternalPaymentId);
-        }
-        catch (MollieApiException e)
-        {
-            return BadRequest(new { e.Message });
-        }
-
-        order.PaymentStatus = paymentResponse.Status switch
-        {
-            PaymentStatus.Paid => DigitalMenu_20_BLL.Enums.PaymentStatus.Paid,
-            PaymentStatus.Canceled => DigitalMenu_20_BLL.Enums.PaymentStatus.Canceled,
-            PaymentStatus.Expired => DigitalMenu_20_BLL.Enums.PaymentStatus.Expired,
-            var _ => DigitalMenu_20_BLL.Enums.PaymentStatus.Pending,
-        };
-        if (!orderService.Update(order))
-        {
-            return BadRequest(new { Message = "Order could not be updated" });
-        }
+        // PaymentResponse paymentResponse;
+        // try
+        // {
+        //     paymentResponse = await orderService.GetPaymentFromMollie(order.ExternalPaymentId);
+        // }
+        // catch (MollieApiException e)
+        // {
+        //     return BadRequest(new { e.Message });
+        // }
+        //
+        // order.PaymentStatus = paymentResponse.Status switch
+        // {
+        //     PaymentStatus.Paid => DigitalMenu_20_BLL.Enums.PaymentStatus.Paid,
+        //     PaymentStatus.Canceled => DigitalMenu_20_BLL.Enums.PaymentStatus.Canceled,
+        //     PaymentStatus.Expired => DigitalMenu_20_BLL.Enums.PaymentStatus.Expired,
+        //     var _ => DigitalMenu_20_BLL.Enums.PaymentStatus.Pending,
+        // };
+        // if (!orderService.Update(order))
+        // {
+        //     return BadRequest(new { Message = "Order could not be updated" });
+        // }
 
         return Ok(new OrderViewModel
         {
@@ -174,7 +174,6 @@ public class OrderController(IOrderService orderService)
             PaymentStatus.Expired => DigitalMenu_20_BLL.Enums.PaymentStatus.Expired,
             var _ => DigitalMenu_20_BLL.Enums.PaymentStatus.Pending,
         };
-        order.OrderDate = DateTime.Parse("2222-01-01T00:00:00Z");
         if (!orderService.Update(order))
         {
             return BadRequest(new { Message = "Order could not be updated" });
