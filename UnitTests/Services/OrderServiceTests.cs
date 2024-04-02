@@ -16,11 +16,12 @@ public class OrderServiceTests
 
     private readonly Mock<IOrderRepository> _orderRepositoryMock = new();
 
-    private readonly OrderService _orderService;
-
     private readonly Mock<ITableRepository> _tableRepositoryMock = new();
 
-    public OrderServiceTests()
+    private OrderService _orderService = null!;
+
+    [SetUp]
+    public void Setup()
     {
         _orderService = new OrderService(_orderRepositoryMock.Object, _cartItemRepositoryMock.Object,
             _tableRepositoryMock.Object, _mollieHelperMock.Object);
