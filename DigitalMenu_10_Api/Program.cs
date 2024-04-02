@@ -1,4 +1,4 @@
-﻿using DigitalMenu_10_Api;
+﻿using DigitalMenu_10_Api.Hub;
 using DigitalMenu_20_BLL.Helpers;
 using DigitalMenu_20_BLL.Interfaces.Repositories;
 using DigitalMenu_20_BLL.Interfaces.Services;
@@ -96,7 +96,8 @@ builder.Services.AddMollieApi(options =>
 
 builder.Services.AddSignalR();
 
-Log.Logger = new LoggerConfiguration().MinimumLevel.Debug().WriteTo.Console().WriteTo.File("logs/mollie-.txt", rollingInterval: RollingInterval.Day).CreateLogger();
+Log.Logger = new LoggerConfiguration().MinimumLevel.Debug().WriteTo.Console().WriteTo
+    .File("logs/mollie-.txt", rollingInterval: RollingInterval.Day).CreateLogger();
 
 WebApplication app = builder.Build();
 

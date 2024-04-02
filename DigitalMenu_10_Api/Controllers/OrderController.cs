@@ -1,10 +1,13 @@
-﻿using DigitalMenu_10_Api.RequestModels;
+﻿using DigitalMenu_10_Api.Hub;
+using DigitalMenu_10_Api.RequestModels;
 using DigitalMenu_10_Api.ViewModels;
 using DigitalMenu_20_BLL.Exceptions;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Mollie.Api.Client;
 using Mollie.Api.Models.Payment;
 using Mollie.Api.Models.Payment.Response;
@@ -14,7 +17,7 @@ namespace DigitalMenu_10_Api.Controllers;
 
 [Route("api/v1/order")]
 [ApiController]
-public class OrderController(IOrderService orderService)
+public class OrderController(IOrderService orderService, IHubContext<OrderHub, IOrderHubClient> hubContext)
     : ControllerBase
 {
     [HttpPost]
@@ -84,7 +87,7 @@ public class OrderController(IOrderService orderService)
     [HttpGet("{id}/{deviceId}/{tableId}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
-    public async Task<IActionResult> Get([FromRoute] string id, [FromRoute] string deviceId, [FromRoute] string tableId)
+    public IActionResult Get([FromRoute] string id, [FromRoute] string deviceId, [FromRoute] string tableId)
     {
         Order? order;
         try
@@ -100,28 +103,6 @@ public class OrderController(IOrderService orderService)
         {
             return NotFound(new { Message = "Order not found" });
         }
-
-        // PaymentResponse paymentResponse;
-        // try
-        // {
-        //     paymentResponse = await orderService.GetPaymentFromMollie(order.ExternalPaymentId);
-        // }
-        // catch (MollieApiException e)
-        // {
-        //     return BadRequest(new { e.Message });
-        // }
-        //
-        // order.PaymentStatus = paymentResponse.Status switch
-        // {
-        //     PaymentStatus.Paid => DigitalMenu_20_BLL.Enums.PaymentStatus.Paid,
-        //     PaymentStatus.Canceled => DigitalMenu_20_BLL.Enums.PaymentStatus.Canceled,
-        //     PaymentStatus.Expired => DigitalMenu_20_BLL.Enums.PaymentStatus.Expired,
-        //     var _ => DigitalMenu_20_BLL.Enums.PaymentStatus.Pending,
-        // };
-        // if (!orderService.Update(order))
-        // {
-        //     return BadRequest(new { Message = "Order could not be updated" });
-        // }
 
         return Ok(new OrderViewModel
         {
@@ -150,7 +131,7 @@ public class OrderController(IOrderService orderService)
     public async Task<IActionResult> Webhook([FromForm] WebhookRequest request)
     {
         Log.Information("Webhook received {@request}", request);
-        
+
         Order? order = orderService.GetByExternalPaymentId(request.id);
         if (order == null)
         {
@@ -179,6 +160,71 @@ public class OrderController(IOrderService orderService)
             return BadRequest(new { Message = "Order could not be updated" });
         }
 
+        if (order.PaymentStatus == DigitalMenu_20_BLL.Enums.PaymentStatus.Paid)
+        {
+            await SendOrderToKitchen(order);
+        }
+
         return Ok();
+    }
+
+    [HttpGet("testWebsocket/{id}")]
+    public async Task<IActionResult> TestWebsocket([FromRoute] string id)
+    {
+        Order? order = orderService.GetByExternalPaymentId(id);
+        if (order == null)
+        {
+            return NotFound();
+        }
+
+        await SendOrderToKitchen(order);
+
+        return Ok();
+    }
+
+    private async Task SendOrderToKitchen(Order order)
+    {
+        OrderViewModel orderViewModel = new()
+        {
+            Id = order.Id,
+            PaymentStatus = order.PaymentStatus.ToString(),
+            Status = order.Status.ToString(),
+            TotalAmount = order.TotalAmount,
+            OrderDate = order.OrderDate,
+            MenuItems = order.OrderMenuItems.Select(omi => new MenuItemViewModel
+            {
+                Id = omi.MenuItem.Id,
+                Name = omi.MenuItem.Name,
+                Price = omi.MenuItem.Price,
+                ImageUrl = omi.MenuItem.ImageUrl,
+            }).ToList(),
+        };
+
+        await hubContext.Clients.All.ReceiveOrder(orderViewModel);
+    }
+
+    [Authorize(Roles = "Admin, Employee")]
+    [HttpGet("paid")]
+    public IActionResult GetPaidOrders()
+    {
+        List<Order> orders = (List<Order>)orderService.GetPaidOrders();
+
+        List<OrderViewModel> orderViewModels = orders.Select(order => new OrderViewModel
+        {
+            Id = order.Id,
+            PaymentStatus = order.PaymentStatus.ToString(),
+            Status = order.Status.ToString(),
+            TotalAmount = order.TotalAmount,
+            OrderDate = order.OrderDate,
+            MenuItems = order.OrderMenuItems.Select(omi => new MenuItemViewModel
+            {
+                Id = omi.MenuItem.Id,
+                Name = omi.MenuItem.Name,
+                Price = omi.MenuItem.Price,
+                ImageUrl = omi.MenuItem.ImageUrl,
+            }).ToList(),
+        }).ToList();
+
+        return Ok(orderViewModels);
     }
 }
