@@ -2,7 +2,7 @@
 
 public class OrderViewModel
 {
-    public int Id { get; set; }
+    public string Id { get; set; }
 
     public int TotalAmount { get; set; }
 

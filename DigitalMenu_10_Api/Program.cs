@@ -1,4 +1,6 @@
 ﻿using DigitalMenu_10_Api;
+using DigitalMenu_10_Api;
+using DigitalMenu_20_BLL.Helpers;
 using DigitalMenu_20_BLL.Interfaces.Repositories;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Services;
@@ -9,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Mollie.Api;
 using Mollie.Api.Framework;
+using Serilog;
 using Swashbuckle.AspNetCore.Filters;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -29,7 +32,6 @@ builder.Services.AddIdentityApiEndpoints<IdentityUser>()
     .AddRoleManager<RoleManager<IdentityRole>>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
-builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITableService, TableService>();
 builder.Services.AddScoped<ITableRepository, TableRepository>();
@@ -37,8 +39,15 @@ builder.Services.AddScoped<IMenuItemService, MenuItemService>();
 builder.Services.AddScoped<IMenuItemRepository, MenuItemRepository>();
 builder.Services.AddScoped<ICartItemService, CartItemService>();
 builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
+builder.Services.AddScoped<IIngredientService, IngredientService>();
+builder.Services.AddScoped<IIngredientRepository, IngredientRepository>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IMollieHelper>(_ => new MollieHelper(
+    builder.Configuration.GetValue<string>("Mollie:ApiKey")!,
+    builder.Configuration.GetValue<string>("Mollie:RedirectUrl")!,
+    builder.Configuration.GetValue<string>("BackendUrl")!
+));
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -87,6 +96,8 @@ builder.Services.AddMollieApi(options =>
 });
 
 builder.Services.AddSignalR();
+
+Log.Logger = new LoggerConfiguration().MinimumLevel.Debug().WriteTo.Console().WriteTo.File("logs/mollie-.txt", rollingInterval: RollingInterval.Day).CreateLogger();
 
 WebApplication app = builder.Build();
 

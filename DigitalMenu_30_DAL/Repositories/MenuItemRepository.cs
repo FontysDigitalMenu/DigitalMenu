@@ -5,18 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DigitalMenu_30_DAL.Repositories;
 
-public class MenuItemRepository : IMenuItemRepository
+public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepository
 {
-    private readonly ApplicationDbContext _dbContext;
-
-    public MenuItemRepository(ApplicationDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-
     public IEnumerable<MenuItem> GetNextMenuItems(int lastId, int amount)
     {
-        return _dbContext.MenuItems
+        return dbContext.MenuItems
             .OrderBy(m => m.Id)
             .Where(m => m.Id > lastId)
             .Take(amount)
@@ -25,7 +18,7 @@ public class MenuItemRepository : IMenuItemRepository
 
     public IEnumerable<MenuItem> GetNextMenuItemsWithCategory(int lastId, int amount)
     {
-        return _dbContext.MenuItems
+        return dbContext.MenuItems
             .Include(m => m.Categories)
             .OrderBy(m => m.Id)
             .Where(m => m.Id > lastId)
@@ -35,12 +28,37 @@ public class MenuItemRepository : IMenuItemRepository
 
     public IEnumerable<Category> GetCategories()
     {
-        return _dbContext.Categories
+        return dbContext.Categories
             .ToList();
     }
 
     public MenuItem? GetMenuItemBy(int id)
     {
-        return _dbContext.MenuItems.Find(id);
+        var menuItemWithIngredients = dbContext.MenuItemIngredients
+            .Where(mii => mii.MenuItemId == id)
+            .Include(mii => mii.Ingredient)
+            .Select(mii => new
+            {
+                mii.MenuItem, mii.Ingredient,
+            })
+            .ToList();
+
+        if (menuItemWithIngredients.Any())
+        {
+            MenuItem firstMenuItem = menuItemWithIngredients.First().MenuItem;
+            MenuItem menuItem = new()
+            {
+                Id = firstMenuItem.Id,
+                Name = firstMenuItem.Name,
+                Description = firstMenuItem.Description,
+                ImageUrl = firstMenuItem.ImageUrl,
+                Price = firstMenuItem.Price,
+                Ingredients = menuItemWithIngredients.Select(m => m.Ingredient).ToList(),
+            };
+
+            return menuItem;
+        }
+
+        return dbContext.MenuItems.Find(id);
     }
 }

@@ -4,7 +4,7 @@ namespace DigitalMenu_20_BLL.Models;
 
 public class Order
 {
-    public int Id { get; set; }
+    public string Id { get; set; }
 
     public string DeviceId { get; set; }
 

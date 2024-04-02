@@ -5,12 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DigitalMenu_30_DAL.Data;
 
-public class ApplicationDbContext : IdentityDbContext<IdentityUser>
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+    : IdentityDbContext<IdentityUser>(options)
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-    {
-    }
-
     public DbSet<CartItem> CartItems { get; set; }
 
     public DbSet<Category> Categories { get; set; }
@@ -19,9 +16,13 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
 
     public DbSet<MenuItem> MenuItems { get; set; }
 
+    public DbSet<MenuItemIngredient> MenuItemIngredients { get; set; }
+
     public DbSet<Order> Orders { get; set; }
 
     public DbSet<OrderMenuItem> OrderMenuItems { get; set; }
+
+    public DbSet<ExcludedIngredientCartItem> ExcludedIngredientCartItems { get; set; }
 
     public DbSet<Table> Tables { get; set; }
 
@@ -41,5 +42,9 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
             .HasOne(om => om.MenuItem)
             .WithMany()
             .HasForeignKey(om => om.MenuItemId);
+
+
+        modelBuilder.Entity<MenuItemIngredient>()
+            .HasKey(mi => new { mi.MenuItemId, mi.IngredientId });
     }
 }

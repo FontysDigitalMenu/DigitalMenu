@@ -8,30 +8,23 @@ using Microsoft.AspNetCore.Mvc;
 namespace DigitalMenu_10_Api.Controllers;
 
 [Authorize(Roles = "Admin")]
-[Route("api/v1/[controller]")]
+[Route("api/v1/table")]
 [ApiController]
-public class TableController : ControllerBase
+public class TableController(ITableService tableService) : ControllerBase
 {
-    private readonly IConfiguration _configuration;
-
-    private readonly ITableService _tableService;
-
-    public TableController(ITableService tableService, IConfiguration configuration)
-    {
-        _tableService = tableService;
-        _configuration = configuration;
-    }
-
     [HttpGet]
-    public IEnumerable<TableViewModel> Get()
+    [ProducesResponseType(200)]
+    public IActionResult Get()
     {
-        return _tableService.GetAll().Select(t => new TableViewModel { Id = t.Id, Name = t.Name });
+        return Ok(tableService.GetAll().Select(t => new TableViewModel { Id = t.Id, Name = t.Name }));
     }
 
     [HttpGet("{id}")]
-    public IActionResult Get(string id)
+    [ProducesResponseType(200)]
+    [ProducesResponseType(404)]
+    public IActionResult Get([FromRoute] string id)
     {
-        Table? table = _tableService.GetById(id);
+        Table? table = tableService.GetById(id);
         if (table == null)
         {
             return NotFound();
@@ -43,22 +36,31 @@ public class TableController : ControllerBase
     }
 
     [HttpPost]
+    [ProducesResponseType(201)]
+    [ProducesResponseType(400)]
     public IActionResult Post([FromBody] TableRequest tableRequest)
     {
         string id = Guid.NewGuid().ToString();
-        string qrCode = "n/a"; // _tableService.GenerateQrCode(_configuration["BackendUrl"], id);
 
-        Table table = new() { Id = id, Name = tableRequest.Name, QrCode = qrCode };
+        Table table = new() { Id = id, Name = tableRequest.Name };
 
-        _tableService.Create(table);
+        Table? createdTable = tableService.Create(table);
+        if (createdTable == null)
+        {
+            return BadRequest(new { Message = "Table could not be created" });
+        }
 
-        return NoContent();
+        return CreatedAtAction("Get", new { id = createdTable.Id },
+            new TableViewModel { Id = createdTable.Id, Name = createdTable.Name });
     }
 
     [HttpPut("{id}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
     public IActionResult Put(string id, [FromBody] TableRequest tableRequest)
     {
-        Table? table = _tableService.GetById(id);
+        Table? table = tableService.GetById(id);
         if (table == null)
         {
             return NotFound();
@@ -66,15 +68,29 @@ public class TableController : ControllerBase
 
         table.Name = tableRequest.Name;
 
-        _tableService.Update(table);
+        if (!tableService.Update(table))
+        {
+            return BadRequest(new { Message = "Table could not be updated" });
+        }
 
         return NoContent();
     }
 
     [HttpDelete("{id}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
     public IActionResult Delete(string id)
     {
-        _tableService.Delete(id);
+        if (tableService.GetById(id) == null)
+        {
+            return NotFound();
+        }
+
+        if (!tableService.Delete(id))
+        {
+            return BadRequest(new { Message = "Table could not be deleted" });
+        }
 
         return NoContent();
     }

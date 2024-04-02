@@ -1,12 +1,8 @@
 ﻿using DigitalMenu_20_BLL.Exceptions;
+using DigitalMenu_20_BLL.Helpers;
 using DigitalMenu_20_BLL.Interfaces.Repositories;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
-using Mollie.Api.Client;
-using Mollie.Api.Client.Abstract;
-using Mollie.Api.Models;
-using Mollie.Api.Models.Payment;
-using Mollie.Api.Models.Payment.Request;
 using Mollie.Api.Models.Payment.Response;
 
 namespace DigitalMenu_20_BLL.Services;
@@ -14,7 +10,8 @@ namespace DigitalMenu_20_BLL.Services;
 public class OrderService(
     IOrderRepository orderRepository,
     ICartItemRepository cartItemRepository,
-    ITableRepository tableRepository) : IOrderService
+    ITableRepository tableRepository,
+    IMollieHelper mollieHelper) : IOrderService
 {
     public int GetTotalAmount(string deviceId, string tableId)
     {
@@ -37,7 +34,7 @@ public class OrderService(
         return cartItems.Sum(item => item.MenuItem.Price * item.Quantity);
     }
 
-    public Order Create(string deviceId, string tableId, string paymentId)
+    public Order Create(string deviceId, string tableId, string paymentId, string orderId)
     {
         if (!cartItemRepository.ExistsByDeviceId(deviceId))
         {
@@ -59,12 +56,15 @@ public class OrderService(
         {
             MenuItemId = ci.MenuItemId,
             MenuItem = ci.MenuItem,
+            Quantity = ci.Quantity,
+            Note = ci.Note,
         }).ToList();
 
         int totalAmount = GetTotalAmount(deviceId, tableId);
 
         Order order = new()
         {
+            Id = orderId,
             DeviceId = deviceId,
             TableId = tableId,
             ExternalPaymentId = paymentId,
@@ -86,9 +86,24 @@ public class OrderService(
         return createdOrder;
     }
 
-    public Order? GetById(int id)
+    public Order? GetByExternalPaymentId(string id)
     {
-        return orderRepository.GetById(id);
+        return orderRepository.GetByExternalPaymentId(id);
+    }
+
+    public Order? GetBy(string id, string deviceId, string tableId)
+    {
+        if (!orderRepository.ExistsByDeviceId(deviceId))
+        {
+            throw new NotFoundException("DeviceId does not exist");
+        }
+
+        if (tableRepository.GetById(tableId) == null)
+        {
+            throw new NotFoundException("TableId does not exist");
+        }
+
+        return orderRepository.GetBy(id, deviceId, tableId);
     }
 
     public bool Update(Order order)
@@ -96,19 +111,14 @@ public class OrderService(
         return orderRepository.Update(order);
     }
 
-    public async Task<PaymentResponse> CreateMolliePayment(string apiKey, string redirectUrl, int totalAmount)
+    public async Task<PaymentResponse> CreateMolliePayment(int totalAmount, string orderId)
     {
-        using IPaymentClient paymentClient = new PaymentClient($"{apiKey}", new HttpClient());
-        PaymentRequest paymentRequest = new()
-        {
-            Amount = new Amount(Currency.EUR, (decimal)totalAmount / 100),
-            Description = "Order payment",
-            RedirectUrl = redirectUrl,
-            Method = PaymentMethod.Ideal,
-        };
-        PaymentResponse paymentResponse = await paymentClient.CreatePaymentAsync(paymentRequest);
+        return await mollieHelper.CreatePayment(totalAmount, orderId);
+    }
 
-        return paymentResponse;
+    public async Task<PaymentResponse> GetPaymentFromMollie(string externalPaymentId)
+    {
+        return await mollieHelper.GetPayment(externalPaymentId);
     }
 
     public IEnumerable<Order> GetPaidOrders()

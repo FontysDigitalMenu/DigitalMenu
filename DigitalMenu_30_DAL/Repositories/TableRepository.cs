@@ -4,47 +4,40 @@ using DigitalMenu_30_DAL.Data;
 
 namespace DigitalMenu_30_DAL.Repositories;
 
-public class TableRepository : ITableRepository
+public class TableRepository(ApplicationDbContext dbContext) : ITableRepository
 {
-    private readonly ApplicationDbContext _dbContext;
-
-    public TableRepository(ApplicationDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-
     public List<Table> GetAll()
     {
-        return _dbContext.Tables.OrderBy(t => t.CreatedAt).ToList();
+        return dbContext.Tables.OrderBy(t => t.CreatedAt).ToList();
     }
 
-    public bool Create(Table table)
+    public Table? Create(Table table)
     {
         table.CreatedAt = DateTime.Now;
-        _dbContext.Tables.Add(table);
-        return _dbContext.SaveChanges() > 0;
+        dbContext.Tables.Add(table);
+        return dbContext.SaveChanges() > 0 ? table : null;
     }
 
     public Table? GetById(string id)
     {
-        return _dbContext.Tables.Find(id);
+        return dbContext.Tables.Find(id);
     }
 
     public bool Update(Table table)
     {
-        _dbContext.Tables.Update(table);
-        return _dbContext.SaveChanges() > 0;
+        dbContext.Tables.Update(table);
+        return dbContext.SaveChanges() > 0;
     }
 
     public bool Delete(string id)
     {
-        Table? table = _dbContext.Tables.Find(id);
+        Table? table = dbContext.Tables.Find(id);
         if (table == null)
         {
             return false;
         }
 
-        _dbContext.Tables.Remove(table);
-        return _dbContext.SaveChanges() > 0;
+        dbContext.Tables.Remove(table);
+        return dbContext.SaveChanges() > 0;
     }
 }
