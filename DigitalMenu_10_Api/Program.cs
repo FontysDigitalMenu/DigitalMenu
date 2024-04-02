@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Mollie.Api;
 using Mollie.Api.Framework;
+using Serilog;
 using Swashbuckle.AspNetCore.Filters;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -94,6 +95,8 @@ builder.Services.AddMollieApi(options =>
 });
 
 builder.Services.AddSignalR();
+
+Log.Logger = new LoggerConfiguration().MinimumLevel.Debug().WriteTo.Console().WriteTo.File("logs/mollie-.txt", rollingInterval: RollingInterval.Day).CreateLogger();
 
 WebApplication app = builder.Build();
 

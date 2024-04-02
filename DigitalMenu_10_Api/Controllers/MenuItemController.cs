@@ -2,6 +2,7 @@
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 
 namespace DigitalMenu_10_Api.Controllers;
 
@@ -25,6 +26,8 @@ public class MenuItemController(IMenuItemService menuItemService) : ControllerBa
             };
             menuItemViewModels.Add(menuItemViewModel);
         }
+        
+        Log.Information("Get menu items {@menuItems}", menuItemViewModels);
 
         return Ok(menuItemViewModels);
     }
