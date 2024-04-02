@@ -3,6 +3,7 @@ using DigitalMenu_10_Api.ViewModels;
 using DigitalMenu_20_BLL.Exceptions;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Mollie.Api.Client;
@@ -84,7 +85,7 @@ public class OrderController(IOrderService orderService)
     [HttpGet("{id}/{deviceId}/{tableId}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
-    public async Task<IActionResult> Get([FromRoute] string id, [FromRoute] string deviceId, [FromRoute] string tableId)
+    public IActionResult Get([FromRoute] string id, [FromRoute] string deviceId, [FromRoute] string tableId)
     {
         Order? order;
         try
@@ -100,28 +101,6 @@ public class OrderController(IOrderService orderService)
         {
             return NotFound(new { Message = "Order not found" });
         }
-
-        // PaymentResponse paymentResponse;
-        // try
-        // {
-        //     paymentResponse = await orderService.GetPaymentFromMollie(order.ExternalPaymentId);
-        // }
-        // catch (MollieApiException e)
-        // {
-        //     return BadRequest(new { e.Message });
-        // }
-        //
-        // order.PaymentStatus = paymentResponse.Status switch
-        // {
-        //     PaymentStatus.Paid => DigitalMenu_20_BLL.Enums.PaymentStatus.Paid,
-        //     PaymentStatus.Canceled => DigitalMenu_20_BLL.Enums.PaymentStatus.Canceled,
-        //     PaymentStatus.Expired => DigitalMenu_20_BLL.Enums.PaymentStatus.Expired,
-        //     var _ => DigitalMenu_20_BLL.Enums.PaymentStatus.Pending,
-        // };
-        // if (!orderService.Update(order))
-        // {
-        //     return BadRequest(new { Message = "Order could not be updated" });
-        // }
 
         return Ok(new OrderViewModel
         {
@@ -141,7 +120,7 @@ public class OrderController(IOrderService orderService)
             }).ToList(),
         });
     }
-    
+
     [DisableCors]
     [HttpPost("webhook")]
     [ProducesResponseType(200)]
@@ -150,7 +129,7 @@ public class OrderController(IOrderService orderService)
     public async Task<IActionResult> Webhook([FromForm] WebhookRequest request)
     {
         Log.Information("Webhook received {@request}", request);
-        
+
         Order? order = orderService.GetByExternalPaymentId(request.id);
         if (order == null)
         {
@@ -182,6 +161,7 @@ public class OrderController(IOrderService orderService)
         return Ok();
     }
 
+    [Authorize(Roles = "Employee")]
     [HttpGet("paid")]
     public IActionResult GetPaidOrders()
     {

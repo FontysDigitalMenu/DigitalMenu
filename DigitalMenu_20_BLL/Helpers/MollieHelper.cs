@@ -12,8 +12,9 @@ public class MollieHelper(string apiKey, string redirectUrl, string backendUrl) 
 {
     public async Task<PaymentResponse> CreatePayment(int totalAmount, string orderId)
     {
-        Log.Information("BackendUrl: {backendUrl}", backendUrl.Contains("localhost") ? null : $"{backendUrl}/api/v1/order/webhook");
-        
+        Log.Information("BackendUrl: {backendUrl}",
+            backendUrl.Contains("localhost") ? null : $"{backendUrl}/api/v1/order/webhook");
+
         using PaymentClient paymentClient = new($"{apiKey}", new HttpClient());
         PaymentRequest paymentRequest = new()
         {
