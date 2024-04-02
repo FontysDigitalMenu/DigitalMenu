@@ -143,9 +143,10 @@ public class OrderController(IOrderService orderService)
     [HttpPost("webhook")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
-    public async Task<IActionResult> Webhook([FromBody] string id)
+    [Consumes("application/x-www-form-urlencoded")]
+    public async Task<IActionResult> Webhook([FromForm] WebhookRequest request)
     {
-        Order? order = orderService.GetByExternalPaymentId(id);
+        Order? order = orderService.GetByExternalPaymentId(request.id);
         if (order == null)
         {
             return Ok();
@@ -154,7 +155,7 @@ public class OrderController(IOrderService orderService)
         PaymentResponse paymentResponse;
         try
         {
-            paymentResponse = await orderService.GetPaymentFromMollie(id);
+            paymentResponse = await orderService.GetPaymentFromMollie(request.id);
         }
         catch (MollieApiException e)
         {
