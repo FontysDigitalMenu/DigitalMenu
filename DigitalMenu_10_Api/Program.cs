@@ -120,6 +120,6 @@ app.MapControllers();
 
 app.UseCors();
 
-app.MapHub<OrderHub>("/orderHub");
+app.MapHub<OrderHub>("/api/orderHub");
 
 app.Run();
