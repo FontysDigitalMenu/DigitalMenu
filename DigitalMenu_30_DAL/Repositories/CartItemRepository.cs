@@ -5,36 +5,29 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DigitalMenu_30_DAL.Repositories;
 
-public class CartItemRepository : ICartItemRepository
+public class CartItemRepository(ApplicationDbContext dbContext) : ICartItemRepository
 {
-    private readonly ApplicationDbContext _dbContext;
-
-    public CartItemRepository(ApplicationDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-
     public bool Create(CartItem cartItem)
     {
-        _dbContext.CartItems.Add(cartItem);
-        return _dbContext.SaveChanges() > 0;
+        dbContext.CartItems.Add(cartItem);
+        return dbContext.SaveChanges() > 0;
     }
 
     public CartItem? GetByMenuItemIdAndDeviceId(int menuItemId, string deviceId)
     {
-        return _dbContext.CartItems.FirstOrDefault(ci => ci.MenuItemId == menuItemId && ci.DeviceId == deviceId);
+        return dbContext.CartItems.FirstOrDefault(ci => ci.MenuItemId == menuItemId && ci.DeviceId == deviceId);
     }
 
     public CartItem? GetByCartItemIdAndDeviceId(int cartItemId, string deviceId)
     {
-        return _dbContext.CartItems
+        return dbContext.CartItems
             .Include(ci => ci.MenuItem)
             .FirstOrDefault(ci => ci.Id == cartItemId && ci.DeviceId == deviceId);
     }
 
     public List<CartItem?> GetCartItemsByMenuItemIdAndDeviceId(int menuItemId, string deviceId)
     {
-        return _dbContext.CartItems
+        return dbContext.CartItems
             .Where(ci => ci.MenuItemId == menuItemId && ci.DeviceId == deviceId)
             .ToList();
     }
@@ -42,7 +35,7 @@ public class CartItemRepository : ICartItemRepository
 
     public List<CartItem> GetByDeviceId(string deviceId)
     {
-        return _dbContext.CartItems
+        return dbContext.CartItems
             .Include(ci => ci.MenuItem)
             .Where(ci => ci.DeviceId == deviceId)
             .ToList();
@@ -50,27 +43,27 @@ public class CartItemRepository : ICartItemRepository
 
     public bool ExistsByDeviceId(string deviceId)
     {
-        return _dbContext.CartItems.Any(ci => ci.DeviceId == deviceId);
+        return dbContext.CartItems.Any(ci => ci.DeviceId == deviceId);
     }
 
     public bool Delete(CartItem cartItem)
     {
-        _dbContext.CartItems.Remove(cartItem);
-        return _dbContext.SaveChanges() > 0;
+        dbContext.CartItems.Remove(cartItem);
+        return dbContext.SaveChanges() > 0;
     }
 
     public bool Update(CartItem cartItem)
     {
-        _dbContext.CartItems.Update(cartItem);
-        return _dbContext.SaveChanges() > 0;
+        dbContext.CartItems.Update(cartItem);
+        return dbContext.SaveChanges() > 0;
     }
 
     public bool AddExcludedIngredientToCartItem(ExcludedIngredientCartItem excludedIngredientCartItem)
     {
         try
         {
-            _dbContext.ExcludedIngredientCartItems.Add(excludedIngredientCartItem);
-            _dbContext.SaveChanges();
+            dbContext.ExcludedIngredientCartItems.Add(excludedIngredientCartItem);
+            dbContext.SaveChanges();
 
             return true;
         }
@@ -82,7 +75,7 @@ public class CartItemRepository : ICartItemRepository
 
     public List<Ingredient> GetExcludedIngredientsByCartItemId(int cartItemId)
     {
-        return _dbContext.ExcludedIngredientCartItems
+        return dbContext.ExcludedIngredientCartItems
             .Where(e => e.CartItemId == cartItemId)
             .Select(e => e.Ingredient)
             .ToList();
@@ -92,12 +85,12 @@ public class CartItemRepository : ICartItemRepository
     {
         try
         {
-            List<ExcludedIngredientCartItem> excludedIngredients = _dbContext.ExcludedIngredientCartItems
+            List<ExcludedIngredientCartItem> excludedIngredients = dbContext.ExcludedIngredientCartItems
                 .Where(eic => eic.CartItemId == cartItemId)
                 .ToList();
 
-            _dbContext.ExcludedIngredientCartItems.RemoveRange(excludedIngredients);
-            _dbContext.SaveChanges();
+            dbContext.ExcludedIngredientCartItems.RemoveRange(excludedIngredients);
+            dbContext.SaveChanges();
 
             return true;
         }
@@ -109,8 +102,8 @@ public class CartItemRepository : ICartItemRepository
 
     public bool ClearByDeviceId(string deviceId)
     {
-        List<CartItem> cartItems = _dbContext.CartItems.Where(ci => ci.DeviceId == deviceId).ToList();
-        _dbContext.CartItems.RemoveRange(cartItems);
-        return _dbContext.SaveChanges() > 0;
+        List<CartItem> cartItems = dbContext.CartItems.Where(ci => ci.DeviceId == deviceId).ToList();
+        dbContext.CartItems.RemoveRange(cartItems);
+        return dbContext.SaveChanges() > 0;
     }
 }

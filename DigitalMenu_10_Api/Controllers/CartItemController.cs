@@ -6,34 +6,23 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DigitalMenu_10_Api.Controllers;
 
-[Route("api/v1/[controller]")]
+[Route("api/v1/cartItem")]
 [ApiController]
-public class CartItemController : ControllerBase
+public class CartItemController(
+    ICartItemService cartItemService,
+    IMenuItemService menuItemService,
+    IIngredientService ingredientService) : ControllerBase
 {
-    private readonly ICartItemService _cartItemService;
-
-    private readonly IIngredientService _ingredientService;
-
-    private readonly IMenuItemService _menuItemService;
-
-    public CartItemController(ICartItemService cartItemService, IMenuItemService menuItemService,
-        IIngredientService ingredientService)
-    {
-        _cartItemService = cartItemService;
-        _menuItemService = menuItemService;
-        _ingredientService = ingredientService;
-    }
-
     [HttpPost]
     public async Task<ActionResult> AddToCart([FromBody] CartRequest cartRequest)
     {
         List<CartItem?> cartItems =
-            _cartItemService.GetCartItemsByMenuItemIdAndDeviceId(cartRequest.MenuItemId, cartRequest.DeviceId);
+            cartItemService.GetCartItemsByMenuItemIdAndDeviceId(cartRequest.MenuItemId, cartRequest.DeviceId);
 
         foreach (CartItem? cartItem in cartItems)
         {
             List<Ingredient> existingExcludedIngredients =
-                _cartItemService.GetExcludedIngredientsByCartItemId(cartItem.Id);
+                cartItemService.GetExcludedIngredientsByCartItemId(cartItem.Id);
             List<string> existingExcludedIngredientNames = existingExcludedIngredients.Select(e => e.Name).ToList();
             bool sameExcludedIngredients = existingExcludedIngredientNames.OrderBy(n => n)
                 .SequenceEqual(cartRequest.ExcludedIngredients.OrderBy(n => n));
@@ -41,13 +30,13 @@ public class CartItemController : ControllerBase
             if (sameExcludedIngredients && cartItem.Note == cartRequest.Note)
             {
                 cartItem.Quantity++;
-                _cartItemService.Update(cartItem);
+                cartItemService.Update(cartItem);
 
                 return NoContent();
             }
         }
 
-        if (_menuItemService.GetMenuItemById(cartRequest.MenuItemId) == null)
+        if (menuItemService.GetMenuItemById(cartRequest.MenuItemId) == null)
         {
             return NotFound();
         }
@@ -60,14 +49,14 @@ public class CartItemController : ControllerBase
             MenuItemId = cartRequest.MenuItemId,
         };
 
-        _cartItemService.Create(newCartItem);
+        cartItemService.Create(newCartItem);
 
         if (cartRequest.ExcludedIngredients != null && cartRequest.ExcludedIngredients.Count != 0)
         {
             foreach (string excludedIngredientName in cartRequest.ExcludedIngredients)
             {
                 Ingredient? excludedIngredient =
-                    await _ingredientService.GetIngredientByNameAsync(excludedIngredientName);
+                    await ingredientService.GetIngredientByNameAsync(excludedIngredientName);
 
                 if (excludedIngredient != null)
                 {
@@ -77,7 +66,7 @@ public class CartItemController : ControllerBase
                         CartItemId = newCartItem.Id,
                     };
 
-                    _cartItemService.AddExcludedIngredientToCartItem(excludedIngredientCartItem);
+                    cartItemService.AddExcludedIngredientToCartItem(excludedIngredientCartItem);
                 }
             }
         }
@@ -88,14 +77,14 @@ public class CartItemController : ControllerBase
     [HttpGet]
     public IActionResult GetCartItem(int cartItemId, string deviceId)
     {
-        CartItem? cartItem = _cartItemService.GetByCartItemIdAndDeviceId(cartItemId, deviceId);
+        CartItem? cartItem = cartItemService.GetByCartItemIdAndDeviceId(cartItemId, deviceId);
 
         if (cartItem == null)
         {
             return NotFound();
         }
 
-        MenuItem? menuitem = _menuItemService.GetMenuItemById(cartItem.MenuItemId);
+        MenuItem? menuitem = menuItemService.GetMenuItemById(cartItem.MenuItemId);
         if (menuitem == null)
         {
             return NotFound();
@@ -103,7 +92,7 @@ public class CartItemController : ControllerBase
 
         cartItem.MenuItem = menuitem;
 
-        List<Ingredient> excludedIngredients = _cartItemService.GetExcludedIngredientsByCartItemId(cartItemId);
+        List<Ingredient> excludedIngredients = cartItemService.GetExcludedIngredientsByCartItemId(cartItemId);
 
         CartItemWithIngredientsViewModel cartItemWithIngredients = new()
         {
@@ -117,13 +106,13 @@ public class CartItemController : ControllerBase
     [HttpGet("{deviceId}")]
     public IActionResult ViewCart([FromRoute] string deviceId)
     {
-        bool cartItemsExists = _cartItemService.ExistsByDeviceId(deviceId);
+        bool cartItemsExists = cartItemService.ExistsByDeviceId(deviceId);
         if (!cartItemsExists)
         {
             return NotFound();
         }
 
-        List<CartItem> cartItems = _cartItemService.GetByDeviceId(deviceId);
+        List<CartItem> cartItems = cartItemService.GetByDeviceId(deviceId);
 
         CartItemViewModel cartViewModel = new()
         {
@@ -137,7 +126,7 @@ public class CartItemController : ControllerBase
     [HttpPut("minus")]
     public IActionResult Minus1FromCart([FromBody] CartUpdateRequest cartRequest)
     {
-        CartItem? cartItem = _cartItemService.GetByCartItemIdAndDeviceId(cartRequest.CartItemId, cartRequest.DeviceId);
+        CartItem? cartItem = cartItemService.GetByCartItemIdAndDeviceId(cartRequest.CartItemId, cartRequest.DeviceId);
 
         if (cartItem == null)
         {
@@ -148,11 +137,11 @@ public class CartItemController : ControllerBase
         {
             cartItem.Quantity--;
 
-            _cartItemService.Update(cartItem);
+            cartItemService.Update(cartItem);
         }
         else
         {
-            _cartItemService.Delete(cartItem);
+            cartItemService.Delete(cartItem);
         }
 
         return NoContent();
@@ -161,7 +150,7 @@ public class CartItemController : ControllerBase
     [HttpPost("plus")]
     public IActionResult Plus1ToCart([FromBody] CartUpdateRequest cartRequest)
     {
-        CartItem? cartItem = _cartItemService.GetByCartItemIdAndDeviceId(cartRequest.CartItemId, cartRequest.DeviceId);
+        CartItem? cartItem = cartItemService.GetByCartItemIdAndDeviceId(cartRequest.CartItemId, cartRequest.DeviceId);
 
         if (cartItem == null)
         {
@@ -169,7 +158,7 @@ public class CartItemController : ControllerBase
         }
 
         cartItem.Quantity++;
-        _cartItemService.Update(cartItem);
+        cartItemService.Update(cartItem);
 
         return NoContent();
     }
@@ -177,7 +166,7 @@ public class CartItemController : ControllerBase
     [HttpPut("updateDetails")]
     public async Task<ActionResult> UpdateCartItem([FromBody] CartItemRequest cartRequest)
     {
-        CartItem? cartItem = _cartItemService.GetByCartItemIdAndDeviceId(cartRequest.CartItemId, cartRequest.DeviceId);
+        CartItem? cartItem = cartItemService.GetByCartItemIdAndDeviceId(cartRequest.CartItemId, cartRequest.DeviceId);
 
         if (cartItem == null)
         {
@@ -186,15 +175,15 @@ public class CartItemController : ControllerBase
         else
         {
             cartItem.Note = cartRequest.Note;
-            _cartItemService.Update(cartItem);
-            _cartItemService.DeleteExcludedIngredientsFromCartItem(cartItem.Id);
+            cartItemService.Update(cartItem);
+            cartItemService.DeleteExcludedIngredientsFromCartItem(cartItem.Id);
 
             if (cartRequest.ExcludedIngredients != null && cartRequest.ExcludedIngredients.Count != 0)
             {
                 foreach (string excludedIngredientName in cartRequest.ExcludedIngredients)
                 {
                     Ingredient? excludedIngredient =
-                        await _ingredientService.GetIngredientByNameAsync(excludedIngredientName);
+                        await ingredientService.GetIngredientByNameAsync(excludedIngredientName);
 
                     if (excludedIngredient != null)
                     {
@@ -204,7 +193,7 @@ public class CartItemController : ControllerBase
                             CartItemId = cartItem.Id,
                         };
 
-                        _cartItemService.AddExcludedIngredientToCartItem(excludedIngredientCartItem);
+                        cartItemService.AddExcludedIngredientToCartItem(excludedIngredientCartItem);
                     }
                 }
             }

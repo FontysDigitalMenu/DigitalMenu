@@ -5,18 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DigitalMenu_30_DAL.Repositories;
 
-public class MenuItemRepository : IMenuItemRepository
+public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepository
 {
-    private readonly ApplicationDbContext _dbContext;
-
-    public MenuItemRepository(ApplicationDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-
     public IEnumerable<MenuItem> GetNextMenuItems(int lastId, int amount)
     {
-        return _dbContext.MenuItems
+        return dbContext.MenuItems
             .OrderBy(m => m.Id)
             .Where(m => m.Id > lastId)
             .Take(amount)
@@ -25,7 +18,7 @@ public class MenuItemRepository : IMenuItemRepository
 
     public IEnumerable<MenuItem> GetNextMenuItemsWithCategory(int lastId, int amount)
     {
-        return _dbContext.MenuItems
+        return dbContext.MenuItems
             .Include(m => m.Categories)
             .OrderBy(m => m.Id)
             .Where(m => m.Id > lastId)
@@ -35,13 +28,13 @@ public class MenuItemRepository : IMenuItemRepository
 
     public IEnumerable<Category> GetCategories()
     {
-        return _dbContext.Categories
+        return dbContext.Categories
             .ToList();
     }
 
     public MenuItem? GetMenuItemBy(int id)
     {
-        var menuItemWithIngredients = _dbContext.MenuItemIngredients
+        var menuItemWithIngredients = dbContext.MenuItemIngredients
             .Where(mii => mii.MenuItemId == id)
             .Include(mii => mii.Ingredient)
             .Select(mii => new
@@ -66,6 +59,6 @@ public class MenuItemRepository : IMenuItemRepository
             return menuItem;
         }
 
-        return _dbContext.MenuItems.Find(id);
+        return dbContext.MenuItems.Find(id);
     }
 }

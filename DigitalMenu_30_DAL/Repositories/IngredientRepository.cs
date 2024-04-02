@@ -5,18 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DigitalMenu_30_DAL.Repositories;
 
-public class IngredientRepository : IIngredientRepository
+public class IngredientRepository(ApplicationDbContext dbContext) : IIngredientRepository
 {
-    private readonly ApplicationDbContext _dbContext;
-
-    public IngredientRepository(ApplicationDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-
     public async Task<Ingredient?> GetIngredientByNameAsync(string name)
     {
-        return await _dbContext.Ingredients
+        return await dbContext.Ingredients
             .FirstOrDefaultAsync(i => i.Name == name);
     }
 }

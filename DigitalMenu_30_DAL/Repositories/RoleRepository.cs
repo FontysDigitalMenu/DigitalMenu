@@ -3,29 +3,20 @@ using Microsoft.AspNetCore.Identity;
 
 namespace DigitalMenu_30_DAL.Repositories;
 
-public class RoleRepository : IRoleRepository
+public class RoleRepository(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
+    : IRoleRepository
 {
-    private readonly RoleManager<IdentityRole> _roleManager;
-
-    private readonly UserManager<IdentityUser> _userManager;
-
-    public RoleRepository(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
-    {
-        _userManager = userManager;
-        _roleManager = roleManager;
-    }
-
     public IEnumerable<IdentityRole> GetAll()
     {
-        return _roleManager.Roles;
+        return roleManager.Roles;
     }
 
     public async Task<IdentityUser?> AttachRoleToUser(string roleName, string userId)
     {
-        IdentityUser? user = await _userManager.FindByIdAsync(userId);
+        IdentityUser? user = await userManager.FindByIdAsync(userId);
         if (user != null)
         {
-            await _userManager.AddToRoleAsync(user, roleName);
+            await userManager.AddToRoleAsync(user, roleName);
         }
 
         return user;
@@ -33,10 +24,10 @@ public class RoleRepository : IRoleRepository
 
     public async Task<IdentityUser?> RevokeRoleFromUser(string roleName, string userId)
     {
-        IdentityUser? user = await _userManager.FindByIdAsync(userId);
+        IdentityUser? user = await userManager.FindByIdAsync(userId);
         if (user != null)
         {
-            await _userManager.RemoveFromRoleAsync(user, roleName);
+            await userManager.RemoveFromRoleAsync(user, roleName);
         }
 
         return user;

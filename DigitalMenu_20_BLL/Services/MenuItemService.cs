@@ -4,19 +4,12 @@ using DigitalMenu_20_BLL.Models;
 
 namespace DigitalMenu_20_BLL.Services;
 
-public class MenuItemService : IMenuItemService
+public class MenuItemService(IMenuItemRepository menuItemRepository) : IMenuItemService
 {
-    private readonly IMenuItemRepository _menuItemRepository;
-
-    public MenuItemService(IMenuItemRepository menuItemRepository)
-    {
-        _menuItemRepository = menuItemRepository;
-    }
-
     public IEnumerable<Category> GetCategoriesWithNextMenuItems(int lastId, int amount)
     {
-        IEnumerable<MenuItem> menuItems = _menuItemRepository.GetNextMenuItemsWithCategory(lastId, amount);
-        IEnumerable<Category> categories = _menuItemRepository.GetCategories();
+        IEnumerable<MenuItem> menuItems = menuItemRepository.GetNextMenuItemsWithCategory(lastId, amount);
+        IEnumerable<Category> categories = menuItemRepository.GetCategories();
 
         List<Category> categoriesWithMenuItems = categories
             .Select(c => new Category
@@ -33,11 +26,11 @@ public class MenuItemService : IMenuItemService
 
     public IEnumerable<MenuItem> GetNextMenuItems(int lastId, int amount)
     {
-        return _menuItemRepository.GetNextMenuItems(lastId, amount);
+        return menuItemRepository.GetNextMenuItems(lastId, amount);
     }
 
     public MenuItem? GetMenuItemById(int id)
     {
-        return _menuItemRepository.GetMenuItemBy(id);
+        return menuItemRepository.GetMenuItemBy(id);
     }
 }

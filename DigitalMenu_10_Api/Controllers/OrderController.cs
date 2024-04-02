@@ -10,9 +10,9 @@ using Mollie.Api.Models.Payment.Response;
 
 namespace DigitalMenu_10_Api.Controllers;
 
-[Route("api/v1/[controller]")]
+[Route("api/v1/order")]
 [ApiController]
-public class OrderController(IConfiguration configuration, IOrderService orderService)
+public class OrderController(IOrderService orderService)
     : ControllerBase
 {
     [HttpPost]
@@ -22,13 +22,6 @@ public class OrderController(IConfiguration configuration, IOrderService orderSe
     [ProducesResponseType(500)]
     public async Task<IActionResult> Post([FromBody] OrderRequest orderRequest)
     {
-        string? apiKey = configuration.GetValue<string>("Mollie:ApiKey");
-        string? redirectUrl = configuration.GetValue<string>("Mollie:RedirectUrl");
-        if (apiKey == null || redirectUrl == null)
-        {
-            return Problem();
-        }
-
         int totalAmount;
         try
         {
@@ -44,7 +37,7 @@ public class OrderController(IConfiguration configuration, IOrderService orderSe
         PaymentResponse paymentResponse;
         try
         {
-            paymentResponse = await orderService.CreateMolliePayment(apiKey, redirectUrl, totalAmount, orderId);
+            paymentResponse = await orderService.CreateMolliePayment(totalAmount, orderId);
         }
         catch (MollieApiException e)
         {
@@ -78,11 +71,12 @@ public class OrderController(IConfiguration configuration, IOrderService orderSe
             return BadRequest(new { e.Message });
         }
 
-        return CreatedAtAction("Get", new { id = order.Id, deviceId = orderRequest.DeviceId, orderRequest.TableId }, new OrderCreatedViewModel
-        {
-            RedirectUrl = paymentResponse.Links.Checkout.Href,
-            OrderId = order.Id,
-        });
+        return CreatedAtAction("Get", new { id = order.Id, deviceId = orderRequest.DeviceId, orderRequest.TableId },
+            new OrderCreatedViewModel
+            {
+                RedirectUrl = paymentResponse.Links.Checkout.Href,
+                OrderId = order.Id,
+            });
     }
 
     [HttpGet("{id}/{deviceId}/{tableId}")]
@@ -105,16 +99,10 @@ public class OrderController(IConfiguration configuration, IOrderService orderSe
             return NotFound(new { Message = "Order not found" });
         }
 
-        string? apiKey = configuration.GetValue<string>("Mollie:ApiKey");
-        if (apiKey == null)
-        {
-            return Problem();
-        }
-
         PaymentResponse paymentResponse;
         try
         {
-            paymentResponse = await orderService.GetPaymentFromMollie(apiKey, order.ExternalPaymentId);
+            paymentResponse = await orderService.GetPaymentFromMollie(order.ExternalPaymentId);
         }
         catch (MollieApiException e)
         {
@@ -150,5 +138,42 @@ public class OrderController(IConfiguration configuration, IOrderService orderSe
                 Note = omi.Note,
             }).ToList(),
         });
+    }
+
+    [HttpPost("webhook")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    public async Task<IActionResult> Webhook([FromBody] string id)
+    {
+        Order? order = orderService.GetBy(id);
+        if (order == null)
+        {
+            return Ok();
+        }
+
+        PaymentResponse paymentResponse;
+        try
+        {
+            paymentResponse = await orderService.GetPaymentFromMollie(id);
+        }
+        catch (MollieApiException e)
+        {
+            return BadRequest(new { e.Message });
+        }
+
+        order.PaymentStatus = paymentResponse.Status switch
+        {
+            PaymentStatus.Paid => DigitalMenu_20_BLL.Enums.PaymentStatus.Paid,
+            PaymentStatus.Canceled => DigitalMenu_20_BLL.Enums.PaymentStatus.Canceled,
+            PaymentStatus.Expired => DigitalMenu_20_BLL.Enums.PaymentStatus.Expired,
+            var _ => DigitalMenu_20_BLL.Enums.PaymentStatus.Pending,
+        };
+        order.OrderDate = DateTime.Parse("2222-01-01T00:00:00Z");
+        if (!orderService.Update(order))
+        {
+            return BadRequest(new { Message = "Order could not be updated" });
+        }
+
+        return Ok();
     }
 }
