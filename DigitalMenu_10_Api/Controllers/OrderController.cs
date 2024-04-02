@@ -145,7 +145,7 @@ public class OrderController(IOrderService orderService)
     [ProducesResponseType(400)]
     public async Task<IActionResult> Webhook([FromBody] string id)
     {
-        Order? order = orderService.GetBy(id);
+        Order? order = orderService.GetByExternalPaymentId(id);
         if (order == null)
         {
             return Ok();

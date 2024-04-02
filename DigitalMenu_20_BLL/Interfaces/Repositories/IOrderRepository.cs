@@ -6,7 +6,7 @@ public interface IOrderRepository
 {
     public Order? Create(Order order);
 
-    public Order? GetBy(string id);
+    public Order? GetByExternalPaymentId(string id);
     
     public Order? GetBy(string id, string deviceId, string tableId);
 
