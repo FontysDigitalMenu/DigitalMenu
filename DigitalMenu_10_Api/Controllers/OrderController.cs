@@ -3,6 +3,7 @@ using DigitalMenu_10_Api.ViewModels;
 using DigitalMenu_20_BLL.Exceptions;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Mollie.Api.Client;
 using Mollie.Api.Models.Payment;
@@ -141,6 +142,7 @@ public class OrderController(IOrderService orderService)
         });
     }
 
+    [DisableCors]
     [HttpPost("webhook")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]

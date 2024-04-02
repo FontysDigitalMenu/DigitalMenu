@@ -4,6 +4,7 @@ using Mollie.Api.Models;
 using Mollie.Api.Models.Payment;
 using Mollie.Api.Models.Payment.Request;
 using Mollie.Api.Models.Payment.Response;
+using Serilog;
 
 namespace DigitalMenu_20_BLL.Helpers;
 
@@ -11,6 +12,8 @@ public class MollieHelper(string apiKey, string redirectUrl, string backendUrl) 
 {
     public async Task<PaymentResponse> CreatePayment(int totalAmount, string orderId)
     {
+        Log.Information("BackendUrl: {backendUrl}", backendUrl.Contains("localhost") ? null : $"{backendUrl}/api/v1/order/webhook");
+        
         using PaymentClient paymentClient = new($"{apiKey}", new HttpClient());
         PaymentRequest paymentRequest = new()
         {
@@ -20,6 +23,7 @@ public class MollieHelper(string apiKey, string redirectUrl, string backendUrl) 
             Method = PaymentMethod.Ideal,
             WebhookUrl = backendUrl.Contains("localhost") ? null : $"{backendUrl}/api/v1/order/webhook",
         };
+        Log.Information("PaymentRequest: {@paymentRequest}", paymentRequest);
         PaymentResponse paymentResponse = await paymentClient.CreatePaymentAsync(paymentRequest);
 
         return paymentResponse;
