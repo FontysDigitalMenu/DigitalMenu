@@ -12,7 +12,7 @@ namespace DigitalMenu_10_Api.Controllers;
 
 [Route("api/v1/order")]
 [ApiController]
-public class OrderController(IConfiguration configuration, IOrderService orderService)
+public class OrderController(IOrderService orderService)
     : ControllerBase
 {
     [HttpPost]
@@ -22,13 +22,6 @@ public class OrderController(IConfiguration configuration, IOrderService orderSe
     [ProducesResponseType(500)]
     public async Task<IActionResult> Post([FromBody] OrderRequest orderRequest)
     {
-        string? apiKey = configuration.GetValue<string>("Mollie:ApiKey");
-        string? redirectUrl = configuration.GetValue<string>("Mollie:RedirectUrl");
-        if (apiKey == null || redirectUrl == null)
-        {
-            return Problem();
-        }
-
         int totalAmount;
         try
         {
@@ -44,7 +37,7 @@ public class OrderController(IConfiguration configuration, IOrderService orderSe
         PaymentResponse paymentResponse;
         try
         {
-            paymentResponse = await orderService.CreateMolliePayment(apiKey, redirectUrl, totalAmount, orderId);
+            paymentResponse = await orderService.CreateMolliePayment(totalAmount, orderId);
         }
         catch (MollieApiException e)
         {
@@ -106,16 +99,10 @@ public class OrderController(IConfiguration configuration, IOrderService orderSe
             return NotFound(new { Message = "Order not found" });
         }
 
-        string? apiKey = configuration.GetValue<string>("Mollie:ApiKey");
-        if (apiKey == null)
-        {
-            return Problem();
-        }
-
         PaymentResponse paymentResponse;
         try
         {
-            paymentResponse = await orderService.GetPaymentFromMollie(apiKey, order.ExternalPaymentId);
+            paymentResponse = await orderService.GetPaymentFromMollie(order.ExternalPaymentId);
         }
         catch (MollieApiException e)
         {
