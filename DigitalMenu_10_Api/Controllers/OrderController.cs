@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Mollie.Api.Client;
 using Mollie.Api.Models.Payment;
 using Mollie.Api.Models.Payment.Response;
+using Serilog;
 
 namespace DigitalMenu_10_Api.Controllers;
 
@@ -146,6 +147,8 @@ public class OrderController(IOrderService orderService)
     [Consumes("application/x-www-form-urlencoded")]
     public async Task<IActionResult> Webhook([FromForm] WebhookRequest request)
     {
+        Log.Information("Webhook received {@request}", request);
+        
         Order? order = orderService.GetByExternalPaymentId(request.id);
         if (order == null)
         {
