@@ -139,4 +139,42 @@ public class OrderController(IOrderService orderService)
             }).ToList(),
         });
     }
+
+    [HttpPost("webhook")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    [Consumes("application/x-www-form-urlencoded")]
+    public async Task<IActionResult> Webhook([FromForm] WebhookRequest request)
+    {
+        Order? order = orderService.GetByExternalPaymentId(request.id);
+        if (order == null)
+        {
+            return Ok();
+        }
+
+        PaymentResponse paymentResponse;
+        try
+        {
+            paymentResponse = await orderService.GetPaymentFromMollie(request.id);
+        }
+        catch (MollieApiException e)
+        {
+            return BadRequest(new { e.Message });
+        }
+
+        order.PaymentStatus = paymentResponse.Status switch
+        {
+            PaymentStatus.Paid => DigitalMenu_20_BLL.Enums.PaymentStatus.Paid,
+            PaymentStatus.Canceled => DigitalMenu_20_BLL.Enums.PaymentStatus.Canceled,
+            PaymentStatus.Expired => DigitalMenu_20_BLL.Enums.PaymentStatus.Expired,
+            var _ => DigitalMenu_20_BLL.Enums.PaymentStatus.Pending,
+        };
+        order.OrderDate = DateTime.Parse("2222-01-01T00:00:00Z");
+        if (!orderService.Update(order))
+        {
+            return BadRequest(new { Message = "Order could not be updated" });
+        }
+
+        return Ok();
+    }
 }
