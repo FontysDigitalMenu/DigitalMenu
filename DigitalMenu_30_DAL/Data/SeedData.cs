@@ -18,6 +18,8 @@ public class SeedData(ApplicationDbContext dbContext)
             SeedUsers();
             SeedRoles();
             SeedMenuItems();
+            SeedIngredients();
+            SeedIngredientsToMenuItem();
             await SeedCategories();
             SeedTables();
             SeedCartItems();
@@ -237,6 +239,74 @@ public class SeedData(ApplicationDbContext dbContext)
                 ImageUrl =
                     "https://www.frisenzoetwaren.nl/wp-content/uploads/2023/07/Mountain-Dew-Citrus-Blast-24-x-330-ml-EU.jpg",
             }
+        );
+    }
+
+    private void SeedIngredients()
+    {
+        dbContext.Ingredients.AddRange(
+            new Ingredient { Id = 1, Name = "Beef Patty" },
+            new Ingredient { Id = 2, Name = "Hamburger Bun" },
+            new Ingredient { Id = 3, Name = "Lettuce" },
+            new Ingredient { Id = 4, Name = "Tomato Slices" },
+            new Ingredient { Id = 5, Name = "Onion Slices" },
+            new Ingredient { Id = 6, Name = "Pickles" },
+            new Ingredient { Id = 7, Name = "Cheese" },
+            new Ingredient { Id = 8, Name = "Bacon" },
+            new Ingredient { Id = 9, Name = "Ketchup" },
+            new Ingredient { Id = 10, Name = "Mustard" },
+            new Ingredient { Id = 11, Name = "Mayonnaise" },
+            new Ingredient { Id = 12, Name = "Pizza Dough" },
+            new Ingredient { Id = 13, Name = "Tomato Sauce" },
+            new Ingredient { Id = 14, Name = "Mozzarella Cheese" },
+            new Ingredient { Id = 15, Name = "Pepperoni" },
+            new Ingredient { Id = 16, Name = "Mushrooms" },
+            new Ingredient { Id = 17, Name = "Bell Peppers" },
+            new Ingredient { Id = 18, Name = "Onions" },
+            new Ingredient { Id = 19, Name = "Olives" },
+            new Ingredient { Id = 20, Name = "Basil" },
+            new Ingredient { Id = 21, Name = "Pasta" },
+            new Ingredient { Id = 22, Name = "Garlic" },
+            new Ingredient { Id = 23, Name = "Olive Oil" },
+            new Ingredient { Id = 24, Name = "Parmesan Cheese" },
+            new Ingredient { Id = 25, Name = "Potatoes" },
+            new Ingredient { Id = 26, Name = "Salt" },
+            new Ingredient { Id = 27, Name = "Oil" }
+        );
+    }
+
+    private void SeedIngredientsToMenuItem()
+    {
+        dbContext.MenuItemIngredients.AddRange(
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 1 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 2 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 3 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 4 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 5 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 6 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 7 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 8 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 9 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 10 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 11 },
+            new MenuItemIngredient { MenuItemId = 2, IngredientId = 12 },
+            new MenuItemIngredient { MenuItemId = 2, IngredientId = 13 },
+            new MenuItemIngredient { MenuItemId = 2, IngredientId = 14 },
+            new MenuItemIngredient { MenuItemId = 2, IngredientId = 15 },
+            new MenuItemIngredient { MenuItemId = 2, IngredientId = 16 },
+            new MenuItemIngredient { MenuItemId = 2, IngredientId = 17 },
+            new MenuItemIngredient { MenuItemId = 2, IngredientId = 18 },
+            new MenuItemIngredient { MenuItemId = 2, IngredientId = 19 },
+            new MenuItemIngredient { MenuItemId = 2, IngredientId = 20 },
+            new MenuItemIngredient { MenuItemId = 3, IngredientId = 21 },
+            new MenuItemIngredient { MenuItemId = 3, IngredientId = 13 },
+            new MenuItemIngredient { MenuItemId = 3, IngredientId = 22 },
+            new MenuItemIngredient { MenuItemId = 3, IngredientId = 23 },
+            new MenuItemIngredient { MenuItemId = 3, IngredientId = 20 },
+            new MenuItemIngredient { MenuItemId = 3, IngredientId = 24 },
+            new MenuItemIngredient { MenuItemId = 4, IngredientId = 25 },
+            new MenuItemIngredient { MenuItemId = 4, IngredientId = 26 },
+            new MenuItemIngredient { MenuItemId = 4, IngredientId = 27 }
         );
     }
 
