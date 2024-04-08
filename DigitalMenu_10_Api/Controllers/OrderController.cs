@@ -222,6 +222,8 @@ public class OrderController(IOrderService orderService, IHubContext<OrderHub, I
                 Name = omi.MenuItem.Name,
                 Price = omi.MenuItem.Price,
                 ImageUrl = omi.MenuItem.ImageUrl,
+                Quantity = omi.Quantity,
+                Note = omi.Note,
             }).ToList(),
         }).ToList();
 
