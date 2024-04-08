@@ -27,6 +27,15 @@ public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
             .FirstOrDefault(o => o.Id == id && o.DeviceId == deviceId && o.TableId == tableId);
     }
 
+    public List<Order>? GetBy(string deviceId, string tableId)
+    {
+        return dbContext.Orders
+            .Include(o => o.OrderMenuItems)
+            .ThenInclude(omi => omi.MenuItem)
+            .Where(o => o.DeviceId == deviceId && o.TableId == tableId)
+            .ToList();
+    }
+
     public IEnumerable<Order> GetPaidOrders()
     {
         return dbContext.Orders

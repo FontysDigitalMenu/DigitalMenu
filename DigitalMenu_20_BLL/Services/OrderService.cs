@@ -4,6 +4,8 @@ using DigitalMenu_20_BLL.Interfaces.Repositories;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
 using Mollie.Api.Models.Payment.Response;
+using shortid;
+using shortid.Configuration;
 
 namespace DigitalMenu_20_BLL.Services;
 
@@ -62,6 +64,7 @@ public class OrderService(
 
         int totalAmount = GetTotalAmount(deviceId, tableId);
 
+        string orderNumber = DateTime.Now.ToString("ddyyMM") + "-" + ShortId.Generate(new GenerationOptions(length: 8));
         Order order = new()
         {
             Id = orderId,
@@ -70,6 +73,7 @@ public class OrderService(
             ExternalPaymentId = paymentId,
             OrderMenuItems = orderMenuItems,
             TotalAmount = totalAmount,
+            OrderNumber = orderNumber,
         };
 
         Order? createdOrder = orderRepository.Create(order);
@@ -89,6 +93,21 @@ public class OrderService(
     public Order? GetByExternalPaymentId(string id)
     {
         return orderRepository.GetByExternalPaymentId(id);
+    }
+
+    public List<Order>? GetBy(string deviceId, string tableId)
+    {
+        if (!orderRepository.ExistsByDeviceId(deviceId))
+        {
+            throw new NotFoundException("DeviceId does not exist");
+        }
+
+        if (tableRepository.GetById(tableId) == null)
+        {
+            throw new NotFoundException("TableId does not exist");
+        }
+
+        return orderRepository.GetBy(deviceId, tableId);
     }
 
     public Order? GetBy(string id, string deviceId, string tableId)

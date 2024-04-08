@@ -11,6 +11,8 @@ public interface IOrderService
 
     public Order? GetByExternalPaymentId(string id);
 
+    public List<Order>? GetBy(string deviceId, string tableId);
+
     public Order? GetBy(string id, string deviceId, string tableId);
 
     public IEnumerable<Order> GetPaidOrders();

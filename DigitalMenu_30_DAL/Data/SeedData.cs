@@ -1,4 +1,5 @@
-﻿using DigitalMenu_20_BLL.Models;
+﻿using DigitalMenu_20_BLL.Enums;
+using DigitalMenu_20_BLL.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MySqlConnector;
@@ -23,6 +24,7 @@ public class SeedData(ApplicationDbContext dbContext)
             await SeedCategories();
             SeedTables();
             SeedCartItems();
+            SeedOrders();
 
             await dbContext.SaveChangesAsync();
         }
@@ -30,6 +32,52 @@ public class SeedData(ApplicationDbContext dbContext)
         {
             Console.WriteLine(ex.Message);
         }
+    }
+
+    private void SeedOrders()
+    {
+        dbContext.Orders.AddRange(
+            new Order
+            {
+                Id = "12d7eaff-5f3c-456d-92c4-7de2220b2d05",
+                DeviceId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
+                TableId = "69AC2F65-5DE9-40D4-B930-624CA40D3F13",
+                TotalAmount = 6400,
+                PaymentStatus = PaymentStatus.Paid,
+                ExternalPaymentId = "tr_294TYYppc4",
+                OrderDate = DateTime.Parse("2024-04-08 14:54:02"),
+                OrderNumber = "082404-AS-JQEFn",
+            }
+        );
+        dbContext.SaveChangesAsync();
+        
+        dbContext.OrderMenuItems.AddRange(
+            new OrderMenuItem
+            {
+                OrderId = "12d7eaff-5f3c-456d-92c4-7de2220b2d05",
+                MenuItemId = 1,
+                Quantity = 2,
+            },
+            new OrderMenuItem
+            {
+                OrderId = "12d7eaff-5f3c-456d-92c4-7de2220b2d05",
+                MenuItemId = 2,
+                Quantity = 1,
+            },
+            new OrderMenuItem
+            {
+                OrderId = "12d7eaff-5f3c-456d-92c4-7de2220b2d05",
+                MenuItemId = 3,
+                Quantity = 2,
+            },
+            new OrderMenuItem
+            {
+                OrderId = "12d7eaff-5f3c-456d-92c4-7de2220b2d05",
+                MenuItemId = 4,
+                Quantity = 1,
+            }
+        );
+        dbContext.SaveChangesAsync();
     }
 
     private void SeedCartItems()

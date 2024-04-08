@@ -25,7 +25,7 @@ public class OrderController(IOrderService orderService, IHubContext<OrderHub, I
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
-    public async Task<IActionResult> Post([FromBody] OrderRequest orderRequest)
+    public async Task<ActionResult<OrderCreatedViewModel>> Post([FromBody] OrderRequest orderRequest)
     {
         int totalAmount;
         try
@@ -84,10 +84,51 @@ public class OrderController(IOrderService orderService, IHubContext<OrderHub, I
             });
     }
 
+    [HttpGet("{deviceId}/{tableId}")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(404)]
+    public ActionResult<List<OrderViewModel>> Get([FromRoute] string deviceId, [FromRoute] string tableId)
+    {
+        List<Order>? orders;
+        try
+        {
+            orders = orderService.GetBy(deviceId, tableId);
+        }
+        catch (NotFoundException e)
+        {
+            return NotFound(new { e.Message });
+        }
+
+        if (orders == null || orders.Count == 0)
+        {
+            return NotFound(new { Message = "Order not found" });
+        }
+
+        return Ok(orders.Select(o => new OrderViewModel
+        {
+            Id = o.Id,
+            PaymentStatus = o.PaymentStatus.ToString(),
+            Status = o.Status.ToString(),
+            TotalAmount = o.TotalAmount,
+            OrderDate = o.OrderDate,
+            OrderNumber = o.OrderNumber,
+            MenuItems = o.OrderMenuItems.Select(omi => new MenuItemViewModel
+            {
+                Id = omi.MenuItem.Id,
+                Name = omi.MenuItem.Name,
+                Price = omi.MenuItem.Price,
+                ImageUrl = omi.MenuItem.ImageUrl,
+                Quantity = omi.Quantity,
+                Note = omi.Note,
+            }).ToList(),
+        }));
+    }
+
     [HttpGet("{id}/{deviceId}/{tableId}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
-    public IActionResult Get([FromRoute] string id, [FromRoute] string deviceId, [FromRoute] string tableId)
+    public ActionResult<OrderViewModel> Get([FromRoute] string id, [FromRoute] string deviceId,
+        [FromRoute] string tableId)
     {
         Order? order;
         try
@@ -111,6 +152,7 @@ public class OrderController(IOrderService orderService, IHubContext<OrderHub, I
             Status = order.Status.ToString(),
             TotalAmount = order.TotalAmount,
             OrderDate = order.OrderDate,
+            OrderNumber = order.OrderNumber,
             MenuItems = order.OrderMenuItems.Select(omi => new MenuItemViewModel
             {
                 Id = omi.MenuItem.Id,
@@ -205,7 +247,7 @@ public class OrderController(IOrderService orderService, IHubContext<OrderHub, I
 
     [Authorize(Roles = "Admin, Employee")]
     [HttpGet("paid")]
-    public IActionResult GetPaidOrders()
+    public ActionResult<List<OrderViewModel>> GetPaidOrders()
     {
         List<Order> orders = (List<Order>)orderService.GetPaidOrders();
 
@@ -216,6 +258,7 @@ public class OrderController(IOrderService orderService, IHubContext<OrderHub, I
             Status = order.Status.ToString(),
             TotalAmount = order.TotalAmount,
             OrderDate = order.OrderDate,
+            OrderNumber = order.OrderNumber,
             MenuItems = order.OrderMenuItems.Select(omi => new MenuItemViewModel
             {
                 Id = omi.MenuItem.Id,
