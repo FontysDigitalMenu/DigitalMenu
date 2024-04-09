@@ -60,11 +60,18 @@ public class OrderService(
             MenuItem = ci.MenuItem,
             Quantity = ci.Quantity,
             Note = ci.Note,
+            ExcludedIngredientOrderMenuItems = cartItemRepository.GetExcludedIngredientsByCartItemId(ci.Id).Select(ei =>
+                new ExcludedIngredientOrderMenuItem
+                {
+                    IngredientId = ei.Id,
+                }).ToList(),
         }).ToList();
 
         int totalAmount = GetTotalAmount(deviceId, tableId);
 
-        string orderNumber = DateTime.Now.ToString("ddyyMM") + ShortId.Generate(new GenerationOptions(length: 8, useSpecialCharacters: false, useNumbers: false))[..4];
+        string orderNumber = DateTime.Now.ToString("ddyyMM") +
+                             ShortId.Generate(new GenerationOptions(length: 8, useSpecialCharacters: false,
+                                 useNumbers: false))[..4];
         Order order = new()
         {
             Id = orderId,

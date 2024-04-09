@@ -21,7 +21,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Order> Orders { get; set; }
 
     public DbSet<OrderMenuItem> OrderMenuItems { get; set; }
-    
+
     public DbSet<ExcludedIngredientOrderMenuItem> ExcludedIngredientOrderMenuItems { get; set; }
 
     public DbSet<ExcludedIngredientCartItem> ExcludedIngredientCartItems { get; set; }

@@ -50,7 +50,7 @@ public class SeedData(ApplicationDbContext dbContext)
             }
         );
         await dbContext.SaveChangesAsync();
-        
+
         dbContext.OrderMenuItems.AddRange(
             new OrderMenuItem
             {
