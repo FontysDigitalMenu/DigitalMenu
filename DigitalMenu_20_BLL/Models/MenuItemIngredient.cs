@@ -2,7 +2,7 @@
 
 namespace DigitalMenu_20_BLL.Models;
 
-[Keyless]
+[PrimaryKey("MenuItemId", "IngredientId")]
 public class MenuItemIngredient
 {
     public int MenuItemId { get; set; }

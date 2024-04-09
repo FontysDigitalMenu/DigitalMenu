@@ -26,5 +26,7 @@ public interface ICartItemRepository
 
     List<Ingredient> GetExcludedIngredientsByCartItemId(int cartItemId);
 
+    List<Ingredient> GetExcludedIngredientsByOrderMenuItemId(int orderMenuItemId);
+
     public bool DeleteExcludedIngredientsFromCartItem(int cartItemId);
 }

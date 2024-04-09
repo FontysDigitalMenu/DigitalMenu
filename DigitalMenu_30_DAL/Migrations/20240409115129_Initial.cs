@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DigitalMenu_30_DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -127,7 +127,7 @@ namespace DigitalMenu_30_DAL.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Name = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    QrCode = table.Column<string>(type: "longtext", nullable: false)
+                    QrCode = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
@@ -379,7 +379,9 @@ namespace DigitalMenu_30_DAL.Migrations
                     PaymentStatus = table.Column<int>(type: "int", nullable: false),
                     ExternalPaymentId = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    OrderDate = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                    OrderDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    OrderNumber = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
@@ -424,6 +426,8 @@ namespace DigitalMenu_30_DAL.Migrations
                 name: "OrderMenuItems",
                 columns: table => new
                 {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     OrderId = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     MenuItemId = table.Column<int>(type: "int", nullable: false),
@@ -433,7 +437,7 @@ namespace DigitalMenu_30_DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OrderMenuItems", x => new { x.OrderId, x.MenuItemId });
+                    table.PrimaryKey("PK_OrderMenuItems", x => x.Id);
                     table.ForeignKey(
                         name: "FK_OrderMenuItems_MenuItems_MenuItemId",
                         column: x => x.MenuItemId,
@@ -444,6 +448,33 @@ namespace DigitalMenu_30_DAL.Migrations
                         name: "FK_OrderMenuItems_Orders_OrderId",
                         column: x => x.OrderId,
                         principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "ExcludedIngredientOrderMenuItems",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    IngredientId = table.Column<int>(type: "int", nullable: false),
+                    OrderMenuItemId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ExcludedIngredientOrderMenuItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ExcludedIngredientOrderMenuItems_Ingredients_IngredientId",
+                        column: x => x.IngredientId,
+                        principalTable: "Ingredients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ExcludedIngredientOrderMenuItems_OrderMenuItems_OrderMenuIte~",
+                        column: x => x.OrderMenuItemId,
+                        principalTable: "OrderMenuItems",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -507,6 +538,16 @@ namespace DigitalMenu_30_DAL.Migrations
                 column: "IngredientId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ExcludedIngredientOrderMenuItems_IngredientId",
+                table: "ExcludedIngredientOrderMenuItems",
+                column: "IngredientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ExcludedIngredientOrderMenuItems_OrderMenuItemId",
+                table: "ExcludedIngredientOrderMenuItems",
+                column: "OrderMenuItemId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_IngredientMenuItem_MenuItemsId",
                 table: "IngredientMenuItem",
                 column: "MenuItemsId");
@@ -520,6 +561,11 @@ namespace DigitalMenu_30_DAL.Migrations
                 name: "IX_OrderMenuItems_MenuItemId",
                 table: "OrderMenuItems",
                 column: "MenuItemId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderMenuItems_OrderId",
+                table: "OrderMenuItems",
+                column: "OrderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_TableId",
@@ -552,13 +598,13 @@ namespace DigitalMenu_30_DAL.Migrations
                 name: "ExcludedIngredientCartItems");
 
             migrationBuilder.DropTable(
+                name: "ExcludedIngredientOrderMenuItems");
+
+            migrationBuilder.DropTable(
                 name: "IngredientMenuItem");
 
             migrationBuilder.DropTable(
                 name: "MenuItemIngredients");
-
-            migrationBuilder.DropTable(
-                name: "OrderMenuItems");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -573,13 +619,16 @@ namespace DigitalMenu_30_DAL.Migrations
                 name: "CartItems");
 
             migrationBuilder.DropTable(
+                name: "OrderMenuItems");
+
+            migrationBuilder.DropTable(
                 name: "Ingredients");
 
             migrationBuilder.DropTable(
-                name: "Orders");
+                name: "MenuItems");
 
             migrationBuilder.DropTable(
-                name: "MenuItems");
+                name: "Orders");
 
             migrationBuilder.DropTable(
                 name: "Tables");

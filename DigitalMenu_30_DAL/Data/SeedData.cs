@@ -1,4 +1,5 @@
-﻿using DigitalMenu_20_BLL.Models;
+﻿using DigitalMenu_20_BLL.Enums;
+using DigitalMenu_20_BLL.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MySqlConnector;
@@ -15,14 +16,15 @@ public class SeedData(ApplicationDbContext dbContext)
 
         try
         {
-            SeedUsers();
-            SeedRoles();
-            SeedMenuItems();
-            SeedIngredients();
-            SeedIngredientsToMenuItem();
+            await SeedUsers();
+            await SeedRoles();
+            await SeedMenuItems();
+            await SeedIngredients();
+            await SeedIngredientsToMenuItem();
             await SeedCategories();
-            SeedTables();
-            SeedCartItems();
+            await SeedTables();
+            await SeedCartItems();
+            await SeedOrders();
 
             await dbContext.SaveChangesAsync();
         }
@@ -32,7 +34,53 @@ public class SeedData(ApplicationDbContext dbContext)
         }
     }
 
-    private void SeedCartItems()
+    private async Task SeedOrders()
+    {
+        dbContext.Orders.AddRange(
+            new Order
+            {
+                Id = "12d7eaff-5f3c-456d-92c4-7de2220b2d05",
+                DeviceId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
+                TableId = "69AC2F65-5DE9-40D4-B930-624CA40D3F13",
+                TotalAmount = 6400,
+                PaymentStatus = PaymentStatus.Paid,
+                ExternalPaymentId = "tr_294TYYppc4",
+                OrderDate = DateTime.Parse("2024-04-09 14:54:02"),
+                OrderNumber = "092404jnWK",
+            }
+        );
+        await dbContext.SaveChangesAsync();
+
+        dbContext.OrderMenuItems.AddRange(
+            new OrderMenuItem
+            {
+                OrderId = "12d7eaff-5f3c-456d-92c4-7de2220b2d05",
+                MenuItemId = 1,
+                Quantity = 2,
+            },
+            new OrderMenuItem
+            {
+                OrderId = "12d7eaff-5f3c-456d-92c4-7de2220b2d05",
+                MenuItemId = 2,
+                Quantity = 1,
+            },
+            new OrderMenuItem
+            {
+                OrderId = "12d7eaff-5f3c-456d-92c4-7de2220b2d05",
+                MenuItemId = 3,
+                Quantity = 2,
+            },
+            new OrderMenuItem
+            {
+                OrderId = "12d7eaff-5f3c-456d-92c4-7de2220b2d05",
+                MenuItemId = 4,
+                Quantity = 1,
+            }
+        );
+        await dbContext.SaveChangesAsync();
+    }
+
+    private async Task SeedCartItems()
     {
         dbContext.CartItems.AddRange(
             new CartItem
@@ -110,9 +158,10 @@ public class SeedData(ApplicationDbContext dbContext)
                 Note = "No ice",
             }
         );
+        await dbContext.SaveChangesAsync();
     }
 
-    private void SeedUsers()
+    private async Task SeedUsers()
     {
         dbContext.Users.AddRange(
             new IdentityUser
@@ -125,9 +174,10 @@ public class SeedData(ApplicationDbContext dbContext)
                 PasswordHash = new PasswordHasher<IdentityUser>().HashPassword(null, "Password123!"),
             }
         );
+        await dbContext.SaveChangesAsync();
     }
 
-    private void SeedRoles()
+    private async Task SeedRoles()
     {
         dbContext.Roles.AddRange(
             new IdentityRole
@@ -139,15 +189,17 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = "81659B09-5665-4E61-ACB9-5C43E28BE6A4", Name = "Employee", NormalizedName = "EMPLOYEE",
             }
         );
+        await dbContext.SaveChangesAsync();
 
         dbContext.UserRoles.Add(new IdentityUserRole<string>
         {
             UserId = "0206A018-5AC6-492D-AB99-10105193D384",
             RoleId = "8977148E-C765-410F-9A58-0C7D054E4536",
         });
+        await dbContext.SaveChangesAsync();
     }
 
-    private void SeedMenuItems()
+    private async Task SeedMenuItems()
     {
         dbContext.MenuItems.AddRange(
             new MenuItem
@@ -240,9 +292,10 @@ public class SeedData(ApplicationDbContext dbContext)
                     "https://www.frisenzoetwaren.nl/wp-content/uploads/2023/07/Mountain-Dew-Citrus-Blast-24-x-330-ml-EU.jpg",
             }
         );
+        await dbContext.SaveChangesAsync();
     }
 
-    private void SeedIngredients()
+    private async Task SeedIngredients()
     {
         dbContext.Ingredients.AddRange(
             new Ingredient { Id = 1, Name = "Beef Patty" },
@@ -273,9 +326,10 @@ public class SeedData(ApplicationDbContext dbContext)
             new Ingredient { Id = 26, Name = "Salt" },
             new Ingredient { Id = 27, Name = "Oil" }
         );
+        await dbContext.SaveChangesAsync();
     }
 
-    private void SeedIngredientsToMenuItem()
+    private async Task SeedIngredientsToMenuItem()
     {
         dbContext.MenuItemIngredients.AddRange(
             new MenuItemIngredient { MenuItemId = 1, IngredientId = 1 },
@@ -308,6 +362,7 @@ public class SeedData(ApplicationDbContext dbContext)
             new MenuItemIngredient { MenuItemId = 4, IngredientId = 26 },
             new MenuItemIngredient { MenuItemId = 4, IngredientId = 27 }
         );
+        await dbContext.SaveChangesAsync();
     }
 
     private async Task SeedCategories()
@@ -317,7 +372,6 @@ public class SeedData(ApplicationDbContext dbContext)
             new Category { Id = 2, Name = "American" },
             new Category { Id = 3, Name = "Drinks" }
         );
-
         await dbContext.SaveChangesAsync();
 
         List<int> ids1 = [2, 3];
@@ -331,9 +385,11 @@ public class SeedData(ApplicationDbContext dbContext)
         List<int> ids3 = [5, 6, 7, 8, 9, 10];
         List<MenuItem> menuItems3 = dbContext.MenuItems.Where(mi => ids3.Contains(mi.Id)).ToList();
         dbContext.Categories.First(c => c.Id == 3).MenuItems = [..menuItems3];
+
+        await dbContext.SaveChangesAsync();
     }
 
-    private void SeedTables()
+    private async Task SeedTables()
     {
         dbContext.Tables.AddRange(
             new Table
@@ -372,5 +428,6 @@ public class SeedData(ApplicationDbContext dbContext)
                 CreatedAt = DateTime.Parse("2023-09-01 12:00:00").AddMinutes(30),
             }
         );
+        await dbContext.SaveChangesAsync();
     }
 }

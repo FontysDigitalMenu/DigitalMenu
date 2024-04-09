@@ -23,4 +23,6 @@ public class Order
     public DateTime OrderDate { get; set; } = DateTime.Now;
 
     public List<OrderMenuItem> OrderMenuItems { get; set; } = [];
+
+    public string OrderNumber { get; set; }
 }

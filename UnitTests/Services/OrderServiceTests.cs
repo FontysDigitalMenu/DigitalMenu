@@ -134,6 +134,8 @@ public class OrderServiceTests
                 new CartItem { MenuItem = new MenuItem { Price = 500 }, Quantity = 2 },
                 new CartItem { MenuItem = new MenuItem { Price = 259 }, Quantity = 1 },
             ]);
+        _cartItemRepositoryMock.Setup(x => x.GetExcludedIngredientsByCartItemId(0))
+            .Returns(new List<Ingredient>());
         _orderRepositoryMock.Setup(x => x.Create(It.IsAny<Order>()))
             .Returns(order);
         _cartItemRepositoryMock.Setup(x => x.ClearByDeviceId(deviceId))
@@ -262,6 +264,8 @@ public class OrderServiceTests
                 new CartItem { MenuItem = new MenuItem { Price = 500 }, Quantity = 2 },
                 new CartItem { MenuItem = new MenuItem { Price = 259 }, Quantity = 1 },
             ]);
+        _cartItemRepositoryMock.Setup(x => x.GetExcludedIngredientsByCartItemId(0))
+            .Returns(new List<Ingredient>());
         _orderRepositoryMock.Setup(x => x.Create(It.IsAny<Order>()))
             .Returns((Order)null!);
         _cartItemRepositoryMock.Setup(x => x.ClearByDeviceId(deviceId))

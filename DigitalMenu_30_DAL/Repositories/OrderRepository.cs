@@ -16,7 +16,10 @@ public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
 
     public Order? GetByExternalPaymentId(string id)
     {
-        return dbContext.Orders.FirstOrDefault(o => o.ExternalPaymentId == id);
+        return dbContext.Orders
+            .Include(o => o.OrderMenuItems)
+            .ThenInclude(omi => omi.MenuItem)
+            .FirstOrDefault(o => o.ExternalPaymentId == id);
     }
 
     public Order? GetBy(string id, string deviceId, string tableId)
@@ -25,6 +28,15 @@ public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
             .Include(o => o.OrderMenuItems)
             .ThenInclude(omi => omi.MenuItem)
             .FirstOrDefault(o => o.Id == id && o.DeviceId == deviceId && o.TableId == tableId);
+    }
+
+    public List<Order>? GetBy(string deviceId, string tableId)
+    {
+        return dbContext.Orders
+            .Include(o => o.OrderMenuItems)
+            .ThenInclude(omi => omi.MenuItem)
+            .Where(o => o.DeviceId == deviceId && o.TableId == tableId)
+            .ToList();
     }
 
     public IEnumerable<Order> GetPaidOrders()
