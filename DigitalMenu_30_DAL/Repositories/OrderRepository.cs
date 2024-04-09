@@ -16,7 +16,10 @@ public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
 
     public Order? GetByExternalPaymentId(string id)
     {
-        return dbContext.Orders.FirstOrDefault(o => o.ExternalPaymentId == id);
+        return dbContext.Orders
+            .Include(o => o.OrderMenuItems)
+            .ThenInclude(omi => omi.MenuItem)
+            .FirstOrDefault(o => o.ExternalPaymentId == id);
     }
 
     public Order? GetBy(string id, string deviceId, string tableId)

@@ -17,7 +17,10 @@ namespace DigitalMenu_10_Api.Controllers;
 
 [Route("api/v1/order")]
 [ApiController]
-public class OrderController(IOrderService orderService, IHubContext<OrderHub, IOrderHubClient> hubContext)
+public class OrderController(
+    IOrderService orderService,
+    IHubContext<OrderHub, IOrderHubClient> hubContext,
+    ICartItemService cartItemService)
     : ControllerBase
 {
     [HttpPost]
@@ -120,6 +123,12 @@ public class OrderController(IOrderService orderService, IHubContext<OrderHub, I
                 ImageUrl = omi.MenuItem.ImageUrl,
                 Quantity = omi.Quantity,
                 Note = omi.Note,
+                ExcludedIngredients = cartItemService.GetExcludedIngredientsByOrderMenuItemId(omi.Id).Select(i =>
+                    new IngredientViewModel
+                    {
+                        Id = i.Id,
+                        Name = i.Name,
+                    }).ToList(),
             }).ToList(),
         }));
     }
@@ -161,6 +170,12 @@ public class OrderController(IOrderService orderService, IHubContext<OrderHub, I
                 ImageUrl = omi.MenuItem.ImageUrl,
                 Quantity = omi.Quantity,
                 Note = omi.Note,
+                ExcludedIngredients = cartItemService.GetExcludedIngredientsByOrderMenuItemId(omi.Id).Select(i =>
+                    new IngredientViewModel
+                    {
+                        Id = i.Id,
+                        Name = i.Name,
+                    }).ToList(),
             }).ToList(),
         });
     }
@@ -233,12 +248,21 @@ public class OrderController(IOrderService orderService, IHubContext<OrderHub, I
             Status = order.Status.ToString(),
             TotalAmount = order.TotalAmount,
             OrderDate = order.OrderDate,
+            OrderNumber = order.OrderNumber,
             MenuItems = order.OrderMenuItems.Select(omi => new MenuItemViewModel
             {
                 Id = omi.MenuItem.Id,
                 Name = omi.MenuItem.Name,
                 Price = omi.MenuItem.Price,
                 ImageUrl = omi.MenuItem.ImageUrl,
+                Quantity = omi.Quantity,
+                Note = omi.Note,
+                ExcludedIngredients = cartItemService.GetExcludedIngredientsByOrderMenuItemId(omi.Id).Select(i =>
+                    new IngredientViewModel
+                    {
+                        Id = i.Id,
+                        Name = i.Name,
+                    }).ToList(),
             }).ToList(),
         };
 
@@ -267,6 +291,12 @@ public class OrderController(IOrderService orderService, IHubContext<OrderHub, I
                 ImageUrl = omi.MenuItem.ImageUrl,
                 Quantity = omi.Quantity,
                 Note = omi.Note,
+                ExcludedIngredients = cartItemService.GetExcludedIngredientsByOrderMenuItemId(omi.Id).Select(i =>
+                    new IngredientViewModel
+                    {
+                        Id = i.Id,
+                        Name = i.Name,
+                    }).ToList(),
             }).ToList(),
         }).ToList();
 

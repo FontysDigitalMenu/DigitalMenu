@@ -52,6 +52,11 @@ public class CartItemService(ICartItemRepository cartItemRepository) : ICartItem
         return cartItemRepository.GetExcludedIngredientsByCartItemId(cartItemId);
     }
 
+    public List<Ingredient> GetExcludedIngredientsByOrderMenuItemId(int orderMenuItemId)
+    {
+        return cartItemRepository.GetExcludedIngredientsByOrderMenuItemId(orderMenuItemId);
+    }
+
     public CartItem? GetByCartItemIdAndDeviceId(int cartItemId, string deviceId)
     {
         return cartItemRepository.GetByCartItemIdAndDeviceId(cartItemId, deviceId);

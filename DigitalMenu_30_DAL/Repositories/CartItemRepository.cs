@@ -81,6 +81,14 @@ public class CartItemRepository(ApplicationDbContext dbContext) : ICartItemRepos
             .ToList();
     }
 
+    public List<Ingredient> GetExcludedIngredientsByOrderMenuItemId(int orderMenuItemId)
+    {
+        return dbContext.ExcludedIngredientOrderMenuItems
+            .Where(e => e.OrderMenuItemId == orderMenuItemId)
+            .Select(e => e.Ingredient)
+            .ToList();
+    }
+
     public bool DeleteExcludedIngredientsFromCartItem(int cartItemId)
     {
         try
