@@ -64,7 +64,7 @@ public class OrderService(
 
         int totalAmount = GetTotalAmount(deviceId, tableId);
 
-        string orderNumber = DateTime.Now.ToString("ddyyMM") + "-" + ShortId.Generate(new GenerationOptions(length: 8));
+        string orderNumber = DateTime.Now.ToString("ddyyMM") + ShortId.Generate(new GenerationOptions(length: 8, useSpecialCharacters: false, useNumbers: false))[..4];
         Order order = new()
         {
             Id = orderId,
