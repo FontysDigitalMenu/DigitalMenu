@@ -13,4 +13,6 @@ public class OrderViewModel
     public DateTime OrderDate { get; set; } = DateTime.Now;
 
     public List<MenuItemViewModel> MenuItems { get; set; } = [];
+
+    public string OrderNumber { get; set; }
 }
