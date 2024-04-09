@@ -45,8 +45,8 @@ public class SeedData(ApplicationDbContext dbContext)
                 TotalAmount = 6400,
                 PaymentStatus = PaymentStatus.Paid,
                 ExternalPaymentId = "tr_294TYYppc4",
-                OrderDate = DateTime.Parse("2024-04-08 14:54:02"),
-                OrderNumber = "082404-AS-JQEFn",
+                OrderDate = DateTime.Parse("2024-04-09 14:54:02"),
+                OrderNumber = "092404jnWK",
             }
         );
         dbContext.SaveChangesAsync();
