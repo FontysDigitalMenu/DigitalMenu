@@ -34,11 +34,16 @@ public class MenuItemService(IMenuItemRepository menuItemRepository) : IMenuItem
     {
         return menuItemRepository.GetMenuItemBy(id);
     }
-    
+
+    public async Task<List<MenuItem>> GetMenuItems()
+    {
+        return await menuItemRepository.GetMenuItems();
+    }
+
     public bool Delete(int id)
     {
         MenuItem? existingMenuItem = GetMenuItemById(id);
-        if (existingMenuItem == null)
+        if (existingMenuItem == null || !existingMenuItem.IsActive)
         {
             throw new NotFoundException("MenuItem does not exist");
         }

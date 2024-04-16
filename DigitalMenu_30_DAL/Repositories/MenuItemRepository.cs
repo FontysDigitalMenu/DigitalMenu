@@ -64,7 +64,15 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
 
         return dbContext.MenuItems.Find(id);
     }
-    
+    public async Task<List<MenuItem>> GetMenuItems()
+    {
+        return await dbContext.MenuItems
+            .Include(m => m.Categories)
+            .OrderBy(m => m.Id)
+            .Where(m => m.IsActive)
+            .ToListAsync();
+    }
+
     public bool Delete(int id)
     {
         MenuItem entityToDelete = dbContext.MenuItems.Find(id)!;

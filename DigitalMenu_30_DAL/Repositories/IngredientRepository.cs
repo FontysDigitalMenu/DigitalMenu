@@ -12,4 +12,11 @@ public class IngredientRepository(ApplicationDbContext dbContext) : IIngredientR
         return await dbContext.Ingredients
             .FirstOrDefaultAsync(i => i.Name == name);
     }
+
+    public async Task<List<Ingredient>> GetIngredients()
+    {
+        return await dbContext.Ingredients
+            .OrderBy(i => i.Id)
+            .ToListAsync();
+    }
 }
