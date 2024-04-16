@@ -11,22 +11,22 @@ namespace UnitTests.Services;
 public class OrderServiceTests
 {
     private readonly Mock<ICartItemRepository> _cartItemRepositoryMock = new();
-    
+
     private readonly Mock<IMollieHelper> _mollieHelperMock = new();
-    
+
     private readonly Mock<IOrderRepository> _orderRepositoryMock = new();
-    
+
     private readonly Mock<ITableRepository> _tableRepositoryMock = new();
-    
+
     private OrderService _orderService = null!;
-    
+
     [SetUp]
     public void Setup()
     {
         _orderService = new OrderService(_orderRepositoryMock.Object, _cartItemRepositoryMock.Object,
             _tableRepositoryMock.Object, _mollieHelperMock.Object);
     }
-    
+
     [Test]
     public void GetTotalAmount_ShouldReturnTotalAmount()
     {
@@ -42,14 +42,14 @@ public class OrderServiceTests
                 new CartItem { MenuItem = new MenuItem { Price = 500 }, Quantity = 2 },
                 new CartItem { MenuItem = new MenuItem { Price = 259 }, Quantity = 1 },
             ]);
-        
+
         // Act
         int result = _orderService.GetTotalAmount(deviceId, tableId);
-        
+
         // Assert
         Assert.That(result, Is.EqualTo(1259));
     }
-    
+
     [Test]
     public void GetTotalAmount_ShouldThrowDeviceNotFoundException()
     {
@@ -65,12 +65,12 @@ public class OrderServiceTests
                 new CartItem { MenuItem = new MenuItem { Price = 500 }, Quantity = 2 },
                 new CartItem { MenuItem = new MenuItem { Price = 259 }, Quantity = 1 },
             ]);
-        
+
         // Act
         // Assert
         Assert.Throws<NotFoundException>(() => _orderService.GetTotalAmount(deviceId, tableId));
     }
-    
+
     [Test]
     public void GetTotalAmount_ShouldThrowTableNotFoundException()
     {
@@ -86,12 +86,12 @@ public class OrderServiceTests
                 new CartItem { MenuItem = new MenuItem { Price = 500 }, Quantity = 2 },
                 new CartItem { MenuItem = new MenuItem { Price = 259 }, Quantity = 1 },
             ]);
-        
+
         // Act
         // Assert
         Assert.Throws<NotFoundException>(() => _orderService.GetTotalAmount(deviceId, tableId));
     }
-    
+
     [Test]
     public void GetTotalAmount_ShouldThrowEmptyCartItemsListNotFoundException()
     {
@@ -104,12 +104,12 @@ public class OrderServiceTests
             .Returns(new Table());
         _cartItemRepositoryMock.Setup(x => x.GetByDeviceId(deviceId))
             .Returns([]);
-        
+
         // Act
         // Assert
         Assert.Throws<NotFoundException>(() => _orderService.GetTotalAmount(deviceId, tableId));
     }
-    
+
     [Test]
     public void Create_ShouldReturnOrder()
     {
@@ -140,14 +140,14 @@ public class OrderServiceTests
             .Returns(order);
         _cartItemRepositoryMock.Setup(x => x.ClearByDeviceId(deviceId))
             .Returns(true);
-        
+
         // Arrange
         Order result = _orderService.Create(deviceId, tableId, paymentId, orderId);
-        
+
         // Assert
         Assert.That(result, Is.EqualTo(order));
     }
-    
+
     [Test]
     public void Create_ShouldThrowDeviceIdNotFoundException()
     {
@@ -176,12 +176,12 @@ public class OrderServiceTests
             .Returns(order);
         _cartItemRepositoryMock.Setup(x => x.ClearByDeviceId(deviceId))
             .Returns(true);
-        
+
         // Arrange
         // Assert
         Assert.Throws<NotFoundException>(() => _orderService.Create(deviceId, tableId, paymentId, orderId));
     }
-    
+
     [Test]
     public void Create_ShouldThrowTableIdNotFoundException()
     {
@@ -210,12 +210,12 @@ public class OrderServiceTests
             .Returns(order);
         _cartItemRepositoryMock.Setup(x => x.ClearByDeviceId(deviceId))
             .Returns(true);
-        
+
         // Arrange
         // Assert
         Assert.Throws<NotFoundException>(() => _orderService.Create(deviceId, tableId, paymentId, orderId));
     }
-    
+
     [Test]
     public void Create_ShouldThrowCartItemsNotFoundException()
     {
@@ -241,12 +241,12 @@ public class OrderServiceTests
             .Returns(order);
         _cartItemRepositoryMock.Setup(x => x.ClearByDeviceId(deviceId))
             .Returns(true);
-        
+
         // Arrange
         // Assert
         Assert.Throws<NotFoundException>(() => _orderService.Create(deviceId, tableId, paymentId, orderId));
     }
-    
+
     [Test]
     public void Create_ShouldThrowDatabaseCreationException()
     {
@@ -270,12 +270,12 @@ public class OrderServiceTests
             .Returns((Order)null!);
         _cartItemRepositoryMock.Setup(x => x.ClearByDeviceId(deviceId))
             .Returns(true);
-        
+
         // Arrange
         // Assert
         Assert.Throws<DatabaseCreationException>(() => _orderService.Create(deviceId, tableId, paymentId, orderId));
     }
-    
+
     [Test]
     public void Create_ShouldThrowDatabaseUpdateException()
     {
@@ -304,12 +304,12 @@ public class OrderServiceTests
             .Returns(order);
         _cartItemRepositoryMock.Setup(x => x.ClearByDeviceId(deviceId))
             .Returns(false);
-        
+
         // Arrange
         // Assert
         Assert.Throws<DatabaseUpdateException>(() => _orderService.Create(deviceId, tableId, paymentId, orderId));
     }
-    
+
     [Test]
     public void GetBy_ShouldReturnOrder()
     {
@@ -330,14 +330,14 @@ public class OrderServiceTests
             .Returns(true);
         _tableRepositoryMock.Setup(x => x.GetById(tableId))
             .Returns(new Table());
-        
+
         // Act
         Order? result = _orderService.GetBy(orderId, deviceId, tableId);
-        
+
         // Assert
         Assert.That(result, Is.EqualTo(order));
     }
-    
+
     [Test]
     public void GetBy_ShouldThrowDeviceIdNotFoundException()
     {
@@ -358,12 +358,12 @@ public class OrderServiceTests
             .Returns(false);
         _tableRepositoryMock.Setup(x => x.GetById(tableId))
             .Returns(new Table());
-        
+
         // Act
         // Assert
         Assert.Throws<NotFoundException>(() => _orderService.GetBy(orderId, deviceId, tableId));
     }
-    
+
     [Test]
     public void GetBy_ShouldThrowTableIdNotFoundException()
     {
@@ -384,12 +384,12 @@ public class OrderServiceTests
             .Returns(true);
         _tableRepositoryMock.Setup(x => x.GetById(tableId))
             .Returns((Table)null!);
-        
+
         // Act
         // Assert
         Assert.Throws<NotFoundException>(() => _orderService.GetBy(orderId, deviceId, tableId));
     }
-    
+
     [Test]
     public void Update_ShouldReturnTrue()
     {
@@ -403,14 +403,14 @@ public class OrderServiceTests
         };
         _orderRepositoryMock.Setup(x => x.Update(order))
             .Returns(true);
-        
+
         // Act
         bool result = _orderService.Update(order);
-        
+
         // Assert
         Assert.That(result, Is.True);
     }
-    
+
     [Test]
     public async Task CreateMolliePayment_ShouldReturnPaymentResponse()
     {
@@ -418,30 +418,30 @@ public class OrderServiceTests
         const int totalAmount = 1259;
         const string orderId = "F91178CE-FFCE-40ED-955F-3471BC6A0586";
         PaymentResponse expectedResponse = new();
-        
+
         _mollieHelperMock.Setup(client => client.CreatePayment(totalAmount, orderId))
             .ReturnsAsync(expectedResponse);
-        
+
         // Act
         PaymentResponse result = await _orderService.CreateMolliePayment(totalAmount, orderId);
-        
+
         // Assert
         Assert.That(result, Is.Not.Null);
     }
-    
+
     [Test]
     public async Task GetMolliePayment_ShouldReturnPaymentResponse()
     {
         // Arrange
         const string externalPaymentId = "A54E9D75-50E0-4245-B0A9-A557B2DE5C07";
         PaymentResponse expectedResponse = new();
-        
+
         _mollieHelperMock.Setup(client => client.GetPayment(externalPaymentId))
             .ReturnsAsync(expectedResponse);
-        
+
         // Act
         PaymentResponse result = await _orderService.GetPaymentFromMollie(externalPaymentId);
-        
+
         // Assert
         Assert.That(result, Is.Not.Null);
     }

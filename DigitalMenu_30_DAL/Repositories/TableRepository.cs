@@ -10,25 +10,25 @@ public class TableRepository(ApplicationDbContext dbContext) : ITableRepository
     {
         return dbContext.Tables.OrderBy(t => t.CreatedAt).ToList();
     }
-    
+
     public Table? Create(Table table)
     {
         table.CreatedAt = DateTime.Now;
         dbContext.Tables.Add(table);
         return dbContext.SaveChanges() > 0 ? table : null;
     }
-    
+
     public Table? GetById(string id)
     {
         return dbContext.Tables.Find(id);
     }
-    
+
     public bool Update(Table table)
     {
         dbContext.Tables.Update(table);
         return dbContext.SaveChanges() > 0;
     }
-    
+
     public bool Delete(string id)
     {
         Table? table = dbContext.Tables.Find(id);
@@ -36,7 +36,7 @@ public class TableRepository(ApplicationDbContext dbContext) : ITableRepository
         {
             return false;
         }
-        
+
         dbContext.Tables.Remove(table);
         return dbContext.SaveChanges() > 0;
     }

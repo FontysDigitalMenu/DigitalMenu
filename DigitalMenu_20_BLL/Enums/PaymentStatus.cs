@@ -3,12 +3,12 @@
 public enum PaymentStatus
 {
     Pending,
-    
+
     Paid,
-    
+
     Canceled,
-    
+
     Refund,
-    
+
     Expired,
 }

@@ -26,17 +26,17 @@ public class MenuItemController(IMenuItemService menuItemService) : ControllerBa
             };
             menuItemViewModels.Add(menuItemViewModel);
         }
-        
+
         Log.Information("Get menu items {@menuItems}", menuItemViewModels);
-        
+
         return Ok(menuItemViewModels);
     }
-    
+
     [HttpGet("getCategories")]
     public IActionResult GetCategories(int lastId, int amount)
     {
         List<Category> categories = (List<Category>)menuItemService.GetCategoriesWithNextMenuItems(lastId, amount);
-        
+
         List<CategoryViewModel> categoryViewModels = categories.Select(category => new CategoryViewModel
         {
             Id = category.Id,
@@ -49,10 +49,10 @@ public class MenuItemController(IMenuItemService menuItemService) : ControllerBa
                 ImageUrl = menuItem.ImageUrl,
             }).ToList(),
         }).ToList();
-        
+
         return Ok(categoryViewModels);
     }
-    
+
     [HttpGet("{id:int}")]
     public IActionResult GetMenuItem(int id)
     {
@@ -61,7 +61,7 @@ public class MenuItemController(IMenuItemService menuItemService) : ControllerBa
         {
             return NotFound();
         }
-        
+
         return Ok(menuitem);
     }
 }

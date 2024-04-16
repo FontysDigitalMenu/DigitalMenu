@@ -3,6 +3,6 @@
 public class OrderCreatedViewModel
 {
     public string RedirectUrl { get; set; }
-    
+
     public string OrderId { get; set; }
 }

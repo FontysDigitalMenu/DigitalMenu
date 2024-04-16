@@ -17,27 +17,27 @@ public class TableService(ITableRepository tableRepository) : ITableService
     //
     //     return Convert.ToBase64String(qrCodeAsBitmapByte);
     // }
-    
+
     public List<Table> GetAll()
     {
         return tableRepository.GetAll();
     }
-    
+
     public Table? Create(Table table)
     {
         return tableRepository.Create(table);
     }
-    
+
     public Table? GetById(string id)
     {
         return tableRepository.GetById(id);
     }
-    
+
     public bool Update(Table table)
     {
         return tableRepository.Update(table);
     }
-    
+
     public bool Delete(string id)
     {
         return tableRepository.Delete(id);

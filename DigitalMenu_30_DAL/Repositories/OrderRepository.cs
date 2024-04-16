@@ -13,7 +13,7 @@ public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
         dbContext.Orders.Add(order);
         return dbContext.SaveChanges() > 0 ? order : null;
     }
-    
+
     public Order? GetByExternalPaymentId(string id)
     {
         return dbContext.Orders
@@ -21,7 +21,7 @@ public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
             .ThenInclude(omi => omi.MenuItem)
             .FirstOrDefault(o => o.ExternalPaymentId == id);
     }
-    
+
     public Order? GetBy(string id, string deviceId, string tableId)
     {
         return dbContext.Orders
@@ -29,7 +29,7 @@ public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
             .ThenInclude(omi => omi.MenuItem)
             .FirstOrDefault(o => o.Id == id && o.DeviceId == deviceId && o.TableId == tableId);
     }
-    
+
     public List<Order>? GetBy(string deviceId, string tableId)
     {
         return dbContext.Orders
@@ -38,7 +38,7 @@ public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
             .Where(o => o.DeviceId == deviceId && o.TableId == tableId)
             .ToList();
     }
-    
+
     public IEnumerable<Order> GetPaidOrders()
     {
         return dbContext.Orders
@@ -50,13 +50,13 @@ public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
                         o.Status == OrderStatus.Completed)
             .ToList();
     }
-    
+
     public bool Update(Order order)
     {
         dbContext.Orders.Update(order);
         return dbContext.SaveChanges() > 0;
     }
-    
+
     public bool ExistsByDeviceId(string deviceId)
     {
         return dbContext.Orders.Any(o => o.DeviceId == deviceId);

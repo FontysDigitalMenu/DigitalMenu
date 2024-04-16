@@ -10,7 +10,7 @@ public class RoleRepository(UserManager<IdentityUser> userManager, RoleManager<I
     {
         return roleManager.Roles;
     }
-    
+
     public async Task<IdentityUser?> AttachRoleToUser(string roleName, string userId)
     {
         IdentityUser? user = await userManager.FindByIdAsync(userId);
@@ -18,10 +18,10 @@ public class RoleRepository(UserManager<IdentityUser> userManager, RoleManager<I
         {
             await userManager.AddToRoleAsync(user, roleName);
         }
-        
+
         return user;
     }
-    
+
     public async Task<IdentityUser?> RevokeRoleFromUser(string roleName, string userId)
     {
         IdentityUser? user = await userManager.FindByIdAsync(userId);
@@ -29,7 +29,7 @@ public class RoleRepository(UserManager<IdentityUser> userManager, RoleManager<I
         {
             await userManager.RemoveFromRoleAsync(user, roleName);
         }
-        
+
         return user;
     }
 }
