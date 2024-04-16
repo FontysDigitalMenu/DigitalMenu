@@ -273,7 +273,7 @@ public class OrderController(
     [HttpGet("paid")]
     public ActionResult<List<OrderViewModel>> GetPaidOrders()
     {
-        IEnumerable<Order> orders = (IEnumerable<Order>)orderService.GetPaidOrders();
+        IEnumerable<Order> orders = orderService.GetPaidOrders();
 
         List<OrderViewModel> orderViewModels = orders.Select(order => new OrderViewModel
         {
