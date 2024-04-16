@@ -1,6 +1,8 @@
-﻿using DigitalMenu_10_Api.ViewModels;
+﻿using DigitalMenu_10_Api.RequestModels;
+using DigitalMenu_10_Api.ViewModels;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
+using DigitalMenu_20_BLL.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
@@ -84,5 +86,18 @@ public class MenuItemController(IMenuItemService menuItemService) : ControllerBa
         }).ToList();
 
         return Ok(menuItemViewModels);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateMenuItem([FromBody] MenuItemCreateRequest menuItemCreateRequest)
+    {
+        try
+        {
+            return Ok(menuItemCreateRequest);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, "An error occurred while creating the menu item.");
+        }
     }
 }
