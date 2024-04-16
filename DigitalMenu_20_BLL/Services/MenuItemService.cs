@@ -10,7 +10,7 @@ public class MenuItemService(IMenuItemRepository menuItemRepository) : IMenuItem
     {
         IEnumerable<MenuItem> menuItems = menuItemRepository.GetNextMenuItemsWithCategory(lastId, amount);
         IEnumerable<Category> categories = menuItemRepository.GetCategories();
-
+        
         List<Category> categoriesWithMenuItems = categories
             .Select(c => new Category
             {
@@ -20,15 +20,15 @@ public class MenuItemService(IMenuItemRepository menuItemRepository) : IMenuItem
             })
             .Where(c => c.MenuItems.Count != 0)
             .ToList();
-
+        
         return categoriesWithMenuItems;
     }
-
+    
     public IEnumerable<MenuItem> GetNextMenuItems(int lastId, int amount)
     {
         return menuItemRepository.GetNextMenuItems(lastId, amount);
     }
-
+    
     public MenuItem? GetMenuItemById(int id)
     {
         return menuItemRepository.GetMenuItemBy(id);

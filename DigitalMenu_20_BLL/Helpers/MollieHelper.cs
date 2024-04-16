@@ -14,7 +14,7 @@ public class MollieHelper(string apiKey, string redirectUrl, string backendUrl) 
     {
         Log.Information("BackendUrl: {backendUrl}",
             backendUrl.Contains("localhost") ? null : $"{backendUrl}/api/v1/order/webhook");
-
+        
         using PaymentClient paymentClient = new($"{apiKey}", new HttpClient());
         PaymentRequest paymentRequest = new()
         {
@@ -26,10 +26,10 @@ public class MollieHelper(string apiKey, string redirectUrl, string backendUrl) 
         };
         Log.Information("PaymentRequest: {@paymentRequest}", paymentRequest);
         PaymentResponse paymentResponse = await paymentClient.CreatePaymentAsync(paymentRequest);
-
+        
         return paymentResponse;
     }
-
+    
     public async Task<PaymentResponse> GetPayment(string externalPaymentId)
     {
         using PaymentClient paymentClient = new(apiKey);
@@ -43,7 +43,7 @@ public class MollieHelper(string apiKey, string redirectUrl, string backendUrl) 
             {
                 throw new NotFoundException("Payment not found");
             }
-
+            
             throw new MollieApiException(e.Message);
         }
     }

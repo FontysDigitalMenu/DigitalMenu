@@ -6,24 +6,24 @@ namespace DigitalMenu_20_BLL.Interfaces.Services;
 public interface IOrderService
 {
     public int GetTotalAmount(string deviceId, string tableId);
-
+    
     public Order Create(string deviceId, string tableId, string paymentId, string orderId);
-
+    
     public Order? GetByExternalPaymentId(string id);
-
+    
     public List<Order>? GetBy(string deviceId, string tableId);
-
+    
     public Order? GetBy(string id, string deviceId, string tableId);
-
+    
     public IEnumerable<Order> GetPaidOrders();
-
+    
     public IEnumerable<Order> GetPaidFoodOrders();
-
+    
     public IEnumerable<Order> GetPaidDrinksOrders();
-
+    
     public bool Update(Order order);
-
+    
     public Task<PaymentResponse> CreateMolliePayment(int totalAmount, string orderId);
-
+    
     public Task<PaymentResponse> GetPaymentFromMollie(string externalPaymentId);
 }

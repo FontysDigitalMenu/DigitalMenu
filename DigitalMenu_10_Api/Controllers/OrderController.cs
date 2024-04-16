@@ -39,9 +39,9 @@ public class OrderController(
         {
             return NotFound(new { e.Message });
         }
-
+        
         string orderId = Guid.NewGuid().ToString();
-
+        
         PaymentResponse paymentResponse;
         try
         {
@@ -53,14 +53,14 @@ public class OrderController(
             {
                 return Unauthorized(new { Message = "Unauthorized Mollie API-Key" });
             }
-
+            
             return BadRequest(new { Message = "Mollie error" });
         }
         catch (Exception)
         {
             return BadRequest(new { Message = "Payment by Mollie could not be created" });
         }
-
+        
         Order order;
         try
         {
@@ -78,7 +78,7 @@ public class OrderController(
         {
             return BadRequest(new { e.Message });
         }
-
+        
         return CreatedAtAction("Get", new { id = order.Id, deviceId = orderRequest.DeviceId, orderRequest.TableId },
             new OrderCreatedViewModel
             {
@@ -86,7 +86,7 @@ public class OrderController(
                 OrderId = order.Id,
             });
     }
-
+    
     [HttpGet("{deviceId}/{tableId}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
@@ -101,12 +101,12 @@ public class OrderController(
         {
             return NotFound(new { e.Message });
         }
-
+        
         if (orders == null || orders.Count == 0)
         {
             return NotFound(new { Message = "Order not found" });
         }
-
+        
         return Ok(orders.Select(o => new OrderViewModel
         {
             Id = o.Id,
@@ -132,7 +132,7 @@ public class OrderController(
             }).ToList(),
         }));
     }
-
+    
     [HttpGet("{id}/{deviceId}/{tableId}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
@@ -148,12 +148,12 @@ public class OrderController(
         {
             return NotFound(new { e.Message });
         }
-
+        
         if (order == null)
         {
             return NotFound(new { Message = "Order not found" });
         }
-
+        
         return Ok(new OrderViewModel
         {
             Id = order.Id,
@@ -179,7 +179,7 @@ public class OrderController(
             }).ToList(),
         });
     }
-
+    
     [DisableCors]
     [HttpPost("webhook")]
     [ProducesResponseType(200)]
@@ -188,13 +188,13 @@ public class OrderController(
     public async Task<IActionResult> Webhook([FromForm] WebhookRequest request)
     {
         Log.Information("Webhook received {@request}", request);
-
+        
         Order? order = orderService.GetByExternalPaymentId(request.id);
         if (order == null)
         {
             return Ok();
         }
-
+        
         PaymentResponse paymentResponse;
         try
         {
@@ -204,7 +204,7 @@ public class OrderController(
         {
             return BadRequest(new { e.Message });
         }
-
+        
         order.PaymentStatus = paymentResponse.Status switch
         {
             PaymentStatus.Paid => DigitalMenu_20_BLL.Enums.PaymentStatus.Paid,
@@ -216,15 +216,15 @@ public class OrderController(
         {
             return BadRequest(new { Message = "Order could not be updated" });
         }
-
+        
         if (order.PaymentStatus == DigitalMenu_20_BLL.Enums.PaymentStatus.Paid)
         {
             await SendOrderToKitchen(order);
         }
-
+        
         return Ok();
     }
-
+    
     [HttpGet("testWebsocket/{id}")]
     public async Task<IActionResult> TestWebsocket([FromRoute] string id)
     {
@@ -233,12 +233,12 @@ public class OrderController(
         {
             return NotFound();
         }
-
+        
         await SendOrderToKitchen(order);
-
+        
         return Ok();
     }
-
+    
     private async Task SendOrderToKitchen(Order order)
     {
         OrderViewModel orderViewModel = new()
@@ -265,16 +265,16 @@ public class OrderController(
                     }).ToList(),
             }).ToList(),
         };
-
+        
         await hubContext.Clients.All.ReceiveOrder(orderViewModel);
     }
-
+    
     [Authorize(Roles = "Admin, Employee")]
     [HttpGet("paid/{type}")]
     public ActionResult<List<OrderViewModel>> GetPaidOrders(string type)
     {
         IEnumerable<Order> orders;
-
+        
         switch (type)
         {
             case "food":
@@ -287,7 +287,7 @@ public class OrderController(
                 orders = orderService.GetPaidOrders();
                 break;
         }
-
+        
         List<OrderViewModel> orderViewModels = orders.Select(order => new OrderViewModel
         {
             Id = order.Id,
@@ -312,7 +312,7 @@ public class OrderController(
                     }).ToList(),
             }).ToList(),
         }).ToList();
-
+        
         return Ok(orderViewModels);
     }
 }

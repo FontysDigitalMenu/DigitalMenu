@@ -18,7 +18,7 @@ public class TableController(ITableService tableService) : ControllerBase
     {
         return Ok(tableService.GetAll().Select(t => new TableViewModel { Id = t.Id, Name = t.Name }));
     }
-
+    
     [HttpGet("{id}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
@@ -29,31 +29,31 @@ public class TableController(ITableService tableService) : ControllerBase
         {
             return NotFound();
         }
-
+        
         TableViewModel tableViewModel = new() { Id = table.Id, Name = table.Name };
-
+        
         return Ok(tableViewModel);
     }
-
+    
     [HttpPost]
     [ProducesResponseType(201)]
     [ProducesResponseType(400)]
     public IActionResult Post([FromBody] TableRequest tableRequest)
     {
         string id = Guid.NewGuid().ToString();
-
+        
         Table table = new() { Id = id, Name = tableRequest.Name };
-
+        
         Table? createdTable = tableService.Create(table);
         if (createdTable == null)
         {
             return BadRequest(new { Message = "Table could not be created" });
         }
-
+        
         return CreatedAtAction("Get", new { id = createdTable.Id },
             new TableViewModel { Id = createdTable.Id, Name = createdTable.Name });
     }
-
+    
     [HttpPut("{id}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
@@ -65,17 +65,17 @@ public class TableController(ITableService tableService) : ControllerBase
         {
             return NotFound();
         }
-
+        
         table.Name = tableRequest.Name;
-
+        
         if (!tableService.Update(table))
         {
             return BadRequest(new { Message = "Table could not be updated" });
         }
-
+        
         return NoContent();
     }
-
+    
     [HttpDelete("{id}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
@@ -86,12 +86,12 @@ public class TableController(ITableService tableService) : ControllerBase
         {
             return NotFound();
         }
-
+        
         if (!tableService.Delete(id))
         {
             return BadRequest(new { Message = "Table could not be deleted" });
         }
-
+        
         return NoContent();
     }
 }

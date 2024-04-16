@@ -10,58 +10,58 @@ public class CartItemService(ICartItemRepository cartItemRepository) : ICartItem
     {
         return cartItemRepository.GetByDeviceId(deviceId);
     }
-
+    
     public CartItem? GetByMenuItemIdAndDeviceId(int menuItemId, string deviceId)
     {
         return cartItemRepository.GetByMenuItemIdAndDeviceId(menuItemId, deviceId);
     }
-
+    
     public List<CartItem?> GetCartItemsByMenuItemIdAndDeviceId(int menuItemId, string deviceId)
     {
         return cartItemRepository.GetCartItemsByMenuItemIdAndDeviceId(menuItemId, deviceId);
     }
-
+    
     public bool Create(CartItem cartItem)
     {
         return cartItemRepository.Create(cartItem);
     }
-
+    
     public bool ExistsByDeviceId(string deviceId)
     {
         return cartItemRepository.ExistsByDeviceId(deviceId) && !string.IsNullOrWhiteSpace(deviceId) &&
                deviceId != "null";
     }
-
+    
     public bool Delete(CartItem cartItem)
     {
         return cartItemRepository.Delete(cartItem);
     }
-
+    
     public bool Update(CartItem cartItem)
     {
         return cartItemRepository.Update(cartItem);
     }
-
+    
     public bool AddExcludedIngredientToCartItem(ExcludedIngredientCartItem excludedIngredientCartItem)
     {
         return cartItemRepository.AddExcludedIngredientToCartItem(excludedIngredientCartItem);
     }
-
+    
     public List<Ingredient> GetExcludedIngredientsByCartItemId(int cartItemId)
     {
         return cartItemRepository.GetExcludedIngredientsByCartItemId(cartItemId);
     }
-
+    
     public List<Ingredient> GetExcludedIngredientsByOrderMenuItemId(int orderMenuItemId)
     {
         return cartItemRepository.GetExcludedIngredientsByOrderMenuItemId(orderMenuItemId);
     }
-
+    
     public CartItem? GetByCartItemIdAndDeviceId(int cartItemId, string deviceId)
     {
         return cartItemRepository.GetByCartItemIdAndDeviceId(cartItemId, deviceId);
     }
-
+    
     public bool DeleteExcludedIngredientsFromCartItem(int cartItemId)
     {
         return cartItemRepository.DeleteExcludedIngredientsFromCartItem(cartItemId);

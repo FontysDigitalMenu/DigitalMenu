@@ -13,7 +13,7 @@ public class SeedData(ApplicationDbContext dbContext)
         await dbContext.Database.EnsureDeletedAsync();
         await dbContext.Database.MigrateAsync();
         dbContext.ChangeTracker.Clear();
-
+        
         try
         {
             await SeedUsers();
@@ -25,7 +25,7 @@ public class SeedData(ApplicationDbContext dbContext)
             await SeedTables();
             await SeedCartItems();
             await SeedOrders();
-
+            
             await dbContext.SaveChangesAsync();
         }
         catch (MySqlException ex)
@@ -33,7 +33,7 @@ public class SeedData(ApplicationDbContext dbContext)
             Console.WriteLine(ex.Message);
         }
     }
-
+    
     private async Task SeedOrders()
     {
         dbContext.Orders.AddRange(
@@ -50,7 +50,7 @@ public class SeedData(ApplicationDbContext dbContext)
             }
         );
         await dbContext.SaveChangesAsync();
-
+        
         dbContext.OrderMenuItems.AddRange(
             new OrderMenuItem
             {
@@ -79,7 +79,7 @@ public class SeedData(ApplicationDbContext dbContext)
         );
         await dbContext.SaveChangesAsync();
     }
-
+    
     private async Task SeedCartItems()
     {
         dbContext.CartItems.AddRange(
@@ -160,7 +160,7 @@ public class SeedData(ApplicationDbContext dbContext)
         );
         await dbContext.SaveChangesAsync();
     }
-
+    
     private async Task SeedUsers()
     {
         dbContext.Users.AddRange(
@@ -176,7 +176,7 @@ public class SeedData(ApplicationDbContext dbContext)
         );
         await dbContext.SaveChangesAsync();
     }
-
+    
     private async Task SeedRoles()
     {
         dbContext.Roles.AddRange(
@@ -190,7 +190,7 @@ public class SeedData(ApplicationDbContext dbContext)
             }
         );
         await dbContext.SaveChangesAsync();
-
+        
         dbContext.UserRoles.Add(new IdentityUserRole<string>
         {
             UserId = "0206A018-5AC6-492D-AB99-10105193D384",
@@ -198,7 +198,7 @@ public class SeedData(ApplicationDbContext dbContext)
         });
         await dbContext.SaveChangesAsync();
     }
-
+    
     private async Task SeedMenuItems()
     {
         dbContext.MenuItems.AddRange(
@@ -294,7 +294,7 @@ public class SeedData(ApplicationDbContext dbContext)
         );
         await dbContext.SaveChangesAsync();
     }
-
+    
     private async Task SeedIngredients()
     {
         dbContext.Ingredients.AddRange(
@@ -328,7 +328,7 @@ public class SeedData(ApplicationDbContext dbContext)
         );
         await dbContext.SaveChangesAsync();
     }
-
+    
     private async Task SeedIngredientsToMenuItem()
     {
         dbContext.MenuItemIngredients.AddRange(
@@ -364,7 +364,7 @@ public class SeedData(ApplicationDbContext dbContext)
         );
         await dbContext.SaveChangesAsync();
     }
-
+    
     private async Task SeedCategories()
     {
         dbContext.Categories.AddRange(
@@ -373,22 +373,22 @@ public class SeedData(ApplicationDbContext dbContext)
             new Category { Id = 3, Name = "Drinks" }
         );
         await dbContext.SaveChangesAsync();
-
+        
         List<int> ids1 = [2, 3];
         List<MenuItem> menuItems1 = dbContext.MenuItems.Where(mi => ids1.Contains(mi.Id)).ToList();
         dbContext.Categories.First(c => c.Id == 1).MenuItems = [..menuItems1];
-
+        
         List<int> ids2 = [1, 4];
         List<MenuItem> menuItems2 = dbContext.MenuItems.Where(mi => ids2.Contains(mi.Id)).ToList();
         dbContext.Categories.First(c => c.Id == 2).MenuItems = [..menuItems2];
-
+        
         List<int> ids3 = [5, 6, 7, 8, 9, 10];
         List<MenuItem> menuItems3 = dbContext.MenuItems.Where(mi => ids3.Contains(mi.Id)).ToList();
         dbContext.Categories.First(c => c.Id == 3).MenuItems = [..menuItems3];
-
+        
         await dbContext.SaveChangesAsync();
     }
-
+    
     private async Task SeedTables()
     {
         dbContext.Tables.AddRange(

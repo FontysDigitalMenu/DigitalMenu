@@ -15,7 +15,7 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
             .Take(amount)
             .ToList();
     }
-
+    
     public IEnumerable<MenuItem> GetNextMenuItemsWithCategory(int lastId, int amount)
     {
         return dbContext.MenuItems
@@ -25,13 +25,13 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
             .Take(amount)
             .ToList();
     }
-
+    
     public IEnumerable<Category> GetCategories()
     {
         return dbContext.Categories
             .ToList();
     }
-
+    
     public MenuItem? GetMenuItemBy(int id)
     {
         var menuItemWithIngredients = dbContext.MenuItemIngredients
@@ -42,7 +42,7 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
                 mii.MenuItem, mii.Ingredient,
             })
             .ToList();
-
+        
         if (menuItemWithIngredients.Any())
         {
             MenuItem firstMenuItem = menuItemWithIngredients.First().MenuItem;
@@ -55,10 +55,10 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
                 Price = firstMenuItem.Price,
                 Ingredients = menuItemWithIngredients.Select(m => m.Ingredient).ToList(),
             };
-
+            
             return menuItem;
         }
-
+        
         return dbContext.MenuItems.Find(id);
     }
 }

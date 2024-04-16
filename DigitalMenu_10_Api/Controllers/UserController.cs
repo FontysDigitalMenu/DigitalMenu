@@ -17,7 +17,7 @@ public class UserController : Controller
         {
             return null;
         }
-
+        
         return User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(r => r.Value).ToList();
     }
 }
