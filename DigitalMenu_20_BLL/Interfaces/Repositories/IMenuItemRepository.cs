@@ -11,4 +11,6 @@ public interface IMenuItemRepository
     public IEnumerable<Category> GetCategories();
 
     public MenuItem? GetMenuItemBy(int id);
+
+    public Task<List<MenuItem>> GetMenuItems();
 }

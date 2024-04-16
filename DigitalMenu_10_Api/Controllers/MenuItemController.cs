@@ -1,6 +1,7 @@
 ﻿using DigitalMenu_10_Api.ViewModels;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 
@@ -63,5 +64,25 @@ public class MenuItemController(IMenuItemService menuItemService) : ControllerBa
         }
 
         return Ok(menuitem);
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpGet("getMenuItems")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(401)]
+    [ProducesResponseType(403)]
+    public async Task<ActionResult> GetMenuItems()
+    {
+        List<MenuItem> menuItems = await menuItemService.GetMenuItems();
+
+        List<MenuItemViewModel> menuItemViewModels = menuItems.Select(menuItem => new MenuItemViewModel
+        {
+            Id = menuItem.Id,
+            Name = menuItem.Name,
+            Price = menuItem.Price,
+            ImageUrl = menuItem.ImageUrl,
+        }).ToList();
+
+        return Ok(menuItemViewModels);
     }
 }

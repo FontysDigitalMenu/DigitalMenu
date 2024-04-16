@@ -33,4 +33,9 @@ public class MenuItemService(IMenuItemRepository menuItemRepository) : IMenuItem
     {
         return menuItemRepository.GetMenuItemBy(id);
     }
+
+    public async Task<List<MenuItem>> GetMenuItems()
+    {
+        return await menuItemRepository.GetMenuItems();
+    }
 }

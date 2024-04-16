@@ -5,4 +5,6 @@ namespace DigitalMenu_20_BLL.Interfaces.Services;
 public interface IIngredientService
 {
     Task<Ingredient?> GetIngredientByNameAsync(string name);
+
+    Task<List<Ingredient>> GetIngredients();
 }
