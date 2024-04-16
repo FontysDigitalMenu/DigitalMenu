@@ -9,4 +9,6 @@ public interface IMenuItemService
     public IEnumerable<Category> GetCategoriesWithNextMenuItems(int lastId, int amount);
 
     public MenuItem? GetMenuItemById(int id);
+    
+    public bool Delete(int id);
 }

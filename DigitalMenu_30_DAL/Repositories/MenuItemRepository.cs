@@ -11,6 +11,7 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
     {
         return dbContext.MenuItems
             .OrderBy(m => m.Id)
+            .Where(m => m.IsActive)
             .Where(m => m.Id > lastId)
             .Take(amount)
             .ToList();
@@ -21,6 +22,7 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
         return dbContext.MenuItems
             .Include(m => m.Categories)
             .OrderBy(m => m.Id)
+            .Where(m => m.IsActive)
             .Where(m => m.Id > lastId)
             .Take(amount)
             .ToList();
@@ -35,6 +37,7 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
     public MenuItem? GetMenuItemBy(int id)
     {
         var menuItemWithIngredients = dbContext.MenuItemIngredients
+            .Where(mii => mii.MenuItem.IsActive)
             .Where(mii => mii.MenuItemId == id)
             .Include(mii => mii.Ingredient)
             .Select(mii => new
@@ -60,5 +63,13 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
         }
 
         return dbContext.MenuItems.Find(id);
+    }
+    
+    public bool Delete(int id)
+    {
+        MenuItem entityToDelete = dbContext.MenuItems.Find(id)!;
+        entityToDelete.IsActive = false;
+        dbContext.SaveChanges();
+        return true;
     }
 }

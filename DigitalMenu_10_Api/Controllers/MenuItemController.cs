@@ -1,4 +1,5 @@
 ﻿using DigitalMenu_10_Api.ViewModels;
+using DigitalMenu_20_BLL.Exceptions;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -63,5 +64,19 @@ public class MenuItemController(IMenuItemService menuItemService) : ControllerBa
         }
 
         return Ok(menuitem);
+    }
+    
+    [HttpDelete("{id:int}")]
+    public IActionResult DeleteMenuItem(int id)
+    {
+        try
+        {
+            bool delete = menuItemService.DeleteMenuItem(id);
+            return Ok(delete);
+        }
+        catch (NotFoundException)
+        {
+            return NotFound();
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using DigitalMenu_20_BLL.Interfaces.Repositories;
+﻿using DigitalMenu_20_BLL.Exceptions;
+using DigitalMenu_20_BLL.Interfaces.Repositories;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
 
@@ -32,5 +33,15 @@ public class MenuItemService(IMenuItemRepository menuItemRepository) : IMenuItem
     public MenuItem? GetMenuItemById(int id)
     {
         return menuItemRepository.GetMenuItemBy(id);
+    }
+    
+    public bool DeleteMenuItem(int id)
+    {
+        MenuItem? existingMenuItem = GetMenuItemById(id);
+        if (existingMenuItem == null)
+        {
+            throw new NotFoundException("MenuItem does not exist");
+        }
+        return menuItemRepository.DeleteMenuItem(id);
     }
 }
