@@ -270,10 +270,23 @@ public class OrderController(
     }
 
     [Authorize(Roles = "Admin, Employee")]
-    [HttpGet("paid")]
-    public ActionResult<List<OrderViewModel>> GetPaidOrders()
+    [HttpGet("paid/{type}")]
+    public ActionResult<List<OrderViewModel>> GetPaidOrders(string type)
     {
-        IEnumerable<Order> orders = orderService.GetPaidOrders();
+        IEnumerable<Order> orders;
+
+        switch (type)
+        {
+            case "food":
+                orders = orderService.GetPaidFoodOrders();
+                break;
+            case "drinks":
+                orders = orderService.GetPaidDrinksOrders();
+                break;
+            default:
+                orders = orderService.GetPaidOrders();
+                break;
+        }
 
         List<OrderViewModel> orderViewModels = orders.Select(order => new OrderViewModel
         {
