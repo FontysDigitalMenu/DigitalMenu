@@ -277,40 +277,6 @@ public class OrderServiceTests
     }
 
     [Test]
-    public void Create_ShouldThrowDatabaseUpdateException()
-    {
-        // Act
-        const string deviceId = "77C10784-D645-406F-869D-C653B19948F5";
-        const string tableId = "11CCAB02-0C97-41F7-8F35-18CFD4BA4672";
-        const string paymentId = "F91178CE-FFCE-40ED-955F-3471BC6A0586";
-        const string orderId = "F91178CE-FFCE-40ED-955F-3471BC6A0586";
-        Order order = new()
-        {
-            Id = orderId,
-            DeviceId = deviceId,
-            TableId = tableId,
-            TotalAmount = 1259,
-        };
-        _cartItemRepositoryMock.Setup(x => x.ExistsByDeviceId(deviceId))
-            .Returns(true);
-        _tableRepositoryMock.Setup(x => x.GetById(tableId))
-            .Returns(new Table());
-        _cartItemRepositoryMock.Setup(x => x.GetByDeviceId(deviceId))
-            .Returns([
-                new CartItem { MenuItem = new MenuItem { Price = 500 }, Quantity = 2 },
-                new CartItem { MenuItem = new MenuItem { Price = 259 }, Quantity = 1 },
-            ]);
-        _orderRepositoryMock.Setup(x => x.Create(It.IsAny<Order>()))
-            .Returns(order);
-        _cartItemRepositoryMock.Setup(x => x.ClearByDeviceId(deviceId))
-            .Returns(false);
-
-        // Arrange
-        // Assert
-        Assert.Throws<DatabaseUpdateException>(() => _orderService.Create(deviceId, tableId, paymentId, orderId));
-    }
-
-    [Test]
     public void GetBy_ShouldReturnOrder()
     {
         // Arrange

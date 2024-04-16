@@ -47,6 +47,28 @@ public class SeedData(ApplicationDbContext dbContext)
                 ExternalPaymentId = "tr_294TYYppc4",
                 OrderDate = DateTime.Parse("2024-04-09 14:54:02"),
                 OrderNumber = "092404jnWK",
+            },
+            new Order
+            {
+                Id = "6befb25e-0207-4a54-82e8-2d29b8b616c0",
+                DeviceId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
+                TableId = "69AC2F65-5DE9-40D4-B930-624CA40D3F13",
+                TotalAmount = 2600,
+                PaymentStatus = PaymentStatus.Pending,
+                ExternalPaymentId = "tr_XvY5pWzhre",
+                OrderDate = DateTime.Parse("2024-04-16 14:54:02"),
+                OrderNumber = "162404QKAK",
+            },
+            new Order
+            {
+                Id = "897dbd82-dd96-476e-83a4-5d9ca59fc8d7",
+                DeviceId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
+                TableId = "69AC2F65-5DE9-40D4-B930-624CA40D3F13",
+                TotalAmount = 700,
+                PaymentStatus = PaymentStatus.Canceled,
+                ExternalPaymentId = "tr_cxyPxPWWqC",
+                OrderDate = DateTime.Parse("2024-04-16 14:55:02"),
+                OrderNumber = "162404gzjE",
             }
         );
         await dbContext.SaveChangesAsync();
@@ -74,6 +96,30 @@ public class SeedData(ApplicationDbContext dbContext)
             {
                 OrderId = "12d7eaff-5f3c-456d-92c4-7de2220b2d05",
                 MenuItemId = 4,
+                Quantity = 1,
+            },
+            new OrderMenuItem
+            {
+                OrderId = "6befb25e-0207-4a54-82e8-2d29b8b616c0",
+                MenuItemId = 1,
+                Quantity = 2,
+            },
+            new OrderMenuItem
+            {
+                OrderId = "6befb25e-0207-4a54-82e8-2d29b8b616c0",
+                MenuItemId = 5,
+                Quantity = 3,
+            },
+            new OrderMenuItem
+            {
+                OrderId = "897dbd82-dd96-476e-83a4-5d9ca59fc8d7",
+                MenuItemId = 4,
+                Quantity = 1,
+            },
+            new OrderMenuItem
+            {
+                OrderId = "897dbd82-dd96-476e-83a4-5d9ca59fc8d7",
+                MenuItemId = 8,
                 Quantity = 1,
             }
         );

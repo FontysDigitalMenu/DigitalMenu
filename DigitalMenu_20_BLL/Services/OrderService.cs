@@ -89,11 +89,6 @@ public class OrderService(
             throw new DatabaseCreationException("Order could not be created");
         }
 
-        if (!cartItemRepository.ClearByDeviceId(deviceId))
-        {
-            throw new DatabaseUpdateException("CartItems could not be cleared");
-        }
-
         return createdOrder;
     }
 
@@ -145,6 +140,14 @@ public class OrderService(
     public async Task<PaymentResponse> GetPaymentFromMollie(string externalPaymentId)
     {
         return await mollieHelper.GetPayment(externalPaymentId);
+    }
+
+    public void ProcessPaidOrder(Order order)
+    {
+        if (!cartItemRepository.ClearByDeviceId(order.DeviceId))
+        {
+            throw new DatabaseUpdateException("CartItems could not be cleared");
+        }
     }
 
     public IEnumerable<Order> GetPaidOrders()

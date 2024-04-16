@@ -219,6 +219,7 @@ public class OrderController(
 
         if (order.PaymentStatus == DigitalMenu_20_BLL.Enums.PaymentStatus.Paid)
         {
+            orderService.ProcessPaidOrder(order);
             await SendOrderToKitchen(order);
         }
 
@@ -234,6 +235,7 @@ public class OrderController(
             return NotFound();
         }
 
+        orderService.ProcessPaidOrder(order);
         await SendOrderToKitchen(order);
 
         return Ok();

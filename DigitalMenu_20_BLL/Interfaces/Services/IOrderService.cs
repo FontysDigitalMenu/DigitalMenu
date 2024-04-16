@@ -22,4 +22,6 @@ public interface IOrderService
     public Task<PaymentResponse> CreateMolliePayment(int totalAmount, string orderId);
 
     public Task<PaymentResponse> GetPaymentFromMollie(string externalPaymentId);
+
+    public void ProcessPaidOrder(Order order);
 }
