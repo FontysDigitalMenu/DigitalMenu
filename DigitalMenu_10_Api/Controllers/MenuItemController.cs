@@ -71,7 +71,7 @@ public class MenuItemController(IMenuItemService menuItemService) : ControllerBa
     {
         try
         {
-            bool delete = menuItemService.DeleteMenuItem(id);
+            bool delete = menuItemService.Delete(id);
             return Ok(delete);
         }
         catch (NotFoundException)

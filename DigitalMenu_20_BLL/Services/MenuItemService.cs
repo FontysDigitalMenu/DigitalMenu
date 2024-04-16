@@ -35,13 +35,13 @@ public class MenuItemService(IMenuItemRepository menuItemRepository) : IMenuItem
         return menuItemRepository.GetMenuItemBy(id);
     }
     
-    public bool DeleteMenuItem(int id)
+    public bool Delete(int id)
     {
         MenuItem? existingMenuItem = GetMenuItemById(id);
         if (existingMenuItem == null)
         {
             throw new NotFoundException("MenuItem does not exist");
         }
-        return menuItemRepository.DeleteMenuItem(id);
+        return menuItemRepository.Delete(id);
     }
 }
