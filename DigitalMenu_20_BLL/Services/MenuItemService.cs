@@ -47,6 +47,7 @@ public class MenuItemService(IMenuItemRepository menuItemRepository) : IMenuItem
         {
             throw new NotFoundException("MenuItem does not exist");
         }
+
         return menuItemRepository.Delete(id);
     }
 }

@@ -15,6 +15,6 @@ public class MenuItem
     public List<Category> Categories { get; set; }
 
     public List<Ingredient> Ingredients { get; set; } = [];
-    
+
     public bool IsActive { get; set; } = true;
 }

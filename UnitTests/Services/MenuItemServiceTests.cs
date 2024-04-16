@@ -22,7 +22,7 @@ public class MenuItemServiceTests
     public void Delete_ReturnsTrue()
     {
         // Arrange
-        MenuItem menuItem = new MenuItem
+        MenuItem menuItem = new()
         {
             Id = 2,
             Name = "Pizza",
@@ -41,14 +41,14 @@ public class MenuItemServiceTests
         // Assert
         Assert.IsTrue(result);
     }
-    
+
     [Test]
     public void Delete_ThrowsNotFoundException()
     {
         // Arrange
         int id = 2234234;
         _mockMenuItemRepository.Setup(repo => repo.GetMenuItemBy(id)).Returns(null as MenuItem);
-        
+
         // Act
         void Delete()
         {

@@ -86,7 +86,7 @@ public class MenuItemController(IMenuItemService menuItemService) : ControllerBa
 
         return Ok(menuItemViewModels);
     }
-    
+
     [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {

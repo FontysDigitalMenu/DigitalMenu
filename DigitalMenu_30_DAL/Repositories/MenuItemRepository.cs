@@ -64,6 +64,7 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
 
         return dbContext.MenuItems.Find(id);
     }
+
     public async Task<List<MenuItem>> GetMenuItems()
     {
         return await dbContext.MenuItems
