@@ -30,6 +30,11 @@ public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
             .FirstOrDefault(o => o.Id == id && o.DeviceId == deviceId && o.TableId == tableId);
     }
 
+    public Order? GetBy(string id)
+    {
+        return dbContext.Orders.FirstOrDefault(o => o.Id == id);
+    }
+
     public List<Order>? GetBy(string deviceId, string tableId)
     {
         return dbContext.Orders

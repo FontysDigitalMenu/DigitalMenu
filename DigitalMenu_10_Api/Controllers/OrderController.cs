@@ -1,6 +1,7 @@
 ﻿using DigitalMenu_10_Api.Hub;
 using DigitalMenu_10_Api.RequestModels;
 using DigitalMenu_10_Api.ViewModels;
+using DigitalMenu_20_BLL.Enums;
 using DigitalMenu_20_BLL.Exceptions;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
@@ -9,9 +10,9 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Mollie.Api.Client;
-using Mollie.Api.Models.Payment;
 using Mollie.Api.Models.Payment.Response;
 using Serilog;
+using PaymentStatus = Mollie.Api.Models.Payment.PaymentStatus;
 
 namespace DigitalMenu_10_Api.Controllers;
 
@@ -303,5 +304,43 @@ public class OrderController(
         }).ToList();
 
         return Ok(orderViewModels);
+    }
+
+    [Authorize(Roles = "Admin, Employee")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    [HttpPut("{id}")]
+    public ActionResult Put([FromRoute] string id, [FromBody] OrderUpdateRequest orderRequest)
+    {
+        Order? order = orderService.GetBy(id);
+        if (order == null)
+        {
+            return NotFound(new { Message = "Order not found" });
+        }
+
+        switch (orderRequest.OrderStatus)
+        {
+            case "Pending":
+                order.Status = OrderStatus.Pending;
+                break;
+            case "Processing":
+                order.Status = OrderStatus.Processing;
+                break;
+            case "Done":
+                order.Status = OrderStatus.Done;
+                break;
+            case "Completed":
+                order.Status = OrderStatus.Completed;
+                break;
+            default:
+                return BadRequest(new { Message = "Invalid OrderStatus" });
+        }
+
+        if (!orderService.Update(order))
+        {
+            return BadRequest(new { Message = "Order could not be updated" });
+        }
+
+        return NoContent();
     }
 }
