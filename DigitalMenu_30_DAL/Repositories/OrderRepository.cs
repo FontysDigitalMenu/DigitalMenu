@@ -32,7 +32,10 @@ public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
 
     public Order? GetBy(string id)
     {
-        return dbContext.Orders.FirstOrDefault(o => o.Id == id);
+        return dbContext.Orders
+            .Include(o => o.OrderMenuItems)
+            .ThenInclude(omi => omi.MenuItem)
+            .FirstOrDefault(o => o.Id == id);
     }
 
     public List<Order>? GetBy(string deviceId, string tableId)

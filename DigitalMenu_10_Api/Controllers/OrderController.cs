@@ -108,30 +108,7 @@ public class OrderController(
             return NotFound(new { Message = "Order not found" });
         }
 
-        return Ok(orders.Select(o => new OrderViewModel
-        {
-            Id = o.Id,
-            PaymentStatus = o.PaymentStatus.ToString(),
-            Status = o.Status.ToString(),
-            TotalAmount = o.TotalAmount,
-            OrderDate = o.OrderDate,
-            OrderNumber = o.OrderNumber,
-            MenuItems = o.OrderMenuItems.Select(omi => new MenuItemViewModel
-            {
-                Id = omi.MenuItem.Id,
-                Name = omi.MenuItem.Name,
-                Price = omi.MenuItem.Price,
-                ImageUrl = omi.MenuItem.ImageUrl,
-                Quantity = omi.Quantity,
-                Note = omi.Note,
-                ExcludedIngredients = cartItemService.GetExcludedIngredientsByOrderMenuItemId(omi.Id).Select(i =>
-                    new IngredientViewModel
-                    {
-                        Id = i.Id,
-                        Name = i.Name,
-                    }).ToList(),
-            }).ToList(),
-        }));
+        return Ok(orders.Select(o => OrderViewModel.FromOrder(o, cartItemService)));
     }
 
     [HttpGet("{id}/{deviceId}/{tableId}")]
@@ -155,30 +132,7 @@ public class OrderController(
             return NotFound(new { Message = "Order not found" });
         }
 
-        return Ok(new OrderViewModel
-        {
-            Id = order.Id,
-            PaymentStatus = order.PaymentStatus.ToString(),
-            Status = order.Status.ToString(),
-            TotalAmount = order.TotalAmount,
-            OrderDate = order.OrderDate,
-            OrderNumber = order.OrderNumber,
-            MenuItems = order.OrderMenuItems.Select(omi => new MenuItemViewModel
-            {
-                Id = omi.MenuItem.Id,
-                Name = omi.MenuItem.Name,
-                Price = omi.MenuItem.Price,
-                ImageUrl = omi.MenuItem.ImageUrl,
-                Quantity = omi.Quantity,
-                Note = omi.Note,
-                ExcludedIngredients = cartItemService.GetExcludedIngredientsByOrderMenuItemId(omi.Id).Select(i =>
-                    new IngredientViewModel
-                    {
-                        Id = i.Id,
-                        Name = i.Name,
-                    }).ToList(),
-            }).ToList(),
-        });
+        return Ok(OrderViewModel.FromOrder(order, cartItemService));
     }
 
     [DisableCors]
@@ -244,31 +198,7 @@ public class OrderController(
 
     private async Task SendOrderToKitchen(Order order)
     {
-        OrderViewModel orderViewModel = new()
-        {
-            Id = order.Id,
-            PaymentStatus = order.PaymentStatus.ToString(),
-            Status = order.Status.ToString(),
-            TotalAmount = order.TotalAmount,
-            OrderDate = order.OrderDate,
-            OrderNumber = order.OrderNumber,
-            MenuItems = order.OrderMenuItems.Select(omi => new MenuItemViewModel
-            {
-                Id = omi.MenuItem.Id,
-                Name = omi.MenuItem.Name,
-                Price = omi.MenuItem.Price,
-                ImageUrl = omi.MenuItem.ImageUrl,
-                Quantity = omi.Quantity,
-                Note = omi.Note,
-                ExcludedIngredients = cartItemService.GetExcludedIngredientsByOrderMenuItemId(omi.Id).Select(i =>
-                    new IngredientViewModel
-                    {
-                        Id = i.Id,
-                        Name = i.Name,
-                    }).ToList(),
-            }).ToList(),
-        };
-
+        OrderViewModel orderViewModel = OrderViewModel.FromOrder(order, cartItemService);
         await hubContext.Clients.All.ReceiveOrder(orderViewModel);
     }
 
@@ -278,30 +208,8 @@ public class OrderController(
     {
         List<Order> orders = (List<Order>)orderService.GetPaidOrders();
 
-        List<OrderViewModel> orderViewModels = orders.Select(order => new OrderViewModel
-        {
-            Id = order.Id,
-            PaymentStatus = order.PaymentStatus.ToString(),
-            Status = order.Status.ToString(),
-            TotalAmount = order.TotalAmount,
-            OrderDate = order.OrderDate,
-            OrderNumber = order.OrderNumber,
-            MenuItems = order.OrderMenuItems.Select(omi => new MenuItemViewModel
-            {
-                Id = omi.MenuItem.Id,
-                Name = omi.MenuItem.Name,
-                Price = omi.MenuItem.Price,
-                ImageUrl = omi.MenuItem.ImageUrl,
-                Quantity = omi.Quantity,
-                Note = omi.Note,
-                ExcludedIngredients = cartItemService.GetExcludedIngredientsByOrderMenuItemId(omi.Id).Select(i =>
-                    new IngredientViewModel
-                    {
-                        Id = i.Id,
-                        Name = i.Name,
-                    }).ToList(),
-            }).ToList(),
-        }).ToList();
+        List<OrderViewModel> orderViewModels =
+            orders.Select(o => OrderViewModel.FromOrder(o, cartItemService)).ToList();
 
         return Ok(orderViewModels);
     }
@@ -340,6 +248,9 @@ public class OrderController(
         {
             return BadRequest(new { Message = "Order could not be updated" });
         }
+
+        OrderViewModel orderViewModel = OrderViewModel.FromOrder(order, cartItemService);
+        hubContext.Clients.Group($"order-{order.Id}").ReceiveOrderUpdate(orderViewModel);
 
         return NoContent();
     }
