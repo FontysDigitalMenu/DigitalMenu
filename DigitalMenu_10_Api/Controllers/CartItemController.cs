@@ -6,64 +6,113 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DigitalMenu_10_Api.Controllers;
 
-[Route("api/v1/[controller]")]
+[Route("api/v1/cartItem")]
 [ApiController]
-public class CartItemController : ControllerBase
+public class CartItemController(
+    ICartItemService cartItemService,
+    IMenuItemService menuItemService,
+    IIngredientService ingredientService) : ControllerBase
 {
-    private readonly ICartItemService _cartItemService;
-
-    private readonly IMenuItemService _menuItemService;
-
-    public CartItemController(ICartItemService cartItemService, IMenuItemService menuItemService)
-    {
-        _cartItemService = cartItemService;
-        _menuItemService = menuItemService;
-    }
-
     [HttpPost]
-    public IActionResult AddToCart([FromBody] CartRequest cartRequest)
+    public async Task<ActionResult> AddToCart([FromBody] CartRequest cartRequest)
     {
-        CartItem? cartItem = _cartItemService.GetByMenuItemIdAndDeviceId(cartRequest.MenuItemId, cartRequest.DeviceId);
+        List<CartItem?> cartItems =
+            cartItemService.GetCartItemsByMenuItemIdAndDeviceId(cartRequest.MenuItemId, cartRequest.DeviceId);
 
-        if (cartItem != null)
+        foreach (CartItem? cartItem in cartItems)
         {
-            cartItem.Quantity++;
-            //TODO: Overwrite or append note?
-            // cartItem.Note = cartRequest.Note;
+            List<Ingredient> existingExcludedIngredients =
+                cartItemService.GetExcludedIngredientsByCartItemId(cartItem.Id);
+            List<string> existingExcludedIngredientNames = existingExcludedIngredients.Select(e => e.Name).ToList();
+            bool sameExcludedIngredients = existingExcludedIngredientNames.OrderBy(n => n)
+                .SequenceEqual(cartRequest.ExcludedIngredients.OrderBy(n => n));
 
-            _cartItemService.Update(cartItem);
-        }
-        else
-        {
-            if (_menuItemService.GetMenuItemById(cartRequest.MenuItemId) == null)
+            if (sameExcludedIngredients && cartItem.Note == cartRequest.Note)
             {
-                return NotFound();
+                cartItem.Quantity++;
+                cartItemService.Update(cartItem);
+
+                return NoContent();
             }
+        }
 
-            CartItem newCartItem = new()
+        if (menuItemService.GetMenuItemById(cartRequest.MenuItemId) == null)
+        {
+            return NotFound();
+        }
+
+        CartItem newCartItem = new()
+        {
+            Note = cartRequest.Note,
+            Quantity = 1,
+            DeviceId = cartRequest.DeviceId,
+            MenuItemId = cartRequest.MenuItemId,
+        };
+
+        cartItemService.Create(newCartItem);
+
+        if (cartRequest.ExcludedIngredients != null && cartRequest.ExcludedIngredients.Count != 0)
+        {
+            foreach (string excludedIngredientName in cartRequest.ExcludedIngredients)
             {
-                Note = cartRequest.Note,
-                Quantity = 1,
-                DeviceId = cartRequest.DeviceId,
-                MenuItemId = cartRequest.MenuItemId,
-            };
+                Ingredient? excludedIngredient =
+                    await ingredientService.GetIngredientByNameAsync(excludedIngredientName);
 
-            _cartItemService.Create(newCartItem);
+                if (excludedIngredient != null)
+                {
+                    ExcludedIngredientCartItem excludedIngredientCartItem = new()
+                    {
+                        IngredientId = excludedIngredient.Id,
+                        CartItemId = newCartItem.Id,
+                    };
+
+                    cartItemService.AddExcludedIngredientToCartItem(excludedIngredientCartItem);
+                }
+            }
         }
 
         return NoContent();
     }
 
+    [HttpGet]
+    public IActionResult GetCartItem(int cartItemId, string deviceId)
+    {
+        CartItem? cartItem = cartItemService.GetByCartItemIdAndDeviceId(cartItemId, deviceId);
+
+        if (cartItem == null)
+        {
+            return NotFound();
+        }
+
+        MenuItem? menuitem = menuItemService.GetMenuItemById(cartItem.MenuItemId);
+        if (menuitem == null)
+        {
+            return NotFound();
+        }
+
+        cartItem.MenuItem = menuitem;
+
+        List<Ingredient> excludedIngredients = cartItemService.GetExcludedIngredientsByCartItemId(cartItemId);
+
+        CartItemWithIngredientsViewModel cartItemWithIngredients = new()
+        {
+            CartItem = cartItem,
+            ExcludedIngredients = excludedIngredients,
+        };
+
+        return Ok(cartItemWithIngredients);
+    }
+
     [HttpGet("{deviceId}")]
     public IActionResult ViewCart([FromRoute] string deviceId)
     {
-        bool cartItemsExists = _cartItemService.ExistsByDeviceId(deviceId);
+        bool cartItemsExists = cartItemService.ExistsByDeviceId(deviceId);
         if (!cartItemsExists)
         {
             return NotFound();
         }
 
-        List<CartItem> cartItems = _cartItemService.GetByDeviceId(deviceId);
+        List<CartItem> cartItems = cartItemService.GetByDeviceId(deviceId);
 
         CartItemViewModel cartViewModel = new()
         {
@@ -74,10 +123,10 @@ public class CartItemController : ControllerBase
         return Ok(cartViewModel);
     }
 
-    [HttpPut]
-    public IActionResult RemoveFromCart([FromBody] CartUpdateRequest cartRequest)
+    [HttpPut("minus")]
+    public IActionResult Minus1FromCart([FromBody] CartUpdateRequest cartRequest)
     {
-        CartItem? cartItem = _cartItemService.GetByMenuItemIdAndDeviceId(cartRequest.MenuItemId, cartRequest.DeviceId);
+        CartItem? cartItem = cartItemService.GetByCartItemIdAndDeviceId(cartRequest.CartItemId, cartRequest.DeviceId);
 
         if (cartItem == null)
         {
@@ -88,11 +137,66 @@ public class CartItemController : ControllerBase
         {
             cartItem.Quantity--;
 
-            _cartItemService.Update(cartItem);
+            cartItemService.Update(cartItem);
         }
         else
         {
-            _cartItemService.Delete(cartItem);
+            cartItemService.Delete(cartItem);
+        }
+
+        return NoContent();
+    }
+
+    [HttpPost("plus")]
+    public IActionResult Plus1ToCart([FromBody] CartUpdateRequest cartRequest)
+    {
+        CartItem? cartItem = cartItemService.GetByCartItemIdAndDeviceId(cartRequest.CartItemId, cartRequest.DeviceId);
+
+        if (cartItem == null)
+        {
+            return NotFound();
+        }
+
+        cartItem.Quantity++;
+        cartItemService.Update(cartItem);
+
+        return NoContent();
+    }
+
+    [HttpPut("updateDetails")]
+    public async Task<ActionResult> UpdateCartItem([FromBody] CartItemRequest cartRequest)
+    {
+        CartItem? cartItem = cartItemService.GetByCartItemIdAndDeviceId(cartRequest.CartItemId, cartRequest.DeviceId);
+
+        if (cartItem == null)
+        {
+            NotFound();
+        }
+        else
+        {
+            cartItem.Note = cartRequest.Note;
+            cartItemService.Update(cartItem);
+            cartItemService.DeleteExcludedIngredientsFromCartItem(cartItem.Id);
+
+            if (cartRequest.ExcludedIngredients != null && cartRequest.ExcludedIngredients.Count != 0)
+            {
+                foreach (string excludedIngredientName in cartRequest.ExcludedIngredients)
+                {
+                    Ingredient? excludedIngredient =
+                        await ingredientService.GetIngredientByNameAsync(excludedIngredientName);
+
+                    if (excludedIngredient != null)
+                    {
+                        ExcludedIngredientCartItem excludedIngredientCartItem = new()
+                        {
+                            IngredientId = excludedIngredient.Id,
+                            CartItemId = cartItem.Id,
+                        };
+
+                        cartItemService.AddExcludedIngredientToCartItem(excludedIngredientCartItem);
+                    }
+                }
+            }
         }
 
         return NoContent();

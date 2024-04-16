@@ -1,35 +1,32 @@
-﻿using DigitalMenu_20_BLL.Models;
+﻿using DigitalMenu_20_BLL.Enums;
+using DigitalMenu_20_BLL.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MySqlConnector;
 
 namespace DigitalMenu_30_DAL.Data;
 
-public class SeedData
+public class SeedData(ApplicationDbContext dbContext)
 {
-    private readonly ApplicationDbContext _dbContext;
-
-    public SeedData(ApplicationDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-
     public async Task ResetDatabaseAndSeed()
     {
-        await _dbContext.Database.EnsureDeletedAsync();
-        await _dbContext.Database.MigrateAsync();
-        _dbContext.ChangeTracker.Clear();
+        await dbContext.Database.EnsureDeletedAsync();
+        await dbContext.Database.MigrateAsync();
+        dbContext.ChangeTracker.Clear();
 
         try
         {
-            SeedUsers();
-            SeedRoles();
-            SeedMenuItems();
+            await SeedUsers();
+            await SeedRoles();
+            await SeedMenuItems();
+            await SeedIngredients();
+            await SeedIngredientsToMenuItem();
             await SeedCategories();
-            SeedTables();
-            SeedCartItems();
+            await SeedTables();
+            await SeedCartItems();
+            await SeedOrders();
 
-            await _dbContext.SaveChangesAsync();
+            await dbContext.SaveChangesAsync();
         }
         catch (MySqlException ex)
         {
@@ -37,9 +34,55 @@ public class SeedData
         }
     }
 
-    private void SeedCartItems()
+    private async Task SeedOrders()
     {
-        _dbContext.CartItems.AddRange(
+        dbContext.Orders.AddRange(
+            new Order
+            {
+                Id = "12d7eaff-5f3c-456d-92c4-7de2220b2d05",
+                DeviceId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
+                TableId = "69AC2F65-5DE9-40D4-B930-624CA40D3F13",
+                TotalAmount = 6400,
+                PaymentStatus = PaymentStatus.Paid,
+                ExternalPaymentId = "tr_294TYYppc4",
+                OrderDate = DateTime.Parse("2024-04-09 14:54:02"),
+                OrderNumber = "092404jnWK",
+            }
+        );
+        await dbContext.SaveChangesAsync();
+
+        dbContext.OrderMenuItems.AddRange(
+            new OrderMenuItem
+            {
+                OrderId = "12d7eaff-5f3c-456d-92c4-7de2220b2d05",
+                MenuItemId = 1,
+                Quantity = 2,
+            },
+            new OrderMenuItem
+            {
+                OrderId = "12d7eaff-5f3c-456d-92c4-7de2220b2d05",
+                MenuItemId = 2,
+                Quantity = 1,
+            },
+            new OrderMenuItem
+            {
+                OrderId = "12d7eaff-5f3c-456d-92c4-7de2220b2d05",
+                MenuItemId = 3,
+                Quantity = 2,
+            },
+            new OrderMenuItem
+            {
+                OrderId = "12d7eaff-5f3c-456d-92c4-7de2220b2d05",
+                MenuItemId = 4,
+                Quantity = 1,
+            }
+        );
+        await dbContext.SaveChangesAsync();
+    }
+
+    private async Task SeedCartItems()
+    {
+        dbContext.CartItems.AddRange(
             new CartItem
             {
                 Id = 1,
@@ -115,11 +158,12 @@ public class SeedData
                 Note = "No ice",
             }
         );
+        await dbContext.SaveChangesAsync();
     }
 
-    private void SeedUsers()
+    private async Task SeedUsers()
     {
-        _dbContext.Users.AddRange(
+        dbContext.Users.AddRange(
             new IdentityUser
             {
                 Id = "0206A018-5AC6-492D-AB99-10105193D384",
@@ -130,11 +174,12 @@ public class SeedData
                 PasswordHash = new PasswordHasher<IdentityUser>().HashPassword(null, "Password123!"),
             }
         );
+        await dbContext.SaveChangesAsync();
     }
 
-    private void SeedRoles()
+    private async Task SeedRoles()
     {
-        _dbContext.Roles.AddRange(
+        dbContext.Roles.AddRange(
             new IdentityRole
             {
                 Id = "8977148E-C765-410F-9A58-0C7D054E4536", Name = "Admin", NormalizedName = "ADMIN",
@@ -144,17 +189,19 @@ public class SeedData
                 Id = "81659B09-5665-4E61-ACB9-5C43E28BE6A4", Name = "Employee", NormalizedName = "EMPLOYEE",
             }
         );
+        await dbContext.SaveChangesAsync();
 
-        _dbContext.UserRoles.Add(new IdentityUserRole<string>
+        dbContext.UserRoles.Add(new IdentityUserRole<string>
         {
             UserId = "0206A018-5AC6-492D-AB99-10105193D384",
             RoleId = "8977148E-C765-410F-9A58-0C7D054E4536",
         });
+        await dbContext.SaveChangesAsync();
     }
 
-    private void SeedMenuItems()
+    private async Task SeedMenuItems()
     {
-        _dbContext.MenuItems.AddRange(
+        dbContext.MenuItems.AddRange(
             new MenuItem
             {
                 Id = 1,
@@ -245,34 +292,106 @@ public class SeedData
                     "https://www.frisenzoetwaren.nl/wp-content/uploads/2023/07/Mountain-Dew-Citrus-Blast-24-x-330-ml-EU.jpg",
             }
         );
+        await dbContext.SaveChangesAsync();
+    }
+
+    private async Task SeedIngredients()
+    {
+        dbContext.Ingredients.AddRange(
+            new Ingredient { Id = 1, Name = "Beef Patty" },
+            new Ingredient { Id = 2, Name = "Hamburger Bun" },
+            new Ingredient { Id = 3, Name = "Lettuce" },
+            new Ingredient { Id = 4, Name = "Tomato Slices" },
+            new Ingredient { Id = 5, Name = "Onion Slices" },
+            new Ingredient { Id = 6, Name = "Pickles" },
+            new Ingredient { Id = 7, Name = "Cheese" },
+            new Ingredient { Id = 8, Name = "Bacon" },
+            new Ingredient { Id = 9, Name = "Ketchup" },
+            new Ingredient { Id = 10, Name = "Mustard" },
+            new Ingredient { Id = 11, Name = "Mayonnaise" },
+            new Ingredient { Id = 12, Name = "Pizza Dough" },
+            new Ingredient { Id = 13, Name = "Tomato Sauce" },
+            new Ingredient { Id = 14, Name = "Mozzarella Cheese" },
+            new Ingredient { Id = 15, Name = "Pepperoni" },
+            new Ingredient { Id = 16, Name = "Mushrooms" },
+            new Ingredient { Id = 17, Name = "Bell Peppers" },
+            new Ingredient { Id = 18, Name = "Onions" },
+            new Ingredient { Id = 19, Name = "Olives" },
+            new Ingredient { Id = 20, Name = "Basil" },
+            new Ingredient { Id = 21, Name = "Pasta" },
+            new Ingredient { Id = 22, Name = "Garlic" },
+            new Ingredient { Id = 23, Name = "Olive Oil" },
+            new Ingredient { Id = 24, Name = "Parmesan Cheese" },
+            new Ingredient { Id = 25, Name = "Potatoes" },
+            new Ingredient { Id = 26, Name = "Salt" },
+            new Ingredient { Id = 27, Name = "Oil" }
+        );
+        await dbContext.SaveChangesAsync();
+    }
+
+    private async Task SeedIngredientsToMenuItem()
+    {
+        dbContext.MenuItemIngredients.AddRange(
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 1 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 2 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 3 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 4 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 5 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 6 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 7 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 8 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 9 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 10 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 11 },
+            new MenuItemIngredient { MenuItemId = 2, IngredientId = 12 },
+            new MenuItemIngredient { MenuItemId = 2, IngredientId = 13 },
+            new MenuItemIngredient { MenuItemId = 2, IngredientId = 14 },
+            new MenuItemIngredient { MenuItemId = 2, IngredientId = 15 },
+            new MenuItemIngredient { MenuItemId = 2, IngredientId = 16 },
+            new MenuItemIngredient { MenuItemId = 2, IngredientId = 17 },
+            new MenuItemIngredient { MenuItemId = 2, IngredientId = 18 },
+            new MenuItemIngredient { MenuItemId = 2, IngredientId = 19 },
+            new MenuItemIngredient { MenuItemId = 2, IngredientId = 20 },
+            new MenuItemIngredient { MenuItemId = 3, IngredientId = 21 },
+            new MenuItemIngredient { MenuItemId = 3, IngredientId = 13 },
+            new MenuItemIngredient { MenuItemId = 3, IngredientId = 22 },
+            new MenuItemIngredient { MenuItemId = 3, IngredientId = 23 },
+            new MenuItemIngredient { MenuItemId = 3, IngredientId = 20 },
+            new MenuItemIngredient { MenuItemId = 3, IngredientId = 24 },
+            new MenuItemIngredient { MenuItemId = 4, IngredientId = 25 },
+            new MenuItemIngredient { MenuItemId = 4, IngredientId = 26 },
+            new MenuItemIngredient { MenuItemId = 4, IngredientId = 27 }
+        );
+        await dbContext.SaveChangesAsync();
     }
 
     private async Task SeedCategories()
     {
-        _dbContext.Categories.AddRange(
+        dbContext.Categories.AddRange(
             new Category { Id = 1, Name = "Italian" },
             new Category { Id = 2, Name = "American" },
             new Category { Id = 3, Name = "Drinks" }
         );
-
-        await _dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesAsync();
 
         List<int> ids1 = [2, 3];
-        List<MenuItem> menuItems1 = _dbContext.MenuItems.Where(mi => ids1.Contains(mi.Id)).ToList();
-        _dbContext.Categories.First(c => c.Id == 1).MenuItems = [..menuItems1];
+        List<MenuItem> menuItems1 = dbContext.MenuItems.Where(mi => ids1.Contains(mi.Id)).ToList();
+        dbContext.Categories.First(c => c.Id == 1).MenuItems = [..menuItems1];
 
         List<int> ids2 = [1, 4];
-        List<MenuItem> menuItems2 = _dbContext.MenuItems.Where(mi => ids2.Contains(mi.Id)).ToList();
-        _dbContext.Categories.First(c => c.Id == 2).MenuItems = [..menuItems2];
+        List<MenuItem> menuItems2 = dbContext.MenuItems.Where(mi => ids2.Contains(mi.Id)).ToList();
+        dbContext.Categories.First(c => c.Id == 2).MenuItems = [..menuItems2];
 
         List<int> ids3 = [5, 6, 7, 8, 9, 10];
-        List<MenuItem> menuItems3 = _dbContext.MenuItems.Where(mi => ids3.Contains(mi.Id)).ToList();
-        _dbContext.Categories.First(c => c.Id == 3).MenuItems = [..menuItems3];
+        List<MenuItem> menuItems3 = dbContext.MenuItems.Where(mi => ids3.Contains(mi.Id)).ToList();
+        dbContext.Categories.First(c => c.Id == 3).MenuItems = [..menuItems3];
+
+        await dbContext.SaveChangesAsync();
     }
 
-    private void SeedTables()
+    private async Task SeedTables()
     {
-        _dbContext.Tables.AddRange(
+        dbContext.Tables.AddRange(
             new Table
             {
                 Id = "69AC2F65-5DE9-40D4-B930-624CA40D3F13",
@@ -309,5 +428,6 @@ public class SeedData
                 CreatedAt = DateTime.Parse("2023-09-01 12:00:00").AddMinutes(30),
             }
         );
+        await dbContext.SaveChangesAsync();
     }
 }

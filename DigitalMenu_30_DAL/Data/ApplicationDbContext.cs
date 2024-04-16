@@ -5,12 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DigitalMenu_30_DAL.Data;
 
-public class ApplicationDbContext : IdentityDbContext<IdentityUser>
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+    : IdentityDbContext<IdentityUser>(options)
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-    {
-    }
-
     public DbSet<CartItem> CartItems { get; set; }
 
     public DbSet<Category> Categories { get; set; }
@@ -19,27 +16,15 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
 
     public DbSet<MenuItem> MenuItems { get; set; }
 
+    public DbSet<MenuItemIngredient> MenuItemIngredients { get; set; }
+
     public DbSet<Order> Orders { get; set; }
 
     public DbSet<OrderMenuItem> OrderMenuItems { get; set; }
 
+    public DbSet<ExcludedIngredientOrderMenuItem> ExcludedIngredientOrderMenuItems { get; set; }
+
+    public DbSet<ExcludedIngredientCartItem> ExcludedIngredientCartItems { get; set; }
+
     public DbSet<Table> Tables { get; set; }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        base.OnModelCreating(modelBuilder);
-
-        modelBuilder.Entity<OrderMenuItem>()
-            .HasKey(om => new { om.OrderId, om.MenuItemId });
-
-        modelBuilder.Entity<OrderMenuItem>()
-            .HasOne(om => om.Order)
-            .WithMany(o => o.OrderMenuItems)
-            .HasForeignKey(om => om.OrderId);
-
-        modelBuilder.Entity<OrderMenuItem>()
-            .HasOne(om => om.MenuItem)
-            .WithMany()
-            .HasForeignKey(om => om.MenuItemId);
-    }
 }

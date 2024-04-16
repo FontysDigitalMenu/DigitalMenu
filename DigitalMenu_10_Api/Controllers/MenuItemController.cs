@@ -2,24 +2,18 @@
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 
 namespace DigitalMenu_10_Api.Controllers;
 
-[Route("api/v1/[controller]")]
+[Route("api/v1/menuItem")]
 [ApiController]
-public class MenuItemController : ControllerBase
+public class MenuItemController(IMenuItemService menuItemService) : ControllerBase
 {
-    private readonly IMenuItemService _menuItemService;
-
-    public MenuItemController(IMenuItemService menuItemService)
-    {
-        _menuItemService = menuItemService;
-    }
-
-    [HttpGet("Paged")]
+    [HttpGet]
     public IActionResult Get(int lastId, int amount)
     {
-        List<MenuItem> menuItems = (List<MenuItem>)_menuItemService.GetNextMenuItems(lastId, amount);
+        List<MenuItem> menuItems = (List<MenuItem>)menuItemService.GetNextMenuItems(lastId, amount);
         List<MenuItemViewModel> menuItemViewModels = new();
         foreach (MenuItem menuItem in menuItems)
         {
@@ -33,13 +27,15 @@ public class MenuItemController : ControllerBase
             menuItemViewModels.Add(menuItemViewModel);
         }
 
+        Log.Information("Get menu items {@menuItems}", menuItemViewModels);
+
         return Ok(menuItemViewModels);
     }
 
-    [HttpGet("Paged/GetCategories")]
+    [HttpGet("getCategories")]
     public IActionResult GetCategories(int lastId, int amount)
     {
-        List<Category> categories = (List<Category>)_menuItemService.GetCategoriesWithNextMenuItems(lastId, amount);
+        List<Category> categories = (List<Category>)menuItemService.GetCategoriesWithNextMenuItems(lastId, amount);
 
         List<CategoryViewModel> categoryViewModels = categories.Select(category => new CategoryViewModel
         {
@@ -60,7 +56,7 @@ public class MenuItemController : ControllerBase
     [HttpGet("{id:int}")]
     public IActionResult GetMenuItem(int id)
     {
-        MenuItem? menuitem = _menuItemService.GetMenuItemById(id);
+        MenuItem? menuitem = menuItemService.GetMenuItemById(id);
         if (menuitem == null)
         {
             return NotFound();

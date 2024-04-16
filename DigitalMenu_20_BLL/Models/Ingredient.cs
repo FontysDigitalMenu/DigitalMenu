@@ -6,7 +6,5 @@ public class Ingredient
 
     public string Name { get; set; }
 
-    public int MenuItemId { get; set; }
-
-    public MenuItem MenuItem { get; set; }
+    public List<MenuItem> MenuItems { get; set; } = new();
 }
