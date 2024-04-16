@@ -17,6 +17,10 @@ public interface IOrderService
 
     public IEnumerable<Order> GetPaidOrders();
 
+    public IEnumerable<Order> GetPaidFoodOrders();
+
+    public IEnumerable<Order> GetPaidDrinksOrders();
+
     public bool Update(Order order);
 
     public Task<PaymentResponse> CreateMolliePayment(int totalAmount, string orderId);
