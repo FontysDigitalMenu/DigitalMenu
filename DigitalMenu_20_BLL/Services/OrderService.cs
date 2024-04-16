@@ -151,4 +151,26 @@ public class OrderService(
     {
         return orderRepository.GetPaidOrders();
     }
+
+    public IEnumerable<Order> GetPaidFoodOrders()
+    {
+        return orderRepository.GetPaidOrders();
+    }
+
+    public IEnumerable<Order> GetPaidDrinksOrders()
+    {
+        IEnumerable<Order> orders = orderRepository.GetPaidOrders();
+
+        IEnumerable<Order> ordersWithDrinks = orders.Select(order =>
+        {
+            order.OrderMenuItems = order.OrderMenuItems
+                .Where(omi => omi.MenuItem.Categories.Any(c => c.Id == 3))
+                .ToList();
+
+            return order;
+        })
+        .Where(order => order.OrderMenuItems.Count != 0);
+
+        return ordersWithDrinks;
+    }
 }

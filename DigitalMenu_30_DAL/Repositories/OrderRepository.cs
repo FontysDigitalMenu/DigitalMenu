@@ -44,9 +44,10 @@ public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
         return dbContext.Orders
             .Include(o => o.OrderMenuItems)
             .ThenInclude(omi => omi.MenuItem)
+            .ThenInclude(mi => mi.Categories)
             .Where(o => o.PaymentStatus == PaymentStatus.Paid)
             .Where(o => o.Status == OrderStatus.Pending || o.Status == OrderStatus.Processing ||
-                        o.Status == OrderStatus.Completed)
+                    o.Status == OrderStatus.Completed)
             .ToList();
     }
 
