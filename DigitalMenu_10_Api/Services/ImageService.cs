@@ -5,7 +5,7 @@ public class ImageService(IWebHostEnvironment webHostEnvironment)
     public async Task<string> SaveImageAsync(IFormFile menuItemFile)
     {
         ValidateImage(menuItemFile);
-        return await GenerateThumbnailNameAsync(menuItemFile);
+        return await GenerateImageNameAsync(menuItemFile);
     }
 
     private static void ValidateImage(IFormFile menuItemFile)
@@ -22,15 +22,15 @@ public class ImageService(IWebHostEnvironment webHostEnvironment)
         }
     }
 
-    private async Task<string> GenerateThumbnailNameAsync(IFormFile menuItemFile)
+    private async Task<string> GenerateImageNameAsync(IFormFile menuItemFile)
     {
         Guid myUuid = Guid.NewGuid();
 
         string menuItemImageName = new string(Path.GetFileNameWithoutExtension(menuItemFile.FileName).Take(10).ToArray()).Replace(' ', '-');
         menuItemImageName = menuItemImageName + DateTime.Now.ToString("yymmssfff") + myUuid + Path.GetExtension(menuItemFile.FileName);
-        string thumbnailPath = Path.Combine(webHostEnvironment.ContentRootPath, "Images", menuItemImageName);
+        string imagePath = Path.Combine(webHostEnvironment.ContentRootPath, "Images", menuItemImageName);
 
-        using (FileStream fileStream = new(thumbnailPath, FileMode.Create))
+        using (FileStream fileStream = new(imagePath, FileMode.Create))
         {
             await menuItemFile.CopyToAsync(fileStream);
         }
