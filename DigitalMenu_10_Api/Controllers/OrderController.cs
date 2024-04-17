@@ -275,7 +275,11 @@ public class OrderController(
         }
 
         OrderViewModel orderViewModel = OrderViewModel.FromOrder(order, cartItemService);
-        hubContext.Clients.Group($"order-{order.Id}").ReceiveOrderUpdate(orderViewModel);
+        
+        if (!orderRequest.IsDrinks)
+        {
+            hubContext.Clients.Group($"order-{order.Id}").ReceiveOrderUpdate(orderViewModel);
+        }
 
         return NoContent();
     }
