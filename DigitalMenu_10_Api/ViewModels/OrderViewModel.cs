@@ -9,7 +9,9 @@ public class OrderViewModel
 
     public int TotalAmount { get; set; }
 
-    public string Status { get; set; }
+    public string DrinkStatus { get; set; }
+
+    public string FoodStatus { get; set; }
 
     public string PaymentStatus { get; set; }
 
@@ -25,7 +27,8 @@ public class OrderViewModel
         {
             Id = order.Id,
             PaymentStatus = order.PaymentStatus.ToString(),
-            Status = order.Status.ToString(),
+            FoodStatus = order.FoodStatus.ToString(),
+            DrinkStatus = order.DrinkStatus.ToString(),
             TotalAmount = order.TotalAmount,
             OrderDate = order.OrderDate,
             OrderNumber = order.OrderNumber,

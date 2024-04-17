@@ -242,16 +242,28 @@ public class OrderController(
         switch (orderRequest.OrderStatus)
         {
             case "Pending":
-                order.Status = OrderStatus.Pending;
+                if (orderRequest.IsDrinks)
+                    order.DrinkStatus = OrderStatus.Pending;
+                else
+                    order.FoodStatus = OrderStatus.Pending;
                 break;
             case "Processing":
-                order.Status = OrderStatus.Processing;
+                if (orderRequest.IsDrinks)
+                    order.DrinkStatus = OrderStatus.Processing;
+                else
+                    order.FoodStatus = OrderStatus.Processing;
                 break;
             case "Done":
-                order.Status = OrderStatus.Done;
+                if (orderRequest.IsDrinks)
+                    order.DrinkStatus = OrderStatus.Done;
+                else
+                    order.FoodStatus = OrderStatus.Done;
                 break;
             case "Completed":
-                order.Status = OrderStatus.Completed;
+                if (orderRequest.IsDrinks)
+                    order.DrinkStatus = OrderStatus.Completed;
+                else
+                    order.FoodStatus = OrderStatus.Completed;
                 break;
             default:
                 return BadRequest(new { Message = "Invalid OrderStatus" });
