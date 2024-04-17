@@ -2,6 +2,7 @@
 using DigitalMenu_20_BLL.Models;
 using DigitalMenu_30_DAL.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace DigitalMenu_30_DAL.Repositories;
 
@@ -68,5 +69,17 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
             .Include(m => m.Categories)
             .OrderBy(m => m.Id)
             .ToListAsync();
+    }
+
+    public async Task<MenuItem?> CreateMenuItem(MenuItem menuItem)
+    {
+        dbContext.MenuItems.Add(menuItem);
+        return dbContext.SaveChanges() > 0 ? menuItem : null;
+    }
+
+    public async Task<List<MenuItemIngredient>?> AddIngredientsToMenuItem(List<MenuItemIngredient> menuItemIngredients)
+    {
+        await dbContext.MenuItemIngredients.AddRangeAsync(menuItemIngredients);
+        return await dbContext.SaveChangesAsync() > 0 ? menuItemIngredients : null;
     }
 }

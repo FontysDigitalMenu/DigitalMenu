@@ -13,4 +13,9 @@ public class CategoryRepository(ApplicationDbContext dbContext) : ICategoryRepos
             .OrderBy(c => c.Id)
             .ToListAsync();
     }
+
+    public async Task<Category?> GetCategoryByName(string categoryName)
+    {
+        return await dbContext.Categories.FirstOrDefaultAsync(c => c.Name == categoryName);
+    }
 }

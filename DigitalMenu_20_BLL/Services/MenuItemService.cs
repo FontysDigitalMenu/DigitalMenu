@@ -1,6 +1,7 @@
 ﻿using DigitalMenu_20_BLL.Interfaces.Repositories;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace DigitalMenu_20_BLL.Services;
 
@@ -37,5 +38,15 @@ public class MenuItemService(IMenuItemRepository menuItemRepository) : IMenuItem
     public async Task<List<MenuItem>> GetMenuItems()
     {
         return await menuItemRepository.GetMenuItems();
+    }
+
+    public async Task<MenuItem?> CreateMenuItem(MenuItem menuItem)
+    {
+        return await menuItemRepository.CreateMenuItem(menuItem);
+    }
+
+    public async Task<List<MenuItemIngredient>?> AddIngredientsToMenuItem(List<MenuItemIngredient> menuItemIngredients)
+    {
+        return await menuItemRepository.AddIngredientsToMenuItem(menuItemIngredients);
     }
 }

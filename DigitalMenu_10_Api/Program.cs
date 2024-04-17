@@ -7,6 +7,7 @@ using DigitalMenu_30_DAL.Data;
 using DigitalMenu_30_DAL.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.OpenApi.Models;
 using Mollie.Api;
 using Mollie.Api.Framework;
@@ -111,6 +112,14 @@ app.MapGroup("/api").MapIdentityApi<IdentityUser>();
 app.UseSwagger();
 app.UseSwaggerUI();
 // }
+
+PhysicalFileProvider imagesProvider = new(Path.Combine(Directory.GetCurrentDirectory(), "Images"));
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = imagesProvider,
+    RequestPath = "/Images",
+});
 
 app.UseCors();
 

@@ -1,9 +1,12 @@
 ﻿using DigitalMenu_10_Api.RequestModels;
+using DigitalMenu_10_Api.Services;
 using DigitalMenu_10_Api.ViewModels;
+using DigitalMenu_20_BLL.Exceptions;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
 using DigitalMenu_20_BLL.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 
@@ -11,8 +14,23 @@ namespace DigitalMenu_10_Api.Controllers;
 
 [Route("api/v1/menuItem")]
 [ApiController]
-public class MenuItemController(IMenuItemService menuItemService) : ControllerBase
+public class MenuItemController : ControllerBase
 {
+    private readonly IWebHostEnvironment webHostEnvironment;
+    private readonly IMenuItemService menuItemService;
+    private readonly ICategoryService categoryService;
+    private readonly IIngredientService ingredientService;
+    private readonly ImageService imageService;
+
+    public MenuItemController(IWebHostEnvironment _webHostEnvironment, IMenuItemService _menuItemService, ICategoryService _categoryService, IIngredientService _ingredientService)
+    {
+        webHostEnvironment = _webHostEnvironment;
+        menuItemService = _menuItemService;
+        categoryService = _categoryService;
+        ingredientService = _ingredientService;
+        imageService = new ImageService(webHostEnvironment);
+    }
+
     [HttpGet]
     public IActionResult Get(int lastId, int amount)
     {
@@ -89,15 +107,71 @@ public class MenuItemController(IMenuItemService menuItemService) : ControllerBa
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateMenuItem([FromBody] MenuItemCreateRequest menuItemCreateRequest)
+    [ProducesResponseType(201)]
+    [ProducesResponseType(404)]
+    public async Task<ActionResult> CreateMenuItem([FromForm] MenuItemCreateRequest menuItemCreateRequest)
     {
         try
         {
-            return Ok(menuItemCreateRequest);
+            List<Category> categories = [];
+            foreach (string categoryName in menuItemCreateRequest.Categories)
+            {
+                Category category = await categoryService.GetCategoryByName(categoryName) ?? throw new NotFoundException("Category not found");
+                categories.Add(category);
+            }
+
+            List<Ingredient> ingredients = [];
+
+            foreach (string ingredientName in menuItemCreateRequest.IngredientsName)
+            {
+                Ingredient ingredient = await ingredientService.GetIngredientByNameAsync(ingredientName) ?? throw new NotFoundException("Ingredient not found");
+                ingredients.Add(ingredient);
+            }
+
+            string menuItemUrl = await imageService.SaveImageAsync(menuItemCreateRequest.Image);
+
+            MenuItem menuItem = new()
+            {
+                Name = menuItemCreateRequest.Name,
+                Description = menuItemCreateRequest.Description,
+                Price = (int)(menuItemCreateRequest.Price * 100),
+                ImageUrl = string.Format("{0}://{1}{2}/Images/{3}", Request.Scheme, Request.Host, Request.PathBase, menuItemUrl),
+                Categories = categories,
+            };
+
+            MenuItem? createdMenuItem = await menuItemService.CreateMenuItem(menuItem);
+            if (createdMenuItem == null)
+            {
+                return BadRequest(new { Message = "Menu item could not be created" });
+            }
+
+            List<MenuItemIngredient> menuItemIngredients = ingredients
+                .Select(ingredient => new MenuItemIngredient
+                {
+                    IngredientId = ingredient.Id,
+                    MenuItemId = createdMenuItem.Id,
+                })
+                .ToList();
+
+            List<MenuItemIngredient>? createdMenuItemIngredients = await menuItemService.AddIngredientsToMenuItem(menuItemIngredients);
+            if (createdMenuItemIngredients == null)
+            {
+                return BadRequest(new { Message = "Ingredients could not be added to the menu item" });
+            }
+
+            return CreatedAtAction("Get", new { id = createdMenuItem.Id }, createdMenuItem.Name);
         }
-        catch (Exception ex)
+        catch (NotFoundException e)
         {
-            return StatusCode(500, "An error occurred while creating the menu item.");
+            return NotFound(new { e.Message });
+        }
+        catch (DatabaseCreationException e)
+        {
+            return BadRequest(new { e.Message });
+        }
+        catch (DatabaseUpdateException e)
+        {
+            return BadRequest(new { e.Message });
         }
     }
 }
