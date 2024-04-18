@@ -15,6 +15,8 @@ public interface IOrderService
 
     public Order? GetBy(string id, string deviceId, string tableId);
 
+    public Order? GetBy(string id);
+
     public IEnumerable<Order> GetPaidOrders();
 
     public IEnumerable<Order> GetPaidFoodOrders();

@@ -1,6 +1,7 @@
 ﻿using DigitalMenu_10_Api.Hub;
 using DigitalMenu_10_Api.RequestModels;
 using DigitalMenu_10_Api.ViewModels;
+using DigitalMenu_20_BLL.Enums;
 using DigitalMenu_20_BLL.Exceptions;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
@@ -9,9 +10,9 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Mollie.Api.Client;
-using Mollie.Api.Models.Payment;
 using Mollie.Api.Models.Payment.Response;
 using Serilog;
+using PaymentStatus = Mollie.Api.Models.Payment.PaymentStatus;
 
 namespace DigitalMenu_10_Api.Controllers;
 
@@ -107,30 +108,7 @@ public class OrderController(
             return NotFound(new { Message = "Order not found" });
         }
 
-        return Ok(orders.Select(o => new OrderViewModel
-        {
-            Id = o.Id,
-            PaymentStatus = o.PaymentStatus.ToString(),
-            Status = o.Status.ToString(),
-            TotalAmount = o.TotalAmount,
-            OrderDate = o.OrderDate,
-            OrderNumber = o.OrderNumber,
-            MenuItems = o.OrderMenuItems.Select(omi => new MenuItemViewModel
-            {
-                Id = omi.MenuItem.Id,
-                Name = omi.MenuItem.Name,
-                Price = omi.MenuItem.Price,
-                ImageUrl = omi.MenuItem.ImageUrl,
-                Quantity = omi.Quantity,
-                Note = omi.Note,
-                ExcludedIngredients = cartItemService.GetExcludedIngredientsByOrderMenuItemId(omi.Id).Select(i =>
-                    new IngredientViewModel
-                    {
-                        Id = i.Id,
-                        Name = i.Name,
-                    }).ToList(),
-            }).ToList(),
-        }));
+        return Ok(orders.Select(o => OrderViewModel.FromOrder(o, cartItemService)));
     }
 
     [HttpGet("{id}/{deviceId}/{tableId}")]
@@ -154,30 +132,7 @@ public class OrderController(
             return NotFound(new { Message = "Order not found" });
         }
 
-        return Ok(new OrderViewModel
-        {
-            Id = order.Id,
-            PaymentStatus = order.PaymentStatus.ToString(),
-            Status = order.Status.ToString(),
-            TotalAmount = order.TotalAmount,
-            OrderDate = order.OrderDate,
-            OrderNumber = order.OrderNumber,
-            MenuItems = order.OrderMenuItems.Select(omi => new MenuItemViewModel
-            {
-                Id = omi.MenuItem.Id,
-                Name = omi.MenuItem.Name,
-                Price = omi.MenuItem.Price,
-                ImageUrl = omi.MenuItem.ImageUrl,
-                Quantity = omi.Quantity,
-                Note = omi.Note,
-                ExcludedIngredients = cartItemService.GetExcludedIngredientsByOrderMenuItemId(omi.Id).Select(i =>
-                    new IngredientViewModel
-                    {
-                        Id = i.Id,
-                        Name = i.Name,
-                    }).ToList(),
-            }).ToList(),
-        });
+        return Ok(OrderViewModel.FromOrder(order, cartItemService));
     }
 
     [DisableCors]
@@ -243,31 +198,7 @@ public class OrderController(
 
     private async Task SendOrderToKitchen(Order order)
     {
-        OrderViewModel orderViewModel = new()
-        {
-            Id = order.Id,
-            PaymentStatus = order.PaymentStatus.ToString(),
-            Status = order.Status.ToString(),
-            TotalAmount = order.TotalAmount,
-            OrderDate = order.OrderDate,
-            OrderNumber = order.OrderNumber,
-            MenuItems = order.OrderMenuItems.Select(omi => new MenuItemViewModel
-            {
-                Id = omi.MenuItem.Id,
-                Name = omi.MenuItem.Name,
-                Price = omi.MenuItem.Price,
-                ImageUrl = omi.MenuItem.ImageUrl,
-                Quantity = omi.Quantity,
-                Note = omi.Note,
-                ExcludedIngredients = cartItemService.GetExcludedIngredientsByOrderMenuItemId(omi.Id).Select(i =>
-                    new IngredientViewModel
-                    {
-                        Id = i.Id,
-                        Name = i.Name,
-                    }).ToList(),
-            }).ToList(),
-        };
-
+        OrderViewModel orderViewModel = OrderViewModel.FromOrder(order, cartItemService);
         await hubContext.Clients.All.ReceiveOrder(orderViewModel);
     }
 
@@ -290,31 +221,66 @@ public class OrderController(
                 break;
         }
 
-        List<OrderViewModel> orderViewModels = orders.Select(order => new OrderViewModel
-        {
-            Id = order.Id,
-            PaymentStatus = order.PaymentStatus.ToString(),
-            Status = order.Status.ToString(),
-            TotalAmount = order.TotalAmount,
-            OrderDate = order.OrderDate,
-            OrderNumber = order.OrderNumber,
-            MenuItems = order.OrderMenuItems.Select(omi => new MenuItemViewModel
-            {
-                Id = omi.MenuItem.Id,
-                Name = omi.MenuItem.Name,
-                Price = omi.MenuItem.Price,
-                ImageUrl = omi.MenuItem.ImageUrl,
-                Quantity = omi.Quantity,
-                Note = omi.Note,
-                ExcludedIngredients = cartItemService.GetExcludedIngredientsByOrderMenuItemId(omi.Id).Select(i =>
-                    new IngredientViewModel
-                    {
-                        Id = i.Id,
-                        Name = i.Name,
-                    }).ToList(),
-            }).ToList(),
-        }).ToList();
+        List<OrderViewModel> orderViewModels =
+            orders.Select(o => OrderViewModel.FromOrder(o, cartItemService)).ToList();
 
         return Ok(orderViewModels);
+    }
+
+    [Authorize(Roles = "Admin, Employee")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    [HttpPut("{id}")]
+    public ActionResult Put([FromRoute] string id, [FromBody] OrderUpdateRequest orderRequest)
+    {
+        Order? order = orderService.GetBy(id);
+        if (order == null)
+        {
+            return NotFound(new { Message = "Order not found" });
+        }
+
+        switch (orderRequest.OrderStatus)
+        {
+            case "Pending":
+                if (orderRequest.IsDrinks)
+                    order.DrinkStatus = OrderStatus.Pending;
+                else
+                    order.FoodStatus = OrderStatus.Pending;
+                break;
+            case "Processing":
+                if (orderRequest.IsDrinks)
+                    order.DrinkStatus = OrderStatus.Processing;
+                else
+                    order.FoodStatus = OrderStatus.Processing;
+                break;
+            case "Done":
+                if (orderRequest.IsDrinks)
+                    order.DrinkStatus = OrderStatus.Done;
+                else
+                    order.FoodStatus = OrderStatus.Done;
+                break;
+            case "Completed":
+                if (orderRequest.IsDrinks)
+                    order.DrinkStatus = OrderStatus.Completed;
+                else
+                    order.FoodStatus = OrderStatus.Completed;
+                break;
+            default:
+                return BadRequest(new { Message = "Invalid OrderStatus" });
+        }
+
+        if (!orderService.Update(order))
+        {
+            return BadRequest(new { Message = "Order could not be updated" });
+        }
+
+        OrderViewModel orderViewModel = OrderViewModel.FromOrder(order, cartItemService);
+        
+        if (!orderRequest.IsDrinks)
+        {
+            hubContext.Clients.Group($"order-{order.Id}").ReceiveOrderUpdate(orderViewModel);
+        }
+
+        return NoContent();
     }
 }

@@ -127,6 +127,11 @@ public class OrderService(
         return orderRepository.GetBy(id, deviceId, tableId);
     }
 
+    public Order? GetBy(string id)
+    {
+        return orderRepository.GetBy(id);
+    }
+
     public bool Update(Order order)
     {
         return orderRepository.Update(order);
