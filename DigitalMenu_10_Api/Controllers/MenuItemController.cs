@@ -153,7 +153,13 @@ public class MenuItemController(
                 return BadRequest(new { Message = "Ingredients could not be added to the menu item" });
             }
 
-            return CreatedAtAction("Get", new { id = createdMenuItem.Id }, createdMenuItem.Name);
+            return Created("", new MenuItemViewModel
+            {
+                Id = menuItem.Id,
+                Name = menuItem.Name,
+                Price = menuItem.Price,
+                ImageUrl = menuItem.ImageUrl,
+            });
         }
         catch (NotFoundException e)
         {
