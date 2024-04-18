@@ -61,4 +61,24 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
 
         return dbContext.MenuItems.Find(id);
     }
+
+    public async Task<List<MenuItem>> GetMenuItems()
+    {
+        return await dbContext.MenuItems
+            .Include(m => m.Categories)
+            .OrderBy(m => m.Id)
+            .ToListAsync();
+    }
+
+    public async Task<MenuItem?> CreateMenuItem(MenuItem menuItem)
+    {
+        dbContext.MenuItems.Add(menuItem);
+        return dbContext.SaveChanges() > 0 ? menuItem : null;
+    }
+
+    public async Task<List<MenuItemIngredient>?> AddIngredientsToMenuItem(List<MenuItemIngredient> menuItemIngredients)
+    {
+        await dbContext.MenuItemIngredients.AddRangeAsync(menuItemIngredients);
+        return await dbContext.SaveChangesAsync() > 0 ? menuItemIngredients : null;
+    }
 }

@@ -33,4 +33,19 @@ public class MenuItemService(IMenuItemRepository menuItemRepository) : IMenuItem
     {
         return menuItemRepository.GetMenuItemBy(id);
     }
+
+    public async Task<List<MenuItem>> GetMenuItems()
+    {
+        return await menuItemRepository.GetMenuItems();
+    }
+
+    public async Task<MenuItem?> CreateMenuItem(MenuItem menuItem)
+    {
+        return await menuItemRepository.CreateMenuItem(menuItem);
+    }
+
+    public async Task<List<MenuItemIngredient>?> AddIngredientsToMenuItem(List<MenuItemIngredient> menuItemIngredients)
+    {
+        return await menuItemRepository.AddIngredientsToMenuItem(menuItemIngredients);
+    }
 }

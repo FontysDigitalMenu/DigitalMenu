@@ -11,4 +11,10 @@ public interface IMenuItemRepository
     public IEnumerable<Category> GetCategories();
 
     public MenuItem? GetMenuItemBy(int id);
+
+    public Task<List<MenuItem>> GetMenuItems();
+
+    public Task<MenuItem?> CreateMenuItem(MenuItem menuItem);
+
+    public Task<List<MenuItemIngredient>?> AddIngredientsToMenuItem(List<MenuItemIngredient> menuItemIngredients);
 }

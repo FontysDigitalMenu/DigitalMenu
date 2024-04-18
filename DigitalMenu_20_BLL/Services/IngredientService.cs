@@ -10,4 +10,9 @@ public class IngredientService(IIngredientRepository ingredientRepository) : IIn
     {
         return ingredientRepository.GetIngredientByNameAsync(name);
     }
+
+    public async Task<List<Ingredient>> GetIngredients()
+    {
+        return await ingredientRepository.GetIngredients();
+    }
 }

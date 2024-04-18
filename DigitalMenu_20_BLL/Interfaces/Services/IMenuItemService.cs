@@ -9,4 +9,10 @@ public interface IMenuItemService
     public IEnumerable<Category> GetCategoriesWithNextMenuItems(int lastId, int amount);
 
     public MenuItem? GetMenuItemById(int id);
+
+    public Task<List<MenuItem>> GetMenuItems();
+
+    public Task<MenuItem?> CreateMenuItem(MenuItem menuItem);
+
+    public Task<List<MenuItemIngredient>?> AddIngredientsToMenuItem(List<MenuItemIngredient> menuItemIngredients);
 }
