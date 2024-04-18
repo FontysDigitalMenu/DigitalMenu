@@ -1,8 +1,8 @@
-﻿namespace DigitalMenu_10_Api.RequestModels
+﻿namespace DigitalMenu_10_Api.RequestModels;
+
+public class IngredientRequestModel
 {
-    public class IngredientRequestModel
-    {
-        public string Name { get; set; }
-        public int Amount { get; set; }
-    }
+    public string Name { get; set; }
+
+    public int Amount { get; set; }
 }

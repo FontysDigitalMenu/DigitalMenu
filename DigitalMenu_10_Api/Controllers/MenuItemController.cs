@@ -4,9 +4,7 @@ using DigitalMenu_10_Api.ViewModels;
 using DigitalMenu_20_BLL.Exceptions;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
-using DigitalMenu_20_BLL.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 
@@ -14,22 +12,14 @@ namespace DigitalMenu_10_Api.Controllers;
 
 [Route("api/v1/menuItem")]
 [ApiController]
-public class MenuItemController : ControllerBase
+public class MenuItemController(
+    IWebHostEnvironment webHostEnvironment,
+    IMenuItemService menuItemService,
+    ICategoryService categoryService,
+    IIngredientService ingredientService
+) : ControllerBase
 {
-    private readonly IWebHostEnvironment webHostEnvironment;
-    private readonly IMenuItemService menuItemService;
-    private readonly ICategoryService categoryService;
-    private readonly IIngredientService ingredientService;
-    private readonly ImageService imageService;
-
-    public MenuItemController(IWebHostEnvironment _webHostEnvironment, IMenuItemService _menuItemService, ICategoryService _categoryService, IIngredientService _ingredientService)
-    {
-        webHostEnvironment = _webHostEnvironment;
-        menuItemService = _menuItemService;
-        categoryService = _categoryService;
-        ingredientService = _ingredientService;
-        imageService = new ImageService(webHostEnvironment);
-    }
+    private readonly ImageService _imageService = new(webHostEnvironment);
 
     [HttpGet]
     public IActionResult Get(int lastId, int amount)
@@ -116,7 +106,8 @@ public class MenuItemController : ControllerBase
             List<Category> categories = [];
             foreach (string categoryName in menuItemCreateRequest.Categories)
             {
-                Category category = await categoryService.GetCategoryByName(categoryName) ?? throw new NotFoundException("Category not found");
+                Category category = await categoryService.GetCategoryByName(categoryName) ??
+                                    throw new NotFoundException("Category not found");
                 categories.Add(category);
             }
 
@@ -124,18 +115,20 @@ public class MenuItemController : ControllerBase
 
             foreach (string ingredientName in menuItemCreateRequest.IngredientsName)
             {
-                Ingredient ingredient = await ingredientService.GetIngredientByNameAsync(ingredientName) ?? throw new NotFoundException("Ingredient not found");
+                Ingredient ingredient = await ingredientService.GetIngredientByNameAsync(ingredientName) ??
+                                        throw new NotFoundException("Ingredient not found");
                 ingredients.Add(ingredient);
             }
 
-            string menuItemUrl = await imageService.SaveImageAsync(menuItemCreateRequest.Image);
+            string menuItemUrl = await _imageService.SaveImageAsync(menuItemCreateRequest.Image);
 
             MenuItem menuItem = new()
             {
                 Name = menuItemCreateRequest.Name,
                 Description = menuItemCreateRequest.Description,
                 Price = (int)(menuItemCreateRequest.Price * 100),
-                ImageUrl = string.Format("{0}://{1}{2}/Images/{3}", Request.Scheme, Request.Host, Request.PathBase, menuItemUrl),
+                ImageUrl = string.Format("{0}://{1}{2}/Images/{3}", Request.Scheme, Request.Host, Request.PathBase,
+                    menuItemUrl),
                 Categories = categories,
             };
 
@@ -153,7 +146,8 @@ public class MenuItemController : ControllerBase
                 })
                 .ToList();
 
-            List<MenuItemIngredient>? createdMenuItemIngredients = await menuItemService.AddIngredientsToMenuItem(menuItemIngredients);
+            List<MenuItemIngredient>? createdMenuItemIngredients =
+                await menuItemService.AddIngredientsToMenuItem(menuItemIngredients);
             if (createdMenuItemIngredients == null)
             {
                 return BadRequest(new { Message = "Ingredients could not be added to the menu item" });
