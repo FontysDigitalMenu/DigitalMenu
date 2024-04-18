@@ -52,7 +52,7 @@ public class MenuItemController(
         {
             Id = category.Id,
             Name = category.Name,
-            MenuItemViewModels = category.MenuItems.Select(menuItem => new MenuItemViewModel
+            MenuItems = category.MenuItems.Select(menuItem => new MenuItemViewModel
             {
                 Id = menuItem.Id,
                 Name = menuItem.Name,
