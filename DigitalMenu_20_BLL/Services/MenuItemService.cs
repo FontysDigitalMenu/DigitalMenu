@@ -48,4 +48,17 @@ public class MenuItemService(IMenuItemRepository menuItemRepository) : IMenuItem
     {
         return await menuItemRepository.AddIngredientsToMenuItem(menuItemIngredients);
     }
+
+    public async Task<List<CategoryMenuItem>?> AddCategoriesToMenuItem(List<Category> categories, int menuItemId)
+    {
+        List<CategoryMenuItem> menuItemCategories = categories
+            .Select(category => new CategoryMenuItem
+            {
+                CategoryId = category.Id,
+                MenuItemId = menuItemId,
+            })
+            .ToList();
+
+        return await menuItemRepository.AddCategoriesToMenuItem(menuItemCategories);
+    }
 }

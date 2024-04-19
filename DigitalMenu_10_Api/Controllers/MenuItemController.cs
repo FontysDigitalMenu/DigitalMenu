@@ -129,13 +129,19 @@ public class MenuItemController(
                 Price = (int)(menuItemCreateRequest.Price * 100),
                 ImageUrl = string.Format("{0}://{1}{2}/Images/{3}", Request.Scheme, Request.Host, Request.PathBase,
                     menuItemUrl),
-                Categories = categories,
             };
 
             MenuItem? createdMenuItem = await menuItemService.CreateMenuItem(menuItem);
             if (createdMenuItem == null)
             {
                 return BadRequest(new { Message = "Menu item could not be created" });
+            }
+
+            List<CategoryMenuItem>? createdCategoryMenuItems =
+                await menuItemService.AddCategoriesToMenuItem(categories, createdMenuItem.Id);
+            if (createdCategoryMenuItems == null)
+            {
+                return BadRequest(new { Message = "Categories could not be added to the menu item" });
             }
 
             List<MenuItemIngredient> menuItemIngredients = ingredients

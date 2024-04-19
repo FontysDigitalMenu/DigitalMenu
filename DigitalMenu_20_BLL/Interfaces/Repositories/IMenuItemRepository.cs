@@ -17,4 +17,6 @@ public interface IMenuItemRepository
     public Task<MenuItem?> CreateMenuItem(MenuItem menuItem);
 
     public Task<List<MenuItemIngredient>?> AddIngredientsToMenuItem(List<MenuItemIngredient> menuItemIngredients);
+
+    public Task<List<CategoryMenuItem>?> AddCategoriesToMenuItem(List<CategoryMenuItem> categoryMenuItems);
 }

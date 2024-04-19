@@ -82,6 +82,29 @@ namespace DigitalMenu_30_DAL.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("DigitalMenu_20_BLL.Models.CategoryMenuItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MenuItemId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("MenuItemId");
+
+                    b.ToTable("CategoryMenuItems");
+                });
+
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.ExcludedIngredientCartItem", b =>
                 {
                     b.Property<int>("Id")
@@ -539,6 +562,25 @@ namespace DigitalMenu_30_DAL.Migrations
                         .HasForeignKey("MenuItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("MenuItem");
+                });
+
+            modelBuilder.Entity("DigitalMenu_20_BLL.Models.CategoryMenuItem", b =>
+                {
+                    b.HasOne("DigitalMenu_20_BLL.Models.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DigitalMenu_20_BLL.Models.MenuItem", "MenuItem")
+                        .WithMany()
+                        .HasForeignKey("MenuItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
 
                     b.Navigation("MenuItem");
                 });

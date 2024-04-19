@@ -18,12 +18,24 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
 
     public IEnumerable<MenuItem> GetNextMenuItemsWithCategory(int lastId, int amount)
     {
-        return dbContext.MenuItems
-            .Include(m => m.Categories)
-            .OrderBy(m => m.Id)
-            .Where(m => m.Id > lastId)
+        IEnumerable<MenuItem> menuItems = dbContext.CategoryMenuItems
+            .OrderBy(cm => cm.CategoryId)
+            .Skip(lastId)
             .Take(amount)
+            .Include(cm => cm.MenuItem)
+            .Include(cm => cm.Category)
+            .Select(cm => new MenuItem
+            {
+                Id = cm.MenuItem.Id,
+                Name = cm.MenuItem.Name,
+                Description = cm.MenuItem.Description,
+                Price = cm.MenuItem.Price,
+                ImageUrl = cm.MenuItem.ImageUrl,
+                Categories = new List<Category> { cm.Category },
+            })
             .ToList();
+
+        return menuItems;
     }
 
     public IEnumerable<Category> GetCategories()
@@ -80,5 +92,11 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
     {
         await dbContext.MenuItemIngredients.AddRangeAsync(menuItemIngredients);
         return await dbContext.SaveChangesAsync() > 0 ? menuItemIngredients : null;
+    }
+
+    public async Task<List<CategoryMenuItem>?> AddCategoriesToMenuItem(List<CategoryMenuItem> categoryMenuItems)
+    {
+        await dbContext.CategoryMenuItems.AddRangeAsync(categoryMenuItems);
+        return await dbContext.SaveChangesAsync() > 0 ? categoryMenuItems : null;
     }
 }
