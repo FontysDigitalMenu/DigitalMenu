@@ -106,18 +106,29 @@ public class MenuItemController(
             List<Category> categories = [];
             foreach (string categoryName in menuItemCreateRequest.Categories)
             {
-                Category category = await categoryService.GetCategoryByName(categoryName) ??
-                                    throw new NotFoundException("Category not found");
-                categories.Add(category);
+                Category? category = await categoryService.GetCategoryByName(categoryName);
+
+                if (category != null)
+                {
+                    categories.Add(category);
+                }
+                else
+                {
+                    Category newCategory = await categoryService.CreateCategory(categoryName);
+                    categories.Add(newCategory);
+                }
             }
 
             List<Ingredient> ingredients = [];
 
-            foreach (string ingredientName in menuItemCreateRequest.IngredientsName)
+            if (menuItemCreateRequest.IngredientsName != null)
             {
-                Ingredient ingredient = await ingredientService.GetIngredientByNameAsync(ingredientName) ??
-                                        throw new NotFoundException("Ingredient not found");
-                ingredients.Add(ingredient);
+                foreach (string ingredientName in menuItemCreateRequest.IngredientsName)
+                {
+                    Ingredient ingredient = await ingredientService.GetIngredientByNameAsync(ingredientName) ??
+                                            throw new NotFoundException("Ingredient not found");
+                    ingredients.Add(ingredient);
+                }
             }
 
             string menuItemUrl = await _imageService.SaveImageAsync(menuItemCreateRequest.Image);
@@ -144,19 +155,26 @@ public class MenuItemController(
                 return BadRequest(new { Message = "Categories could not be added to the menu item" });
             }
 
-            List<MenuItemIngredient> menuItemIngredients = ingredients
-                .Select(ingredient => new MenuItemIngredient
-                {
-                    IngredientId = ingredient.Id,
-                    MenuItemId = createdMenuItem.Id,
-                })
-                .ToList();
-
-            List<MenuItemIngredient>? createdMenuItemIngredients =
-                await menuItemService.AddIngredientsToMenuItem(menuItemIngredients);
-            if (createdMenuItemIngredients == null)
+            if (ingredients.Count != 0)
             {
-                return BadRequest(new { Message = "Ingredients could not be added to the menu item" });
+                List<MenuItemIngredient> menuItemIngredients = ingredients
+                    .Select((ingredient, index) => new MenuItemIngredient
+                    {
+                        IngredientId = ingredient.Id,
+                        MenuItemId = createdMenuItem.Id,
+                        Pieces = menuItemCreateRequest.IngredientsAmount != null &&
+                                 index < menuItemCreateRequest.IngredientsAmount.Count
+                            ? menuItemCreateRequest.IngredientsAmount[index]
+                            : 1,
+                    })
+                    .ToList();
+
+                List<MenuItemIngredient>? createdMenuItemIngredients =
+                    await menuItemService.AddIngredientsToMenuItem(menuItemIngredients);
+                if (createdMenuItemIngredients == null)
+                {
+                    return BadRequest(new { Message = "Ingredients could not be added to the menu item" });
+                }
             }
 
             return Created("", new MenuItemViewModel
@@ -170,6 +188,10 @@ public class MenuItemController(
         catch (NotFoundException e)
         {
             return NotFound(new { e.Message });
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(new { e.Message });
         }
         catch (DatabaseCreationException e)
         {

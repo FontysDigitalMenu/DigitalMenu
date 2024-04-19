@@ -10,9 +10,9 @@ public class MenuItemCreateRequest
 
     public List<string> Categories { get; set; }
 
-    public List<string> IngredientsName { get; set; }
+    public List<string>? IngredientsName { get; set; }
 
-    public List<int> IngredientsAmount { get; set; }
+    public List<int>? IngredientsAmount { get; set; }
 
     public IFormFile Image { get; set; }
 }

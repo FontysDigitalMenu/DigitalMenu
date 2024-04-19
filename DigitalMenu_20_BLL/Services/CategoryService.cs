@@ -21,4 +21,19 @@ public class CategoryService(ICategoryRepository categoryRepository) : ICategory
 
         return await categoryRepository.GetCategoryByName(categoryName);
     }
+
+    public async Task<Category> CreateCategory(string categoryName)
+    {
+        if (string.IsNullOrEmpty(categoryName))
+        {
+            throw new ArgumentException("Category name cannot be null or empty.", nameof(categoryName));
+        }
+
+        Category category = new()
+        {
+            Name = categoryName,
+        };
+
+        return await categoryRepository.CreateCategory(category);
+    }
 }

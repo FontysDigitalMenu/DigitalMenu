@@ -7,4 +7,6 @@ public interface ICategoryService
     public Task<List<Category>> GetCategories();
 
     public Task<Category?> GetCategoryByName(string categoryName);
+
+    public Task<Category> CreateCategory(string categoryName);
 }

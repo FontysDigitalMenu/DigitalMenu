@@ -204,6 +204,9 @@ namespace DigitalMenu_30_DAL.Migrations
                     b.Property<int>("IngredientId")
                         .HasColumnType("int");
 
+                    b.Property<int>("Pieces")
+                        .HasColumnType("int");
+
                     b.HasKey("MenuItemId", "IngredientId");
 
                     b.HasIndex("IngredientId");
