@@ -17,4 +17,6 @@ public interface IMenuItemService
     public Task<List<MenuItemIngredient>?> AddIngredientsToMenuItem(List<MenuItemIngredient> menuItemIngredients);
 
     public Task<List<CategoryMenuItem>?> AddCategoriesToMenuItem(List<Category> categories, int menuItemId);
+
+    public bool Delete(int id);
 }

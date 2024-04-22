@@ -1,4 +1,4 @@
-﻿using DigitalMenu_10_Api.RequestModels;
+using DigitalMenu_10_Api.RequestModels;
 using DigitalMenu_10_Api.Services;
 using DigitalMenu_10_Api.ViewModels;
 using DigitalMenu_20_BLL.Exceptions;
@@ -200,6 +200,20 @@ public class MenuItemController(
         catch (DatabaseUpdateException e)
         {
             return BadRequest(new { e.Message });
+        }
+    }
+
+    [HttpDelete("{id:int}")]
+    public IActionResult Delete(int id)
+    {
+        try
+        {
+            bool delete = menuItemService.Delete(id);
+            return Ok(delete);
+        }
+        catch (NotFoundException)
+        {
+            return NotFound();
         }
     }
 }
