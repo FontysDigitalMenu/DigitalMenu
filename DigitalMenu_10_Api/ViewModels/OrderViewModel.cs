@@ -20,13 +20,17 @@ public class OrderViewModel
     public List<MenuItemViewModel> MenuItems { get; set; } = [];
 
     public string OrderNumber { get; set; }
+    
+    public List<SplitViewModel>? Splits { get; set; }
 
     public static OrderViewModel FromOrder(Order order, ICartItemService cartItemService)
     {
         return new OrderViewModel
         {
             Id = order.Id,
-            PaymentStatus = order.PaymentStatus.ToString(),
+            PaymentStatus = order.Splits.All(s => s.PaymentStatus == DigitalMenu_20_BLL.Enums.PaymentStatus.Paid)
+                ? DigitalMenu_20_BLL.Enums.PaymentStatus.Paid.ToString()
+                : DigitalMenu_20_BLL.Enums.PaymentStatus.Pending.ToString(),
             FoodStatus = order.FoodStatus.ToString(),
             DrinkStatus = order.DrinkStatus.ToString(),
             TotalAmount = order.TotalAmount,
@@ -46,6 +50,12 @@ public class OrderViewModel
                         Id = i.Id,
                         Name = i.Name,
                     }).ToList(),
+            }).ToList(),
+            Splits = order.Splits.Select(s => new SplitViewModel
+            {
+                Id = s.Id,
+                Amount = s.Amount,
+                PaymentStatus = s.PaymentStatus.ToString(),
             }).ToList(),
         };
     }

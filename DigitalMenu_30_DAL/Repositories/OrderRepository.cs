@@ -14,14 +14,6 @@ public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
         return dbContext.SaveChanges() > 0 ? order : null;
     }
 
-    public Order? GetByExternalPaymentId(string id)
-    {
-        return dbContext.Orders
-            .Include(o => o.OrderMenuItems)
-            .ThenInclude(omi => omi.MenuItem)
-            .FirstOrDefault(o => o.ExternalPaymentId == id);
-    }
-
     public Order? GetBy(string id, string deviceId, string tableId)
     {
         return dbContext.Orders
@@ -53,7 +45,7 @@ public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
             .Include(o => o.OrderMenuItems)
             .ThenInclude(omi => omi.MenuItem)
             .ThenInclude(mi => mi.Categories)
-            .Where(o => o.PaymentStatus == PaymentStatus.Paid)
+            .Where(o => o.Splits.All(s => s.PaymentStatus == PaymentStatus.Paid))
             .Where(o => o.FoodStatus == OrderStatus.Pending || o.FoodStatus == OrderStatus.Processing ||
                         o.FoodStatus == OrderStatus.Completed)
             .ToList();

@@ -1,9 +1,7 @@
 ﻿using DigitalMenu_20_BLL.Exceptions;
-using DigitalMenu_20_BLL.Helpers;
 using DigitalMenu_20_BLL.Interfaces.Repositories;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
-using Mollie.Api.Models.Payment.Response;
 using shortid;
 using shortid.Configuration;
 
@@ -12,8 +10,7 @@ namespace DigitalMenu_20_BLL.Services;
 public class OrderService(
     IOrderRepository orderRepository,
     ICartItemRepository cartItemRepository,
-    ITableRepository tableRepository,
-    IMollieHelper mollieHelper) : IOrderService
+    ITableRepository tableRepository) : IOrderService
 {
     public int GetTotalAmount(string deviceId, string tableId)
     {
@@ -36,7 +33,7 @@ public class OrderService(
         return cartItems.Sum(item => item.MenuItem.Price * item.Quantity);
     }
 
-    public Order Create(string deviceId, string tableId, string paymentId, string orderId)
+    public Order Create(string deviceId, string tableId)
     {
         if (!cartItemRepository.ExistsByDeviceId(deviceId))
         {
@@ -72,12 +69,12 @@ public class OrderService(
         string orderNumber = DateTime.Now.ToString("ddyyMM") +
                              ShortId.Generate(new GenerationOptions(length: 8, useSpecialCharacters: false,
                                  useNumbers: false))[..4];
+        
         Order order = new()
         {
-            Id = orderId,
+            Id = Guid.NewGuid().ToString(),
             DeviceId = deviceId,
             TableId = tableId,
-            ExternalPaymentId = paymentId,
             OrderMenuItems = orderMenuItems,
             TotalAmount = totalAmount,
             OrderNumber = orderNumber,
@@ -90,11 +87,6 @@ public class OrderService(
         }
 
         return createdOrder;
-    }
-
-    public Order? GetByExternalPaymentId(string id)
-    {
-        return orderRepository.GetByExternalPaymentId(id);
     }
 
     public List<Order>? GetBy(string deviceId, string tableId)
@@ -135,16 +127,6 @@ public class OrderService(
     public bool Update(Order order)
     {
         return orderRepository.Update(order);
-    }
-
-    public async Task<PaymentResponse> CreateMolliePayment(int totalAmount, string orderId)
-    {
-        return await mollieHelper.CreatePayment(totalAmount, orderId);
-    }
-
-    public async Task<PaymentResponse> GetPaymentFromMollie(string externalPaymentId)
-    {
-        return await mollieHelper.GetPayment(externalPaymentId);
     }
 
     public void ProcessPaidOrder(Order order)
