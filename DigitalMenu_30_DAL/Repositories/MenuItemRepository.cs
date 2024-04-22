@@ -25,6 +25,7 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
             .Take(amount)
             .Include(cm => cm.MenuItem)
             .Include(cm => cm.Category)
+            .Where(cm => cm.MenuItem.IsActive)
             .Select(cm => new MenuItem
             {
                 Id = cm.MenuItem.Id,
@@ -48,7 +49,6 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
     public MenuItem? GetMenuItemBy(int id)
     {
         var menuItemWithIngredients = dbContext.MenuItemIngredients
-            .Where(mii => mii.MenuItem.IsActive)
             .Where(mii => mii.MenuItemId == id)
             .Include(mii => mii.Ingredient)
             .Select(mii => new

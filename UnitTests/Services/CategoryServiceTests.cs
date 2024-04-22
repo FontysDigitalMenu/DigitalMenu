@@ -9,15 +9,16 @@ namespace UnitTests.Services;
 [TestFixture]
 public class CategoryServiceTests
 {
-    private Mock<ICategoryRepository> _mockCategoryRepository;
-    private CategoryService _categoryService;
-
     [SetUp]
     public void Setup()
     {
         _mockCategoryRepository = new Mock<ICategoryRepository>();
         _categoryService = new CategoryService(_mockCategoryRepository.Object);
     }
+
+    private Mock<ICategoryRepository> _mockCategoryRepository;
+
+    private CategoryService _categoryService;
 
     [Test]
     public async Task GetCategories_ReturnsCategories()
@@ -38,7 +39,7 @@ public class CategoryServiceTests
     {
         // Arrange
         const string categoryName = "Category1";
-        Category category = new Category { Name = categoryName };
+        Category category = new() { Name = categoryName };
         _mockCategoryRepository.Setup(repo => repo.GetCategoryByName(categoryName)).ReturnsAsync(category);
 
         // Act
@@ -53,7 +54,7 @@ public class CategoryServiceTests
     {
         // Arrange
         const string categoryName = "";
-        
+
         // Act & Assert
         Assert.ThrowsAsync<NotFoundException>(() => _categoryService.GetCategoryByName(categoryName));
     }
@@ -63,7 +64,7 @@ public class CategoryServiceTests
     {
         // Arrange
         const string categoryName = "NewCategory";
-        Category createdCategory = new Category { Name = categoryName };
+        Category createdCategory = new() { Name = categoryName };
         _mockCategoryRepository.Setup(repo => repo.CreateCategory(It.IsAny<Category>())).ReturnsAsync(createdCategory);
 
         // Act
@@ -78,7 +79,7 @@ public class CategoryServiceTests
     {
         // Arrange
         const string categoryName = "";
-        
+
         // Act & Assert
         Assert.ThrowsAsync<ArgumentException>(() => _categoryService.CreateCategory(categoryName));
     }
