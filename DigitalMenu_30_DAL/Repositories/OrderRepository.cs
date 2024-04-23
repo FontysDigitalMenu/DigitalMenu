@@ -48,7 +48,8 @@ public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
             .Include(o => o.Splits)
             .Include(o => o.OrderMenuItems)
             .ThenInclude(omi => omi.MenuItem)
-            .ThenInclude(mi => mi.Categories)
+            .ThenInclude(mi => mi.CategoryMenuItems)
+            .ThenInclude(cm => cm.Category)
             .Where(o => o.Splits.All(s => s.PaymentStatus == PaymentStatus.Paid))
             .Where(o => o.FoodStatus == OrderStatus.Pending || o.FoodStatus == OrderStatus.Processing ||
                         o.FoodStatus == OrderStatus.Completed)

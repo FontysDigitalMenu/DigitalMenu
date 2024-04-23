@@ -144,7 +144,7 @@ public class OrderService(
         IEnumerable<Order> foodOnlyOrders = orders.Select(order =>
             {
                 order.OrderMenuItems = order.OrderMenuItems
-                    .Where(omi => omi.MenuItem.Categories.Any(c => c.Name != "Drinks"))
+                    .Where(omi => omi.MenuItem.CategoryMenuItems.Any(c => c.Category.Name != "Drinks"))
                     .ToList();
 
                 return order;
@@ -161,7 +161,7 @@ public class OrderService(
         IEnumerable<Order> drinkOnlyOrders = orders.Select(order =>
             {
                 order.OrderMenuItems = order.OrderMenuItems
-                    .Where(omi => omi.MenuItem.Categories.Any(c => c.Name == "Drinks"))
+                    .Where(omi => omi.MenuItem.CategoryMenuItems.Any(c => c.Category.Name == "Drinks"))
                     .ToList();
 
                 return order;
