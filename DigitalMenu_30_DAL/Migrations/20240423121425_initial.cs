@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DigitalMenu_30_DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -406,9 +406,6 @@ namespace DigitalMenu_30_DAL.Migrations
                     TotalAmount = table.Column<int>(type: "int", nullable: false),
                     FoodStatus = table.Column<int>(type: "int", nullable: false),
                     DrinkStatus = table.Column<int>(type: "int", nullable: false),
-                    PaymentStatus = table.Column<int>(type: "int", nullable: false),
-                    ExternalPaymentId = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
                     OrderDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     OrderNumber = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4")
@@ -484,21 +481,25 @@ namespace DigitalMenu_30_DAL.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Split",
+                name: "Splits",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     OrderId = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    Name = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     Amount = table.Column<int>(type: "int", nullable: false),
-                    PaymentStatus = table.Column<int>(type: "int", nullable: false)
+                    PaymentStatus = table.Column<int>(type: "int", nullable: false),
+                    ExternalPaymentId = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Split", x => x.Id);
+                    table.PrimaryKey("PK_Splits", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Split_Orders_OrderId",
+                        name: "FK_Splits_Orders_OrderId",
                         column: x => x.OrderId,
                         principalTable: "Orders",
                         principalColumn: "Id",
@@ -636,8 +637,8 @@ namespace DigitalMenu_30_DAL.Migrations
                 column: "TableId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Split_OrderId",
-                table: "Split",
+                name: "IX_Splits_OrderId",
+                table: "Splits",
                 column: "OrderId");
         }
 
@@ -678,7 +679,7 @@ namespace DigitalMenu_30_DAL.Migrations
                 name: "MenuItemIngredients");
 
             migrationBuilder.DropTable(
-                name: "Split");
+                name: "Splits");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
