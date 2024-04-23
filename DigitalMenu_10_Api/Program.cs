@@ -45,6 +45,8 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ISplitService, SplitService>();
+builder.Services.AddScoped<ISplitRepository, SplitRepository>();
 builder.Services.AddScoped<IMollieHelper>(_ => new MollieHelper(
     builder.Configuration.GetValue<string>("Mollie:ApiKey")!,
     builder.Configuration.GetValue<string>("Mollie:RedirectUrl")!,

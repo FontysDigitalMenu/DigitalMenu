@@ -1,4 +1,5 @@
-﻿using DigitalMenu_20_BLL.Interfaces.Repositories;
+﻿using DigitalMenu_20_BLL.Exceptions;
+using DigitalMenu_20_BLL.Interfaces.Repositories;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
 
@@ -47,5 +48,29 @@ public class MenuItemService(IMenuItemRepository menuItemRepository) : IMenuItem
     public async Task<List<MenuItemIngredient>?> AddIngredientsToMenuItem(List<MenuItemIngredient> menuItemIngredients)
     {
         return await menuItemRepository.AddIngredientsToMenuItem(menuItemIngredients);
+    }
+
+    public async Task<List<CategoryMenuItem>?> AddCategoriesToMenuItem(List<Category> categories, int menuItemId)
+    {
+        List<CategoryMenuItem> menuItemCategories = categories
+            .Select(category => new CategoryMenuItem
+            {
+                CategoryId = category.Id,
+                MenuItemId = menuItemId,
+            })
+            .ToList();
+
+        return await menuItemRepository.AddCategoriesToMenuItem(menuItemCategories);
+    }
+
+    public bool Delete(int id)
+    {
+        MenuItem? existingMenuItem = GetMenuItemById(id);
+        if (existingMenuItem == null || !existingMenuItem.IsActive)
+        {
+            throw new NotFoundException("MenuItem does not exist");
+        }
+
+        return menuItemRepository.Delete(id);
     }
 }
