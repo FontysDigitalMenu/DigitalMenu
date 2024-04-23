@@ -3,7 +3,6 @@ using DigitalMenu_20_BLL.Interfaces.Repositories;
 using DigitalMenu_20_BLL.Models;
 using DigitalMenu_30_DAL.Data;
 using Microsoft.EntityFrameworkCore;
-using Table = Microsoft.EntityFrameworkCore.Metadata.Internal.Table;
 
 namespace DigitalMenu_30_DAL.Repositories;
 
@@ -70,7 +69,7 @@ public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
     {
         return dbContext.Orders.Any(o => o.DeviceId == deviceId);
     }
-    
+
     public bool ExistsBySessionId(string sessionId)
     {
         return dbContext.Orders.Any(o => o.SessionId == sessionId);

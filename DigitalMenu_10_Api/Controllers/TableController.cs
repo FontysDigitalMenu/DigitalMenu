@@ -17,7 +17,8 @@ public class TableController(ITableService tableService) : ControllerBase
     [ProducesResponseType(200)]
     public IActionResult Get()
     {
-        return Ok(tableService.GetAll().Select(t => new TableViewModel { Id = t.Id, Name = t.Name, SessionId = t.SessionId}));
+        return Ok(tableService.GetAll().Select(t => new TableViewModel
+            { Id = t.Id, Name = t.Name, SessionId = t.SessionId }));
     }
 
     [HttpGet("{id}")]
@@ -44,7 +45,7 @@ public class TableController(ITableService tableService) : ControllerBase
         string id = Guid.NewGuid().ToString();
         string sessionId = Guid.NewGuid().ToString();
 
-        Table table = new() { Id = id, Name = tableRequest.Name , SessionId = sessionId};
+        Table table = new() { Id = id, Name = tableRequest.Name, SessionId = sessionId };
 
         Table? createdTable = tableService.Create(table);
         if (createdTable == null)
@@ -96,7 +97,7 @@ public class TableController(ITableService tableService) : ControllerBase
 
         return NoContent();
     }
-    
+
     [HttpPost("ResetSession")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
@@ -106,35 +107,37 @@ public class TableController(ITableService tableService) : ControllerBase
         try
         {
             if (!tableService.ResetSession(id))
-            {            
+            {
                 return BadRequest(new { Message = "Session could not be reset" });
             }
+
             return NoContent();
         }
         catch (NotFoundException)
         {
             return NotFound();
         }
-    }    
-    
-     [HttpPost("AddHost")]
-     [AllowAnonymous]
-     [ProducesResponseType(204)]
-     [ProducesResponseType(400)]
-     [ProducesResponseType(404)]
-     public IActionResult AddHost([FromForm] string id, [FromForm] string deviceId)
-     {
-         try
-         {
-             if (!tableService.AddHost(id, deviceId))
-             {            
-                 return BadRequest(new { Message = "Host could not be added" });
-             }
-             return NoContent();
-         }
-         catch (NotFoundException)
-         {
-             return NotFound();
-         }
+    }
+
+    [HttpPost("AddHost")]
+    [AllowAnonymous]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
+    public IActionResult AddHost([FromForm] string id, [FromForm] string deviceId)
+    {
+        try
+        {
+            if (!tableService.AddHost(id, deviceId))
+            {
+                return BadRequest(new { Message = "Host could not be added" });
+            }
+
+            return NoContent();
+        }
+        catch (NotFoundException)
+        {
+            return NotFound();
+        }
     }
 }

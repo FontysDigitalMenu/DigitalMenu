@@ -42,7 +42,7 @@ public class OrderService(
         {
             throw new NotFoundException("DeviceId does not exist");
         }
-        
+
         Table? table = tableRepository.GetById(tableId);
         if (table == null)
         {
@@ -102,17 +102,17 @@ public class OrderService(
     public List<Order>? GetBy(string deviceId, string tableId)
     {
         Table? table = tableRepository.GetById(tableId);
-        
+
         if (!orderRepository.ExistsByDeviceId(deviceId))
         {
             throw new NotFoundException("DeviceId does not exist");
         }
-        
+
         if (table == null)
         {
             throw new NotFoundException("TableId does not exist");
         }
-        
+
         if (!orderRepository.ExistsBySessionId(table.SessionId))
         {
             throw new NotFoundException("SessionId does not exist");

@@ -96,7 +96,7 @@ public class TableServiceTests
         // Assert
         Assert.That(result, Is.True);
     }
-    
+
     [Test]
     public void ResetSession_ShouldReturnTrue()
     {
@@ -106,14 +106,14 @@ public class TableServiceTests
             .Returns(true);
         _tableRepositoryMock.Setup(x => x.GetById(table.Id))
             .Returns(table);
-        
+
         // Act
         bool result = _tableService.ResetSession("CA3D0ED8-78D6-4690-8952-89D7E1FC18A4");
-        
+
         // Assert
         Assert.That(result, Is.True);
     }
-    
+
     [Test]
     public void ResetSession_ThrowsNotFoundException()
     {
@@ -123,13 +123,13 @@ public class TableServiceTests
             .Returns(true);
         _tableRepositoryMock.Setup(x => x.GetById("sdfdsfsd"))
             .Returns(null as Table);
-        
+
         // Act
         void ResetSession()
         {
             _tableService.ResetSession("CA3D0ED8-78D6-4690-8952-89D7E1FC18A4");
         }
-        
+
         // Assert
         Assert.Throws<NotFoundException>(ResetSession);
     }

@@ -13,7 +13,7 @@ public class Order
     public Table Table { get; set; }
 
     public string SessionId { get; set; }
-    
+
     public int TotalAmount { get; set; }
 
     public OrderStatus FoodStatus { get; set; } = OrderStatus.Pending;

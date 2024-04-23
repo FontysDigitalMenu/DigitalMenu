@@ -19,5 +19,6 @@ public interface IOrderRepository
     public bool Update(Order order);
 
     public bool ExistsByDeviceId(string deviceId);
+
     public bool ExistsBySessionId(string sessionId);
 }

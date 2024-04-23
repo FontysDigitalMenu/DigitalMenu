@@ -437,7 +437,7 @@ public class SeedData(ApplicationDbContext dbContext)
 
         await dbContext.SaveChangesAsync();
     }
-    
+
     private async Task SeedTables()
     {
         dbContext.Tables.AddRange(

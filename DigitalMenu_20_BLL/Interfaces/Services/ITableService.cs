@@ -15,8 +15,8 @@ public interface ITableService
     public bool Update(Table table);
 
     public bool Delete(string id);
-    
+
     public bool ResetSession(string id);
-    
+
     public bool AddHost(string id, string deviceId);
 }
