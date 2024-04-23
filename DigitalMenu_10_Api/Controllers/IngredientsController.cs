@@ -1,4 +1,5 @@
-﻿using DigitalMenu_10_Api.ViewModels;
+﻿using DigitalMenu_10_Api.RequestModels;
+using DigitalMenu_10_Api.ViewModels;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -23,8 +24,39 @@ public class IngredientsController(IIngredientService ingredientService) : Contr
         {
             Id = ingredient.Id,
             Name = ingredient.Name,
+            Stock = ingredient.Stock,
         }).ToList();
 
         return Ok(ingredientViewModels);
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPost]
+    [ProducesResponseType(201)]
+    [ProducesResponseType(400)]
+    public async Task<ActionResult> Post([FromBody] IngredientCreateRequest ingredientCreateRequest)
+    {
+        try
+        {
+            Ingredient ingredient = new()
+            {
+                Name = ingredientCreateRequest.Name,
+                Stock = ingredientCreateRequest.Stock,
+            };
+
+            Ingredient? createdIngredient = await ingredientService.CreateIngredient(ingredient);
+            if (createdIngredient == null)
+            {
+                return BadRequest(new { Message = "Ingredient could not be created" });
+            }
+
+            return Created("",
+                new Ingredient
+                    { Id = createdIngredient.Id, Name = createdIngredient.Name, Stock = createdIngredient.Stock });
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(new { e.Message });
+        }
     }
 }

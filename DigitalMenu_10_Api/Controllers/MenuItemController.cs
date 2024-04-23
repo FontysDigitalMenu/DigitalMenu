@@ -95,7 +95,7 @@ public class MenuItemController(
 
         return Ok(menuItemViewModels);
     }
-    
+
     [Authorize(Roles = "Admin")]
     [HttpPost]
     [ProducesResponseType(201)]
@@ -204,7 +204,7 @@ public class MenuItemController(
             return BadRequest(new { e.Message });
         }
     }
-    
+
     [Authorize(Roles = "Admin")]
     [HttpPut]
     [ProducesResponseType(204)]
@@ -324,7 +324,7 @@ public class MenuItemController(
             return BadRequest(new { e.Message });
         }
     }
-    
+
     [Authorize(Roles = "Admin")]
     [HttpDelete("{id:int}")]
     [ProducesResponseType(204)]
@@ -334,7 +334,7 @@ public class MenuItemController(
         try
         {
             bool isDeleted = menuItemService.Delete(id);
-            
+
             if (isDeleted)
             {
                 return NoContent();

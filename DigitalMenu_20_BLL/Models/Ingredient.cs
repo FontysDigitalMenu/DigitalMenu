@@ -8,6 +8,8 @@ public class Ingredient
 
     public string Name { get; set; }
 
+    public int Stock { get; set; }
+
     [NotMapped] public int Pieces { get; set; }
 
     public List<MenuItem> MenuItems { get; set; } = new();
