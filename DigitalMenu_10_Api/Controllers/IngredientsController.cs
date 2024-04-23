@@ -19,12 +19,12 @@ public class IngredientsController(IIngredientService ingredientService) : Contr
     {
         List<Ingredient> ingredients = await ingredientService.GetIngredients();
 
-        List<IngredientViewModel> menuItemViewModels = ingredients.Select(ingredient => new IngredientViewModel
+        List<IngredientViewModel> ingredientViewModels = ingredients.Select(ingredient => new IngredientViewModel
         {
             Id = ingredient.Id,
             Name = ingredient.Name,
         }).ToList();
 
-        return Ok(menuItemViewModels);
+        return Ok(ingredientViewModels);
     }
 }
