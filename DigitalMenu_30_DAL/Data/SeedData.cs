@@ -378,35 +378,35 @@ public class SeedData(ApplicationDbContext dbContext)
     private async Task SeedIngredientsToMenuItem()
     {
         dbContext.MenuItemIngredients.AddRange(
-            new MenuItemIngredient { MenuItemId = 1, IngredientId = 1 },
-            new MenuItemIngredient { MenuItemId = 1, IngredientId = 2 },
-            new MenuItemIngredient { MenuItemId = 1, IngredientId = 3 },
-            new MenuItemIngredient { MenuItemId = 1, IngredientId = 4 },
-            new MenuItemIngredient { MenuItemId = 1, IngredientId = 5 },
-            new MenuItemIngredient { MenuItemId = 1, IngredientId = 6 },
-            new MenuItemIngredient { MenuItemId = 1, IngredientId = 7 },
-            new MenuItemIngredient { MenuItemId = 1, IngredientId = 8 },
-            new MenuItemIngredient { MenuItemId = 1, IngredientId = 9 },
-            new MenuItemIngredient { MenuItemId = 1, IngredientId = 10 },
-            new MenuItemIngredient { MenuItemId = 1, IngredientId = 11 },
-            new MenuItemIngredient { MenuItemId = 2, IngredientId = 12 },
-            new MenuItemIngredient { MenuItemId = 2, IngredientId = 13 },
-            new MenuItemIngredient { MenuItemId = 2, IngredientId = 14 },
-            new MenuItemIngredient { MenuItemId = 2, IngredientId = 15 },
-            new MenuItemIngredient { MenuItemId = 2, IngredientId = 16 },
-            new MenuItemIngredient { MenuItemId = 2, IngredientId = 17 },
-            new MenuItemIngredient { MenuItemId = 2, IngredientId = 18 },
-            new MenuItemIngredient { MenuItemId = 2, IngredientId = 19 },
-            new MenuItemIngredient { MenuItemId = 2, IngredientId = 20 },
-            new MenuItemIngredient { MenuItemId = 3, IngredientId = 21 },
-            new MenuItemIngredient { MenuItemId = 3, IngredientId = 13 },
-            new MenuItemIngredient { MenuItemId = 3, IngredientId = 22 },
-            new MenuItemIngredient { MenuItemId = 3, IngredientId = 23 },
-            new MenuItemIngredient { MenuItemId = 3, IngredientId = 20 },
-            new MenuItemIngredient { MenuItemId = 3, IngredientId = 24 },
-            new MenuItemIngredient { MenuItemId = 4, IngredientId = 25 },
-            new MenuItemIngredient { MenuItemId = 4, IngredientId = 26 },
-            new MenuItemIngredient { MenuItemId = 4, IngredientId = 27 }
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 1, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 2, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 3, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 4, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 5, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 6, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 7, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 8, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 9, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 10, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 11, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 2, IngredientId = 12, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 2, IngredientId = 13, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 2, IngredientId = 14, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 2, IngredientId = 15, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 2, IngredientId = 16, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 2, IngredientId = 17, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 2, IngredientId = 18, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 2, IngredientId = 19, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 2, IngredientId = 20, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 3, IngredientId = 21, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 3, IngredientId = 13, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 3, IngredientId = 22, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 3, IngredientId = 23, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 3, IngredientId = 20, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 3, IngredientId = 24, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 4, IngredientId = 25, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 4, IngredientId = 26, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 4, IngredientId = 27, Pieces = 1 }
         );
         await dbContext.SaveChangesAsync();
     }
@@ -420,18 +420,32 @@ public class SeedData(ApplicationDbContext dbContext)
         );
         await dbContext.SaveChangesAsync();
 
-        List<int> ids1 = [2, 3];
-        List<MenuItem> menuItems1 = dbContext.MenuItems.Where(mi => ids1.Contains(mi.Id)).ToList();
-        dbContext.Categories.First(c => c.Id == 1).MenuItems = [..menuItems1];
+        dbContext.CategoryMenuItems.AddRange(new List<CategoryMenuItem>
+        {
+            new() { CategoryId = 1, MenuItemId = 2 },
+            new() { CategoryId = 1, MenuItemId = 3 },
+            new() { CategoryId = 2, MenuItemId = 1 },
+            new() { CategoryId = 2, MenuItemId = 4 },
+            new() { CategoryId = 3, MenuItemId = 5 },
+            new() { CategoryId = 3, MenuItemId = 6 },
+            new() { CategoryId = 3, MenuItemId = 7 },
+            new() { CategoryId = 3, MenuItemId = 8 },
+            new() { CategoryId = 3, MenuItemId = 9 },
+            new() { CategoryId = 3, MenuItemId = 10 },
+        });
 
-        List<int> ids2 = [1, 4];
-        List<MenuItem> menuItems2 = dbContext.MenuItems.Where(mi => ids2.Contains(mi.Id)).ToList();
-        dbContext.Categories.First(c => c.Id == 2).MenuItems = [..menuItems2];
+        /*        List<int> ids1 = [2, 3];
+                List<MenuItem> menuItems1 = dbContext.MenuItems.Where(mi => ids1.Contains(mi.Id)).ToList();
+                dbContext.Categories.First(c => c.Id == 1).MenuItems = [..menuItems1];
 
-        List<int> ids3 = [5, 6, 7, 8, 9, 10];
-        List<MenuItem> menuItems3 = dbContext.MenuItems.Where(mi => ids3.Contains(mi.Id)).ToList();
-        dbContext.Categories.First(c => c.Id == 3).MenuItems = [..menuItems3];
+                List<int> ids2 = [1, 4];
+                List<MenuItem> menuItems2 = dbContext.MenuItems.Where(mi => ids2.Contains(mi.Id)).ToList();
+                dbContext.Categories.First(c => c.Id == 2).MenuItems = [..menuItems2];*/
 
+        /*        List<int> ids3 = [5, 6, 7, 8, 9, 10];
+                List<MenuItem> menuItems3 = dbContext.MenuItems.Where(mi => ids3.Contains(mi.Id)).ToList();
+                dbContext.Categories.First(c => c.Id == 3).MenuItems = [..menuItems3];
+        */
         await dbContext.SaveChangesAsync();
     }
 
