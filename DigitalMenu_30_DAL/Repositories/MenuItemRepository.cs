@@ -56,6 +56,11 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
                 mii.MenuItem, mii.Ingredient,
             })
             .ToList();
+        
+        List<Category> categories = dbContext.CategoryMenuItems
+            .Where(mc => mc.MenuItemId == id)
+            .Select(mc => mc.Category)
+            .ToList();
 
         if (menuItemWithIngredients.Any())
         {
@@ -68,12 +73,20 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
                 ImageUrl = firstMenuItem.ImageUrl,
                 Price = firstMenuItem.Price,
                 Ingredients = menuItemWithIngredients.Select(m => m.Ingredient).ToList(),
+                Categories = categories,
             };
 
             return menuItem;
         }
-
-        return dbContext.MenuItems.Find(id);
+        
+        MenuItem? menuItemWithoutIngredient = dbContext.MenuItems.Find(id);
+        
+        if (menuItemWithoutIngredient != null)
+        {
+            menuItemWithoutIngredient.Categories = categories;
+        }
+        
+        return menuItemWithoutIngredient;
     }
 
     public async Task<List<MenuItem>> GetMenuItems()
@@ -88,7 +101,13 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
     public async Task<MenuItem?> CreateMenuItem(MenuItem menuItem)
     {
         dbContext.MenuItems.Add(menuItem);
-        return dbContext.SaveChanges() > 0 ? menuItem : null;
+        return await dbContext.SaveChangesAsync() > 0 ? menuItem : null;
+    }
+    
+    public async Task<MenuItem?> UpdateMenuItem(MenuItem menuItem)
+    {
+        dbContext.MenuItems.Update(menuItem);
+        return await dbContext.SaveChangesAsync() > 0 ? menuItem : null;
     }
 
     public async Task<List<MenuItemIngredient>?> AddIngredientsToMenuItem(List<MenuItemIngredient> menuItemIngredients)

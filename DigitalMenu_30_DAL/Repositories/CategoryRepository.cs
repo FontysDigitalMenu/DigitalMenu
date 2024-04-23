@@ -26,4 +26,21 @@ public class CategoryRepository(ApplicationDbContext dbContext) : ICategoryRepos
 
         return category;
     }
+    
+    public async Task<bool> DeleteCategoriesByMenuItemId(int menuItemId)
+    {
+        List<CategoryMenuItem> categoryMenuItems = await dbContext.CategoryMenuItems
+            .Where(cmi => cmi.MenuItemId == menuItemId)
+            .ToListAsync();
+        
+        if (categoryMenuItems.Count == 0)
+        {
+            return true;
+        }
+        
+        dbContext.CategoryMenuItems.RemoveRange(categoryMenuItems);
+        await dbContext.SaveChangesAsync();
+        
+        return true;
+    }
 }

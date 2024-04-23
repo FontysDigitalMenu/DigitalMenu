@@ -36,4 +36,14 @@ public class CategoryService(ICategoryRepository categoryRepository) : ICategory
 
         return await categoryRepository.CreateCategory(category);
     }
+    
+    public async Task<bool> DeleteCategoriesByMenuItemId(int menuItemId)
+    {
+        if (menuItemId <= 0)
+        {
+            throw new NotFoundException("Menu item id not found.");
+        }
+        
+        return await categoryRepository.DeleteCategoriesByMenuItemId(menuItemId);
+    }
 }

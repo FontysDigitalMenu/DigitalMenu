@@ -202,6 +202,118 @@ public class MenuItemController(
             return BadRequest(new { e.Message });
         }
     }
+    
+    [HttpPut]
+    public async Task<ActionResult> UpdateMenuItem([FromForm] MenuItemUpdateRequest menuItemUpdateRequest)
+    {
+        try
+        {
+            List<Category> categories = [];
+            foreach (string categoryName in menuItemUpdateRequest.Categories)
+            {
+                Category? category = await categoryService.GetCategoryByName(categoryName);
+
+                if (category != null)
+                {
+                    categories.Add(category);
+                }
+                else
+                {
+                    Category newCategory = await categoryService.CreateCategory(categoryName);
+                    categories.Add(newCategory);
+                }
+            }
+
+            List<Ingredient> ingredients = [];
+
+            if (menuItemUpdateRequest.IngredientsName != null)
+            {
+                foreach (string ingredientName in menuItemUpdateRequest.IngredientsName)
+                {
+                    Ingredient ingredient = await ingredientService.GetIngredientByNameAsync(ingredientName) ??
+                                            throw new NotFoundException("Ingredient not found");
+                    ingredients.Add(ingredient);
+                }
+            }
+            
+            string menuItemUrl = "";
+            
+            if (menuItemUpdateRequest.Image != null)
+            {
+                menuItemUrl = await _imageService.SaveImageAsync(menuItemUpdateRequest.Image);
+            }
+            
+            MenuItem menuItem = new()
+            {
+                Id = menuItemUpdateRequest.Id,
+                Name = menuItemUpdateRequest.Name,
+                Description = menuItemUpdateRequest.Description,
+                Price = (int)(menuItemUpdateRequest.Price * 100),
+                ImageUrl = menuItemUrl != "" ? $"{Request.Scheme}://{Request.Host}{Request.PathBase}/Images/{menuItemUrl}" : "",
+            };
+            
+            MenuItem? updatedMenuItem = await menuItemService.UpdateMenuItem(menuItem);
+            if (updatedMenuItem == null)
+            {
+                return BadRequest(new { Message = "Menu item could not be updated" });
+            }
+            
+            bool menuItemCategoriesDeleted = await categoryService.DeleteCategoriesByMenuItemId(menuItemUpdateRequest.Id);
+            if (menuItemCategoriesDeleted)
+            {
+                List<CategoryMenuItem>? createdCategoryMenuItems =
+                    await menuItemService.AddCategoriesToMenuItem(categories, updatedMenuItem.Id);
+                if (createdCategoryMenuItems == null)
+                {
+                    return BadRequest(new { Message = "Categories could not be added to the menu item" });
+                }   
+            }
+
+            if (ingredients.Count != 0)
+            {
+                List<MenuItemIngredient> menuItemIngredients = ingredients
+                    .Select((ingredient, index) => new MenuItemIngredient
+                    {
+                        IngredientId = ingredient.Id,
+                        MenuItemId = updatedMenuItem.Id,
+                        Pieces = menuItemUpdateRequest.IngredientsAmount != null &&
+                                 index < menuItemUpdateRequest.IngredientsAmount.Count
+                            ? menuItemUpdateRequest.IngredientsAmount[index]
+                            : 1,
+                    })
+                    .ToList();
+                
+                
+                bool menuItemIngredientsDeleted = await ingredientService.DeleteIngredientsByMenuItemId(menuItemUpdateRequest.Id);
+                if (!menuItemIngredientsDeleted) return NoContent();
+                
+                List<MenuItemIngredient>? createdMenuItemIngredients =
+                    await menuItemService.AddIngredientsToMenuItem(menuItemIngredients);
+                if (createdMenuItemIngredients == null)
+                {
+                    return BadRequest(new { Message = "Ingredients could not be added to the menu item" });
+                }
+            }
+            
+            return NoContent();
+        }
+        catch (NotFoundException e)
+        {
+            return NotFound(new { e.Message });
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(new { e.Message });
+        }
+        catch (DatabaseCreationException e)
+        {
+            return BadRequest(new { e.Message });
+        }
+        catch (DatabaseUpdateException e)
+        {
+            return BadRequest(new { e.Message });
+        }
+    }
 
     [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)

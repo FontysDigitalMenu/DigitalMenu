@@ -9,4 +9,6 @@ public interface ICategoryService
     public Task<Category?> GetCategoryByName(string categoryName);
 
     public Task<Category> CreateCategory(string categoryName);
+    
+    public Task<bool> DeleteCategoriesByMenuItemId(int menuItemId);
 }
