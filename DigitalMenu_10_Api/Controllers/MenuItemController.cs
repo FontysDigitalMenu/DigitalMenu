@@ -96,6 +96,7 @@ public class MenuItemController(
         return Ok(menuItemViewModels);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     [ProducesResponseType(201)]
     [ProducesResponseType(404)]
@@ -203,6 +204,7 @@ public class MenuItemController(
         }
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {
