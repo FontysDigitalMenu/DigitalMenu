@@ -211,6 +211,15 @@ public class SeedData(ApplicationDbContext dbContext)
                 UserName = "admin@gmail.com",
                 NormalizedUserName = "admin@gmail.com",
                 PasswordHash = new PasswordHasher<IdentityUser>().HashPassword(null, "Password123!"),
+            },
+            new IdentityUser
+            {
+                Id = "B8B80F1A-BC51-4246-8895-C33B83D0CA32",
+                Email = "employee@gmail.com",
+                NormalizedEmail = "employee@gmail.com",
+                UserName = "employee@gmail.com",
+                NormalizedUserName = "employee@gmail.com",
+                PasswordHash = new PasswordHasher<IdentityUser>().HashPassword(null, "Password123!"),
             }
         );
         await dbContext.SaveChangesAsync();
@@ -230,11 +239,16 @@ public class SeedData(ApplicationDbContext dbContext)
         );
         await dbContext.SaveChangesAsync();
 
-        dbContext.UserRoles.Add(new IdentityUserRole<string>
-        {
-            UserId = "0206A018-5AC6-492D-AB99-10105193D384",
-            RoleId = "8977148E-C765-410F-9A58-0C7D054E4536",
-        });
+        dbContext.UserRoles.AddRange(new IdentityUserRole<string>
+            {
+                UserId = "0206A018-5AC6-492D-AB99-10105193D384",
+                RoleId = "8977148E-C765-410F-9A58-0C7D054E4536",
+            }, new IdentityUserRole<string>
+            {
+                UserId = "B8B80F1A-BC51-4246-8895-C33B83D0CA32",
+                RoleId = "81659B09-5665-4E61-ACB9-5C43E28BE6A4",
+            }
+        );
         await dbContext.SaveChangesAsync();
     }
 

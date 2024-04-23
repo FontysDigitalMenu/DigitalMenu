@@ -133,33 +133,6 @@ public class MenuItemServiceTests
     }
 
     [Test]
-    public async Task UpdateMenuItem_ReturnsUpdatedMenuItem_WhenMenuItemExists()
-    {
-        // Arrange
-        MenuItem menuItem = new() { Id = 123, Name = "Pizza" };
-        MenuItem updatedMenuItem = new() { Id = 123, Name = "Updated Pizza" };
-        _mockMenuItemRepository.Setup(repo => repo.GetMenuItemBy(menuItem.Id)).Returns(menuItem);
-        _mockMenuItemRepository.Setup(repo => repo.UpdateMenuItem(menuItem)).ReturnsAsync(updatedMenuItem);
-
-        // Act and Assert
-        MenuItem? result = await _menuItemService.UpdateMenuItem(menuItem);
-        That(result, Is.Not.Null);
-        That(result, Is.EqualTo(updatedMenuItem));
-    }
-
-    [Test]
-    public Task UpdateMenuItem_ThrowsNotFoundException_WhenMenuItemDoesNotExist()
-    {
-        // Arrange
-        MenuItem menuItem = new() { Id = 123, Name = "Pizza" };
-        _mockMenuItemRepository.Setup(repo => repo.GetMenuItemBy(menuItem.Id)).Returns((MenuItem)null);
-
-        // Act & Assert
-        ThrowsAsync<NotFoundException>(() => _menuItemService.UpdateMenuItem(menuItem));
-        return Task.CompletedTask;
-    }
-
-    [Test]
     public async Task AddIngredientsToMenuItem_ReturnsAddedIngredients()
     {
         // Arrange

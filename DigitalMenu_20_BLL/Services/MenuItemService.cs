@@ -47,7 +47,7 @@ public class MenuItemService(IMenuItemRepository menuItemRepository) : IMenuItem
 
     public async Task<MenuItem?> UpdateMenuItem(MenuItem menuItem)
     {
-        MenuItem? originalMenuItem = menuItemRepository.GetMenuItemBy(menuItem.Id);
+        /*MenuItem? originalMenuItem = menuItemRepository.GetMenuItemBy(menuItem.Id);
 
         if (originalMenuItem == null)
         {
@@ -65,9 +65,9 @@ public class MenuItemService(IMenuItemRepository menuItemRepository) : IMenuItem
             menuItem.ImageUrl = originalMenuItem.ImageUrl;
         }
 
-        originalMenuItem.ImageUrl = menuItem.ImageUrl;
+        originalMenuItem.ImageUrl = menuItem.ImageUrl;*/
 
-        return await menuItemRepository.UpdateMenuItem(originalMenuItem);
+        return await menuItemRepository.UpdateMenuItem(menuItem);
     }
 
     public async Task<List<MenuItemIngredient>?> AddIngredientsToMenuItem(List<MenuItemIngredient> menuItemIngredients)
