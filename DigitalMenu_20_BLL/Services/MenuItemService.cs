@@ -45,6 +45,31 @@ public class MenuItemService(IMenuItemRepository menuItemRepository) : IMenuItem
         return await menuItemRepository.CreateMenuItem(menuItem);
     }
 
+    public async Task<MenuItem?> UpdateMenuItem(MenuItem menuItem)
+    {
+        MenuItem? originalMenuItem = menuItemRepository.GetMenuItemBy(menuItem.Id);
+
+        if (originalMenuItem == null)
+        {
+            throw new NotFoundException("MenuItem does not exist");
+        }
+
+        originalMenuItem.Name = menuItem.Name;
+        originalMenuItem.Description = menuItem.Description;
+        originalMenuItem.Price = menuItem.Price;
+        originalMenuItem.Ingredients = [];
+        originalMenuItem.Categories = null;
+
+        if (string.IsNullOrEmpty(menuItem.ImageUrl))
+        {
+            menuItem.ImageUrl = originalMenuItem.ImageUrl;
+        }
+
+        originalMenuItem.ImageUrl = menuItem.ImageUrl;
+
+        return await menuItemRepository.UpdateMenuItem(originalMenuItem);
+    }
+
     public async Task<List<MenuItemIngredient>?> AddIngredientsToMenuItem(List<MenuItemIngredient> menuItemIngredients)
     {
         return await menuItemRepository.AddIngredientsToMenuItem(menuItemIngredients);
