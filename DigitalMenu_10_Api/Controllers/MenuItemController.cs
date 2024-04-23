@@ -95,9 +95,11 @@ public class MenuItemController(
 
         return Ok(menuItemViewModels);
     }
-
+    
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     [ProducesResponseType(201)]
+    [ProducesResponseType(400)]
     [ProducesResponseType(404)]
     public async Task<ActionResult> CreateMenuItem([FromForm] MenuItemCreateRequest menuItemCreateRequest)
     {
@@ -202,8 +204,12 @@ public class MenuItemController(
             return BadRequest(new { e.Message });
         }
     }
-
+    
+    [Authorize(Roles = "Admin")]
     [HttpPut]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
     public async Task<ActionResult> UpdateMenuItem([FromForm] MenuItemUpdateRequest menuItemUpdateRequest)
     {
         try
@@ -318,14 +324,23 @@ public class MenuItemController(
             return BadRequest(new { e.Message });
         }
     }
-
+    
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id:int}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404)]
     public IActionResult Delete(int id)
     {
         try
         {
-            bool delete = menuItemService.Delete(id);
-            return Ok(delete);
+            bool isDeleted = menuItemService.Delete(id);
+            
+            if (isDeleted)
+            {
+                return NoContent();
+            }
+
+            return BadRequest(new { Message = "Could not delete menu item." });
         }
         catch (NotFoundException)
         {
