@@ -17,6 +17,7 @@ public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
     public Order? GetBy(string id, string deviceId, string tableId)
     {
         return dbContext.Orders
+            .Include(o => o.Splits)
             .Include(o => o.OrderMenuItems)
             .ThenInclude(omi => omi.MenuItem)
             .FirstOrDefault(o => o.Id == id && o.DeviceId == deviceId && o.TableId == tableId);
@@ -25,6 +26,7 @@ public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
     public Order? GetBy(string id)
     {
         return dbContext.Orders
+            .Include(o => o.Splits)
             .Include(o => o.OrderMenuItems)
             .ThenInclude(omi => omi.MenuItem)
             .FirstOrDefault(o => o.Id == id);
@@ -33,6 +35,7 @@ public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
     public List<Order>? GetBy(string deviceId, string tableId)
     {
         return dbContext.Orders
+            .Include(o => o.Splits)
             .Include(o => o.OrderMenuItems)
             .ThenInclude(omi => omi.MenuItem)
             .Where(o => o.DeviceId == deviceId && o.TableId == tableId)
@@ -42,6 +45,7 @@ public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
     public IEnumerable<Order> GetPaidOrders()
     {
         return dbContext.Orders
+            .Include(o => o.Splits)
             .Include(o => o.OrderMenuItems)
             .ThenInclude(omi => omi.MenuItem)
             .ThenInclude(mi => mi.Categories)

@@ -34,6 +34,9 @@ public class SplitService(ISplitRepository splitRepository, IMollieHelper mollie
 
     public async Task<PaymentResponse> CreateMolliePayment(Split split)
     {
-        return await mollieHelper.CreatePayment(split);
+        PaymentResponse paymentResponse = await mollieHelper.CreatePayment(split);
+        split.ExternalPaymentId = paymentResponse.Id;
+        splitRepository.Update(split);
+        return paymentResponse;
     }
 }

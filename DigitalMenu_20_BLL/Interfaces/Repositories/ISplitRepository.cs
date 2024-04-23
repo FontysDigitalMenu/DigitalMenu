@@ -11,4 +11,6 @@ public interface ISplitRepository
     public Split? GetById(int id);
 
     public Split? Create(Split split);
+
+    public bool CreateSplits(List<Split> splits);
 }

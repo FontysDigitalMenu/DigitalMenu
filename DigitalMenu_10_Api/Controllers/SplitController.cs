@@ -16,61 +16,14 @@ namespace DigitalMenu_10_Api.Controllers;
 
 [Route("api/v1/split")]
 [ApiController]
-public class SplitController(ISplitService splitService, IOrderService orderService, ICartItemService cartItemService, IHubContext<OrderHub, IOrderHubClient> hubContext) : ControllerBase
+public class SplitController(
+    ISplitService splitService,
+    IOrderService orderService,
+    ICartItemService cartItemService,
+    IHubContext<OrderHub, IOrderHubClient> hubContext) : ControllerBase
 {
-    [HttpPost]
-    [ProducesResponseType(201)]
-    [ProducesResponseType(400)]
-    public IActionResult Post([FromBody] SplitRequest request)
-    {
-        Split split = new()
-        {
-            OrderId = request.OrderId,
-            Name = request.Name,
-            Amount = request.Amount,
-        };
-
-        Split? createdSplit = splitService.Create(split);
-        if (createdSplit == null)
-        {
-            return BadRequest(new { Message = "Split could not be created" });
-        }
-
-        return CreatedAtAction("", new { id = createdSplit.Id },
-            new SplitViewModel
-            {
-                Id = createdSplit.Id,
-                Name = createdSplit.Name,
-                Amount = createdSplit.Amount,
-                PaymentStatus = createdSplit.PaymentStatus.ToString(),
-            });
-    }
-
-    [HttpPut("{id:int}")]
-    [ProducesResponseType(204)]
-    [ProducesResponseType(400)]
-    [ProducesResponseType(404)]
-    public IActionResult Put(int id, [FromBody] SplitUpdateRequest request)
-    {
-        Split? split = splitService.GetById(id);
-        if (split == null)
-        {
-            return NotFound();
-        }
-
-        split.Name = request.Name;
-        split.Amount = request.Amount;
-
-        if (!splitService.Update(split))
-        {
-            return BadRequest(new { Message = "Split could not be updated" });
-        }
-
-        return NoContent();
-    }
-
-    [HttpPost]
-    [ProducesResponseType(201)]
+    [HttpPost("pay")]
+    [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     public async Task<ActionResult> Pay([FromBody] PaySplitRequest request)
     {
@@ -99,13 +52,13 @@ public class SplitController(ISplitService splitService, IOrderService orderServ
             return BadRequest(new { Message = "Payment by Mollie could not be created" });
         }
 
-        return CreatedAtAction("", new SplitPayedViewModel
+        return Ok(new SplitPayedViewModel
         {
             RedirectUrl = paymentResponse.Links.Checkout.Href,
             OrderId = split.OrderId,
         });
     }
-    
+
     [DisableCors]
     [HttpPost("webhook")]
     [ProducesResponseType(200)]

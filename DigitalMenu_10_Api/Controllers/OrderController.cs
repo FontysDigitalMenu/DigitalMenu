@@ -1,4 +1,5 @@
-﻿using DigitalMenu_10_Api.Hub;
+﻿using System.ComponentModel.DataAnnotations;
+using DigitalMenu_10_Api.Hub;
 using DigitalMenu_10_Api.RequestModels;
 using DigitalMenu_10_Api.ViewModels;
 using DigitalMenu_20_BLL.Enums;
@@ -13,7 +14,10 @@ namespace DigitalMenu_10_Api.Controllers;
 
 [Route("api/v1/order")]
 [ApiController]
-public class OrderController(IOrderService orderService, ICartItemService cartItemService, IHubContext<OrderHub, IOrderHubClient> hubContext) : ControllerBase
+public class OrderController(
+    IOrderService orderService,
+    ICartItemService cartItemService,
+    IHubContext<OrderHub, IOrderHubClient> hubContext) : ControllerBase
 {
     [HttpPost]
     [ProducesResponseType(201)]
@@ -22,10 +26,20 @@ public class OrderController(IOrderService orderService, ICartItemService cartIt
     [ProducesResponseType(500)]
     public ActionResult<SplitPayedViewModel> Post([FromBody] OrderRequest orderRequest)
     {
+        List<Split> splits = orderRequest.Splits.Select(s => new Split
+        {
+            Name = s.Name,
+            Amount = s.Amount,
+        }).ToList();
+
         Order createdOrder;
         try
         {
-            createdOrder = orderService.Create(orderRequest.DeviceId, orderRequest.TableId);
+            createdOrder = orderService.Create(orderRequest.DeviceId, orderRequest.TableId, splits);
+        }
+        catch (ValidationException e)
+        {
+            return BadRequest(new { e.Message });
         }
         catch (NotFoundException e)
         {
@@ -35,12 +49,10 @@ public class OrderController(IOrderService orderService, ICartItemService cartIt
         {
             return BadRequest(new { e.Message });
         }
-        catch (DatabaseUpdateException e)
-        {
-            return BadRequest(new { e.Message });
-        }
 
-        return CreatedAtAction("Get", new { id = createdOrder.Id, deviceId = createdOrder.DeviceId, createdOrder.TableId });
+        return CreatedAtAction("Get",
+            new { id = createdOrder.Id, deviceId = createdOrder.DeviceId, tableId = createdOrder.TableId },
+            OrderViewModel.FromOrder(createdOrder, cartItemService));
     }
 
     [HttpGet("{deviceId}/{tableId}")]

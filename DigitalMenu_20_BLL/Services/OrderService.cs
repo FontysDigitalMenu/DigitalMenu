@@ -1,4 +1,5 @@
-﻿using DigitalMenu_20_BLL.Exceptions;
+﻿using System.ComponentModel.DataAnnotations;
+using DigitalMenu_20_BLL.Exceptions;
 using DigitalMenu_20_BLL.Interfaces.Repositories;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
@@ -10,30 +11,10 @@ namespace DigitalMenu_20_BLL.Services;
 public class OrderService(
     IOrderRepository orderRepository,
     ICartItemRepository cartItemRepository,
-    ITableRepository tableRepository) : IOrderService
+    ITableRepository tableRepository,
+    ISplitRepository splitRepository) : IOrderService
 {
-    public int GetTotalAmount(string deviceId, string tableId)
-    {
-        if (!cartItemRepository.ExistsByDeviceId(deviceId))
-        {
-            throw new NotFoundException("DeviceId does not exist");
-        }
-
-        if (tableRepository.GetById(tableId) == null)
-        {
-            throw new NotFoundException("TableId does not exist");
-        }
-
-        List<CartItem> cartItems = cartItemRepository.GetByDeviceId(deviceId);
-        if (cartItems.Count == 0)
-        {
-            throw new NotFoundException("CartItems do not exist");
-        }
-
-        return cartItems.Sum(item => item.MenuItem.Price * item.Quantity);
-    }
-
-    public Order Create(string deviceId, string tableId)
+    public Order Create(string deviceId, string tableId, List<Split> splits)
     {
         if (!cartItemRepository.ExistsByDeviceId(deviceId))
         {
@@ -65,11 +46,15 @@ public class OrderService(
         }).ToList();
 
         int totalAmount = GetTotalAmount(deviceId, tableId);
+        if (splits.Sum(s => s.Amount) != totalAmount)
+        {
+            throw new ValidationException("Total amount does not match with splits amount");
+        }
 
         string orderNumber = DateTime.Now.ToString("ddyyMM") +
                              ShortId.Generate(new GenerationOptions(length: 8, useSpecialCharacters: false,
                                  useNumbers: false))[..4];
-        
+
         Order order = new()
         {
             Id = Guid.NewGuid().ToString(),
@@ -79,9 +64,11 @@ public class OrderService(
             TotalAmount = totalAmount,
             OrderNumber = orderNumber,
         };
-
         Order? createdOrder = orderRepository.Create(order);
-        if (createdOrder == null)
+
+        splits.ForEach(s => s.OrderId = order.Id);
+        bool hasCreatedSplits = splitRepository.CreateSplits(splits);
+        if (!hasCreatedSplits || createdOrder == null)
         {
             throw new DatabaseCreationException("Order could not be created");
         }
@@ -174,5 +161,26 @@ public class OrderService(
             .Where(order => order.OrderMenuItems.Count != 0);
 
         return drinkOnlyOrders;
+    }
+
+    public int GetTotalAmount(string deviceId, string tableId)
+    {
+        if (!cartItemRepository.ExistsByDeviceId(deviceId))
+        {
+            throw new NotFoundException("DeviceId does not exist");
+        }
+
+        if (tableRepository.GetById(tableId) == null)
+        {
+            throw new NotFoundException("TableId does not exist");
+        }
+
+        List<CartItem> cartItems = cartItemRepository.GetByDeviceId(deviceId);
+        if (cartItems.Count == 0)
+        {
+            throw new NotFoundException("CartItems do not exist");
+        }
+
+        return cartItems.Sum(item => item.MenuItem.Price * item.Quantity);
     }
 }

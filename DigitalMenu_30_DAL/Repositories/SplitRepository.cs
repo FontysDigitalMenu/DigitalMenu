@@ -32,4 +32,10 @@ public class SplitRepository(ApplicationDbContext dbContext) : ISplitRepository
         dbContext.Splits.Add(split);
         return dbContext.SaveChanges() > 0 ? split : null;
     }
+
+    public bool CreateSplits(List<Split> splits)
+    {
+        dbContext.Splits.AddRange(splits);
+        return dbContext.SaveChanges() > 0;
+    }
 }

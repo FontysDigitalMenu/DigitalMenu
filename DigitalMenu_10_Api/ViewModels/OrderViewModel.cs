@@ -1,4 +1,5 @@
-﻿using DigitalMenu_20_BLL.Interfaces.Services;
+﻿using DigitalMenu_20_BLL.Enums;
+using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
 
 namespace DigitalMenu_10_Api.ViewModels;
@@ -13,14 +14,14 @@ public class OrderViewModel
 
     public string FoodStatus { get; set; }
 
-    public string PaymentStatus { get; set; }
+    public bool IsPaymentSuccess { get; set; }
 
     public DateTime OrderDate { get; set; } = DateTime.Now;
 
     public List<MenuItemViewModel> MenuItems { get; set; } = [];
 
     public string OrderNumber { get; set; }
-    
+
     public List<SplitViewModel>? Splits { get; set; }
 
     public static OrderViewModel FromOrder(Order order, ICartItemService cartItemService)
@@ -28,9 +29,7 @@ public class OrderViewModel
         return new OrderViewModel
         {
             Id = order.Id,
-            PaymentStatus = order.Splits.All(s => s.PaymentStatus == DigitalMenu_20_BLL.Enums.PaymentStatus.Paid)
-                ? DigitalMenu_20_BLL.Enums.PaymentStatus.Paid.ToString()
-                : DigitalMenu_20_BLL.Enums.PaymentStatus.Pending.ToString(),
+            IsPaymentSuccess = order.Splits.All(s => s.PaymentStatus == PaymentStatus.Paid),
             FoodStatus = order.FoodStatus.ToString(),
             DrinkStatus = order.DrinkStatus.ToString(),
             TotalAmount = order.TotalAmount,
@@ -55,6 +54,7 @@ public class OrderViewModel
             {
                 Id = s.Id,
                 Amount = s.Amount,
+                Name = s.Name,
                 PaymentStatus = s.PaymentStatus.ToString(),
             }).ToList(),
         };

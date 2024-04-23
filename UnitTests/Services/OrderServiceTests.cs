@@ -1,9 +1,7 @@
 ﻿using DigitalMenu_20_BLL.Exceptions;
-using DigitalMenu_20_BLL.Helpers;
 using DigitalMenu_20_BLL.Interfaces.Repositories;
 using DigitalMenu_20_BLL.Models;
 using DigitalMenu_20_BLL.Services;
-using Mollie.Api.Models.Payment.Response;
 using Moq;
 
 namespace UnitTests.Services;
@@ -12,9 +10,9 @@ public class OrderServiceTests
 {
     private readonly Mock<ICartItemRepository> _cartItemRepositoryMock = new();
 
-    private readonly Mock<IMollieHelper> _mollieHelperMock = new();
-
     private readonly Mock<IOrderRepository> _orderRepositoryMock = new();
+
+    private readonly Mock<ISplitRepository> _splitRepositoryMock = new();
 
     private readonly Mock<ITableRepository> _tableRepositoryMock = new();
 
@@ -23,7 +21,8 @@ public class OrderServiceTests
     [SetUp]
     public void Setup()
     {
-        _orderService = new OrderService(_orderRepositoryMock.Object, _cartItemRepositoryMock.Object, _tableRepositoryMock.Object);
+        _orderService = new OrderService(_orderRepositoryMock.Object, _cartItemRepositoryMock.Object,
+            _tableRepositoryMock.Object, _splitRepositoryMock.Object);
     }
 
     [Test]
@@ -115,7 +114,6 @@ public class OrderServiceTests
         // Arrange
         const string deviceId = "77C10784-D645-406F-869D-C653B19948F5";
         const string tableId = "11CCAB02-0C97-41F7-8F35-18CFD4BA4672";
-        const string paymentId = "F91178CE-FFCE-40ED-955F-3471BC6A0586";
         const string orderId = "F91178CE-FFCE-40ED-955F-3471BC6A0586";
         Order order = new()
         {
@@ -124,6 +122,7 @@ public class OrderServiceTests
             TableId = tableId,
             TotalAmount = 1259,
         };
+        List<Split> splits = [new Split { Amount = 1259, Name = "Split 1" }];
         _cartItemRepositoryMock.Setup(x => x.ExistsByDeviceId(deviceId))
             .Returns(true);
         _tableRepositoryMock.Setup(x => x.GetById(tableId))
@@ -139,9 +138,11 @@ public class OrderServiceTests
             .Returns(order);
         _cartItemRepositoryMock.Setup(x => x.ClearByDeviceId(deviceId))
             .Returns(true);
+        _splitRepositoryMock.Setup(x => x.CreateSplits(splits))
+            .Returns(true);
 
         // Act
-        Order result = _orderService.Create(order.DeviceId, order.TableId);
+        Order result = _orderService.Create(order.DeviceId, order.TableId, splits);
 
         // Assert
         Assert.That(result, Is.EqualTo(order));
@@ -162,6 +163,7 @@ public class OrderServiceTests
             TableId = tableId,
             TotalAmount = 1259,
         };
+        List<Split> splits = [new Split { Amount = 1259, Name = "Split 1" }];
         _cartItemRepositoryMock.Setup(x => x.ExistsByDeviceId(deviceId))
             .Returns(false);
         _tableRepositoryMock.Setup(x => x.GetById(tableId))
@@ -178,7 +180,7 @@ public class OrderServiceTests
 
         // Act
         // Assert
-        Assert.Throws<NotFoundException>(() => _orderService.Create(order.DeviceId, order.TableId));
+        Assert.Throws<NotFoundException>(() => _orderService.Create(order.DeviceId, order.TableId, splits));
     }
 
     [Test]
@@ -196,6 +198,7 @@ public class OrderServiceTests
             TableId = tableId,
             TotalAmount = 1259,
         };
+        List<Split> splits = [new Split { Amount = 1259, Name = "Split 1" }];
         _cartItemRepositoryMock.Setup(x => x.ExistsByDeviceId(deviceId))
             .Returns(true);
         _tableRepositoryMock.Setup(x => x.GetById(tableId))
@@ -212,13 +215,13 @@ public class OrderServiceTests
 
         // Act
         // Assert
-        Assert.Throws<NotFoundException>(() => _orderService.Create(order.DeviceId, order.TableId));
+        Assert.Throws<NotFoundException>(() => _orderService.Create(order.DeviceId, order.TableId, splits));
     }
 
     [Test]
     public void Create_ShouldThrowCartItemsNotFoundException()
     {
-        // Act
+        // Arrange
         const string deviceId = "77C10784-D645-406F-869D-C653B19948F5";
         const string tableId = "11CCAB02-0C97-41F7-8F35-18CFD4BA4672";
         const string paymentId = "F91178CE-FFCE-40ED-955F-3471BC6A0586";
@@ -230,6 +233,7 @@ public class OrderServiceTests
             TableId = tableId,
             TotalAmount = 1259,
         };
+        List<Split> splits = [new Split { Amount = 1259, Name = "Split 1" }];
         _cartItemRepositoryMock.Setup(x => x.ExistsByDeviceId(deviceId))
             .Returns(true);
         _tableRepositoryMock.Setup(x => x.GetById(tableId))
@@ -241,9 +245,9 @@ public class OrderServiceTests
         _cartItemRepositoryMock.Setup(x => x.ClearByDeviceId(deviceId))
             .Returns(true);
 
-        // Arrange
+        // Act
         // Assert
-        Assert.Throws<NotFoundException>(() => _orderService.Create(order.DeviceId, order.TableId));
+        Assert.Throws<NotFoundException>(() => _orderService.Create(order.DeviceId, order.TableId, splits));
     }
 
     [Test]
@@ -254,6 +258,7 @@ public class OrderServiceTests
         const string tableId = "11CCAB02-0C97-41F7-8F35-18CFD4BA4672";
         const string paymentId = "F91178CE-FFCE-40ED-955F-3471BC6A0586";
         const string orderId = "F91178CE-FFCE-40ED-955F-3471BC6A0586";
+        List<Split> splits = [new Split { Amount = 1259, Name = "Split 1" }];
         _cartItemRepositoryMock.Setup(x => x.ExistsByDeviceId(deviceId))
             .Returns(true);
         _tableRepositoryMock.Setup(x => x.GetById(tableId))
@@ -272,7 +277,7 @@ public class OrderServiceTests
 
         // Arrange
         // Assert
-        Assert.Throws<DatabaseCreationException>(() => _orderService.Create(deviceId, tableId));
+        Assert.Throws<DatabaseCreationException>(() => _orderService.Create(deviceId, tableId, splits));
     }
 
     [Test]
