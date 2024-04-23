@@ -229,10 +229,6 @@ namespace DigitalMenu_30_DAL.Migrations
                     b.Property<int>("DrinkStatus")
                         .HasColumnType("int");
 
-                    b.Property<string>("ExternalPaymentId")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
                     b.Property<int>("FoodStatus")
                         .HasColumnType("int");
 
@@ -242,9 +238,6 @@ namespace DigitalMenu_30_DAL.Migrations
                     b.Property<string>("OrderNumber")
                         .IsRequired()
                         .HasColumnType("longtext");
-
-                    b.Property<int>("PaymentStatus")
-                        .HasColumnType("int");
 
                     b.Property<string>("TableId")
                         .IsRequired()
@@ -301,6 +294,13 @@ namespace DigitalMenu_30_DAL.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("int");
 
+                    b.Property<string>("ExternalPaymentId")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<string>("OrderId")
                         .IsRequired()
                         .HasColumnType("varchar(255)");
@@ -312,7 +312,7 @@ namespace DigitalMenu_30_DAL.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("Split");
+                    b.ToTable("Splits");
                 });
 
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.Table", b =>

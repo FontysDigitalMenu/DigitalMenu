@@ -10,7 +10,11 @@ public class Split
 
     public Order Order { get; set; }
 
+    public string Name { get; set; }
+
     public int Amount { get; set; }
 
     public PaymentStatus PaymentStatus { get; set; } = PaymentStatus.Pending;
+
+    public string? ExternalPaymentId { get; set; }
 }
