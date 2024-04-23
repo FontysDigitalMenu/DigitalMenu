@@ -12,11 +12,12 @@ public interface IOrderRepository
 
     public Order? GetBy(string id);
 
-    public List<Order>? GetBy(string deviceId, string tableId);
+    public List<Order>? GetBy(string deviceId, string sessionId);
 
     public IEnumerable<Order> GetPaidOrders();
 
     public bool Update(Order order);
 
     public bool ExistsByDeviceId(string deviceId);
+    public bool ExistsBySessionId(string sessionId);
 }

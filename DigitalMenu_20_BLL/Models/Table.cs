@@ -7,6 +7,8 @@ public class Table
     public string Name { get; set; }
 
     public List<Order> Orders { get; set; }
+    
+    public string SessionId { get; set; }
 
     public string? QrCode { get; set; }
 

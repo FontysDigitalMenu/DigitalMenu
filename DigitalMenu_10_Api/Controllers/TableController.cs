@@ -1,5 +1,6 @@
 using DigitalMenu_10_Api.RequestModels;
 using DigitalMenu_10_Api.ViewModels;
+using DigitalMenu_20_BLL.Exceptions;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -16,7 +17,7 @@ public class TableController(ITableService tableService) : ControllerBase
     [ProducesResponseType(200)]
     public IActionResult Get()
     {
-        return Ok(tableService.GetAll().Select(t => new TableViewModel { Id = t.Id, Name = t.Name }));
+        return Ok(tableService.GetAll().Select(t => new TableViewModel { Id = t.Id, Name = t.Name, SessionId = t.SessionId}));
     }
 
     [HttpGet("{id}")]
@@ -41,8 +42,9 @@ public class TableController(ITableService tableService) : ControllerBase
     public IActionResult Post([FromBody] TableRequest tableRequest)
     {
         string id = Guid.NewGuid().ToString();
+        string sessionId = Guid.NewGuid().ToString();
 
-        Table table = new() { Id = id, Name = tableRequest.Name };
+        Table table = new() { Id = id, Name = tableRequest.Name , SessionId = sessionId};
 
         Table? createdTable = tableService.Create(table);
         if (createdTable == null)
@@ -93,5 +95,25 @@ public class TableController(ITableService tableService) : ControllerBase
         }
 
         return NoContent();
+    }
+    
+    [HttpPost("{id}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
+    public IActionResult ResetSession(string id)
+    {
+        try
+        {
+            if (!tableService.ResetSession(id))
+            {            
+                return BadRequest(new { Message = "Session could not be reset" });
+            }
+            return NoContent();
+        }
+        catch (NotFoundException)
+        {
+            return NotFound();
+        }
     }
 }

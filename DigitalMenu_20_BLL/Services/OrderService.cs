@@ -42,8 +42,9 @@ public class OrderService(
         {
             throw new NotFoundException("DeviceId does not exist");
         }
-
-        if (tableRepository.GetById(tableId) == null)
+        
+        Table? table = tableRepository.GetById(tableId);
+        if (table == null)
         {
             throw new NotFoundException("TableId does not exist");
         }
@@ -77,6 +78,7 @@ public class OrderService(
             Id = orderId,
             DeviceId = deviceId,
             TableId = tableId,
+            SessionId = table.SessionId,
             ExternalPaymentId = paymentId,
             OrderMenuItems = orderMenuItems,
             TotalAmount = totalAmount,
@@ -99,17 +101,24 @@ public class OrderService(
 
     public List<Order>? GetBy(string deviceId, string tableId)
     {
+        Table? table = tableRepository.GetById(tableId);
+        
         if (!orderRepository.ExistsByDeviceId(deviceId))
         {
             throw new NotFoundException("DeviceId does not exist");
         }
-
-        if (tableRepository.GetById(tableId) == null)
+        
+        if (table == null)
         {
             throw new NotFoundException("TableId does not exist");
         }
+        
+        if (!orderRepository.ExistsBySessionId(table.SessionId))
+        {
+            throw new NotFoundException("SessionId does not exist");
+        }
 
-        return orderRepository.GetBy(deviceId, tableId);
+        return orderRepository.GetBy(deviceId, table.SessionId);
     }
 
     public Order? GetBy(string id, string deviceId, string tableId)

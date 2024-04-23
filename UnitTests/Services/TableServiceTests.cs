@@ -1,4 +1,5 @@
-﻿using DigitalMenu_20_BLL.Interfaces.Repositories;
+﻿using DigitalMenu_20_BLL.Exceptions;
+using DigitalMenu_20_BLL.Interfaces.Repositories;
 using DigitalMenu_20_BLL.Models;
 using DigitalMenu_20_BLL.Services;
 using Moq;
@@ -94,5 +95,40 @@ public class TableServiceTests
 
         // Assert
         Assert.That(result, Is.True);
+    }
+    
+    [Test]
+    public void ResetSession_ShouldReturnTrue()
+    {
+        // Arrange
+        Table table = new() { Id = "CA3D0ED8-78D6-4690-8952-89D7E1FC18A4", Name = "Table 1", CreatedAt = DateTime.Now };
+        _tableRepositoryMock.Setup(x => x.Update(table))
+            .Returns(true);
+        _tableRepositoryMock.Setup(x => x.GetById(table.Id))
+            .Returns(table);
+        
+        // Act
+        bool result = _tableService.ResetSession("CA3D0ED8-78D6-4690-8952-89D7E1FC18A4");
+        
+        // Assert
+        Assert.That(result, Is.True);
+    }
+    
+    [Test]
+    public void ResetSession_ThrowsNotFoundException()
+    {
+        // Arrange
+        Table table = new() { Id = "CA3D0ED8-78D6-4690-8952-89D7E1FC18A4", Name = "Table 1", CreatedAt = DateTime.Now };
+        _tableRepositoryMock.Setup(x => x.Update(table))
+            .Returns(true);
+        
+        // Act
+        void ResetSession()
+        {
+            _tableService.ResetSession("CA3D0ED8-78D6-4690-8952-89D7E1FC18A4");
+        }
+        
+        // Assert
+        Assert.Throws<NotFoundException>(ResetSession);
     }
 }

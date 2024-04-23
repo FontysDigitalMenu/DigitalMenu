@@ -3,6 +3,7 @@ using DigitalMenu_20_BLL.Interfaces.Repositories;
 using DigitalMenu_20_BLL.Models;
 using DigitalMenu_30_DAL.Data;
 using Microsoft.EntityFrameworkCore;
+using Table = Microsoft.EntityFrameworkCore.Metadata.Internal.Table;
 
 namespace DigitalMenu_30_DAL.Repositories;
 
@@ -38,12 +39,12 @@ public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
             .FirstOrDefault(o => o.Id == id);
     }
 
-    public List<Order>? GetBy(string deviceId, string tableId)
+    public List<Order>? GetBy(string deviceId, string sessionId)
     {
         return dbContext.Orders
             .Include(o => o.OrderMenuItems)
             .ThenInclude(omi => omi.MenuItem)
-            .Where(o => o.DeviceId == deviceId && o.TableId == tableId)
+            .Where(o => o.DeviceId == deviceId && o.SessionId == sessionId)
             .ToList();
     }
 
@@ -68,5 +69,10 @@ public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
     public bool ExistsByDeviceId(string deviceId)
     {
         return dbContext.Orders.Any(o => o.DeviceId == deviceId);
+    }
+    
+    public bool ExistsBySessionId(string sessionId)
+    {
+        return dbContext.Orders.Any(o => o.SessionId == sessionId);
     }
 }

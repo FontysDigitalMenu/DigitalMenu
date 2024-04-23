@@ -42,6 +42,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = "12d7eaff-5f3c-456d-92c4-7de2220b2d05",
                 DeviceId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
                 TableId = "69AC2F65-5DE9-40D4-B930-624CA40D3F13",
+                SessionId = "0449DB90-66AF-4E17-8086-C1452270B52D",
                 TotalAmount = 6400,
                 PaymentStatus = PaymentStatus.Paid,
                 ExternalPaymentId = "tr_294TYYppc4",
@@ -53,6 +54,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = "6befb25e-0207-4a54-82e8-2d29b8b616c0",
                 DeviceId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
                 TableId = "69AC2F65-5DE9-40D4-B930-624CA40D3F13",
+                SessionId = "0449DB90-66AF-4E17-8086-C1452270B52D",
                 TotalAmount = 2600,
                 PaymentStatus = PaymentStatus.Pending,
                 ExternalPaymentId = "tr_XvY5pWzhre",
@@ -64,6 +66,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = "897dbd82-dd96-476e-83a4-5d9ca59fc8d7",
                 DeviceId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
                 TableId = "69AC2F65-5DE9-40D4-B930-624CA40D3F13",
+                SessionId = "CBF261E5-A710-4611-A423-87943EB5DC32",
                 TotalAmount = 700,
                 PaymentStatus = PaymentStatus.Canceled,
                 ExternalPaymentId = "tr_cxyPxPWWqC",
@@ -434,7 +437,7 @@ public class SeedData(ApplicationDbContext dbContext)
 
         await dbContext.SaveChangesAsync();
     }
-
+    
     private async Task SeedTables()
     {
         dbContext.Tables.AddRange(
@@ -442,6 +445,7 @@ public class SeedData(ApplicationDbContext dbContext)
             {
                 Id = "69AC2F65-5DE9-40D4-B930-624CA40D3F13",
                 Name = "Table 1",
+                SessionId = "0449DB90-66AF-4E17-8086-C1452270B52D",
                 QrCode = "n/a",
                 CreatedAt = DateTime.Parse("2023-09-01 12:00:00"),
             },
@@ -449,6 +453,7 @@ public class SeedData(ApplicationDbContext dbContext)
             {
                 Id = "C158F7B2-3F05-4C9F-BC95-3246D20A8A45",
                 Name = "Table 2",
+                SessionId = "7EAE8F7F-C969-4FCD-869E-07AC2E62EB44",
                 QrCode = "n/a",
                 CreatedAt = DateTime.Parse("2023-09-01 12:00:00").AddMinutes(10),
             },
@@ -456,6 +461,7 @@ public class SeedData(ApplicationDbContext dbContext)
             {
                 Id = "46673854-0888-4309-AD33-71A306C1D026",
                 Name = "Table 3",
+                SessionId = "CBF261E5-A710-4611-A423-87943EB5DC32",
                 QrCode = "n/a",
                 CreatedAt = DateTime.Parse("2023-09-01 12:00:00").AddMinutes(20),
             },
@@ -463,6 +469,7 @@ public class SeedData(ApplicationDbContext dbContext)
             {
                 Id = "493FAF89-7344-403C-8D89-C9DF5BDFCB0F",
                 Name = "Table 4",
+                SessionId = "F2740A4E-2E7F-4E5E-A8BE-5680599D4357",
                 QrCode = "n/a",
                 CreatedAt = DateTime.Parse("2023-09-01 12:00:00").AddMinutes(30),
             },
@@ -470,6 +477,7 @@ public class SeedData(ApplicationDbContext dbContext)
             {
                 Id = "AE15A89C-0CF0-47DA-83F0-6E232B819BBD",
                 Name = "Table 5",
+                SessionId = "FD9EADC3-1CBC-417D-9CFB-62202E242356",
                 QrCode = "n/a",
                 CreatedAt = DateTime.Parse("2023-09-01 12:00:00").AddMinutes(30),
             }
