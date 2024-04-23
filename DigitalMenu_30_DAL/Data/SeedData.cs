@@ -1,5 +1,4 @@
-﻿using DigitalMenu_20_BLL.Enums;
-using DigitalMenu_20_BLL.Models;
+﻿using DigitalMenu_20_BLL.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MySqlConnector;
@@ -43,8 +42,6 @@ public class SeedData(ApplicationDbContext dbContext)
                 DeviceId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
                 TableId = "69AC2F65-5DE9-40D4-B930-624CA40D3F13",
                 TotalAmount = 6400,
-                PaymentStatus = PaymentStatus.Paid,
-                ExternalPaymentId = "tr_294TYYppc4",
                 OrderDate = DateTime.Parse("2024-04-09 14:54:02"),
                 OrderNumber = "092404jnWK",
             },
@@ -54,8 +51,6 @@ public class SeedData(ApplicationDbContext dbContext)
                 DeviceId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
                 TableId = "69AC2F65-5DE9-40D4-B930-624CA40D3F13",
                 TotalAmount = 2600,
-                PaymentStatus = PaymentStatus.Pending,
-                ExternalPaymentId = "tr_XvY5pWzhre",
                 OrderDate = DateTime.Parse("2024-04-16 14:54:02"),
                 OrderNumber = "162404QKAK",
             },
@@ -65,8 +60,6 @@ public class SeedData(ApplicationDbContext dbContext)
                 DeviceId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
                 TableId = "69AC2F65-5DE9-40D4-B930-624CA40D3F13",
                 TotalAmount = 700,
-                PaymentStatus = PaymentStatus.Canceled,
-                ExternalPaymentId = "tr_cxyPxPWWqC",
                 OrderDate = DateTime.Parse("2024-04-16 14:55:02"),
                 OrderNumber = "162404gzjE",
             }
