@@ -80,7 +80,6 @@ public class OrderService(
 
     public List<Order>? GetBy(string deviceId, string tableId)
     {
-
         if (!orderRepository.ExistsByDeviceId(deviceId))
         {
             throw new NotFoundException("DeviceId does not exist");
