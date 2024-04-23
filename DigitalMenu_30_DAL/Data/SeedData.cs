@@ -1,5 +1,4 @@
-﻿using DigitalMenu_20_BLL.Enums;
-using DigitalMenu_20_BLL.Models;
+﻿using DigitalMenu_20_BLL.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MySqlConnector;
