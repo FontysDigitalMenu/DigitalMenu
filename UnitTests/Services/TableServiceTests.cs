@@ -118,16 +118,14 @@ public class TableServiceTests
     public void ResetSession_ThrowsNotFoundException()
     {
         // Arrange
-        Table table = new() { Id = "CA3D0ED8-78D6-4690-8952-89D7E1FC18A4", Name = "Table 1", CreatedAt = DateTime.Now };
-        _tableRepositoryMock.Setup(x => x.Update(table))
-            .Returns(true);
-        _tableRepositoryMock.Setup(x => x.GetById("sdfdsfsd"))
-            .Returns(null as Table);
+        string id = "CA3D0ED8-78D6-4690-8952-89D7E1FC18A4";
+        _tableRepositoryMock.Setup(x => x.GetById(id))
+            .Returns((Table?)null);
 
         // Act
         void ResetSession()
         {
-            _tableService.ResetSession("CA3D0ED8-78D6-4690-8952-89D7E1FC18A4");
+            _tableService.ResetSession(id);
         }
 
         // Assert
