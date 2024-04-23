@@ -68,8 +68,11 @@ public class TableService(ITableRepository tableRepository) : ITableService
             throw new NotFoundException("TableId does not exist");
         }
         
-        table.HostId = deviceId;
-        
-        return tableRepository.Update(table);
+        if (table.HostId == null)
+        {
+            table.HostId = deviceId;
+            return tableRepository.Update(table);
+        }
+        return false;
     }
 }

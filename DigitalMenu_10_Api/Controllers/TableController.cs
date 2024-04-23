@@ -118,6 +118,7 @@ public class TableController(ITableService tableService) : ControllerBase
     }    
     
      [HttpPost("AddHost")]
+     [AllowAnonymous]
      [ProducesResponseType(204)]
      [ProducesResponseType(400)]
      [ProducesResponseType(404)]
