@@ -97,7 +97,7 @@ public class TableController(ITableService tableService) : ControllerBase
         return NoContent();
     }
     
-    [HttpPost("{id}")]
+    [HttpPost("ResetSession")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
@@ -115,5 +115,25 @@ public class TableController(ITableService tableService) : ControllerBase
         {
             return NotFound();
         }
+    }    
+    
+     [HttpPost("AddHost")]
+     [ProducesResponseType(204)]
+     [ProducesResponseType(400)]
+     [ProducesResponseType(404)]
+     public IActionResult AddHost([FromForm] string id, [FromForm] string deviceId)
+     {
+         try
+         {
+             if (!tableService.AddHost(id, deviceId))
+             {            
+                 return BadRequest(new { Message = "Host could not be added" });
+             }
+             return NoContent();
+         }
+         catch (NotFoundException)
+         {
+             return NotFound();
+         }
     }
 }

@@ -121,6 +121,8 @@ public class TableServiceTests
         Table table = new() { Id = "CA3D0ED8-78D6-4690-8952-89D7E1FC18A4", Name = "Table 1", CreatedAt = DateTime.Now };
         _tableRepositoryMock.Setup(x => x.Update(table))
             .Returns(true);
+        _tableRepositoryMock.Setup(x => x.GetById("sdfdsfsd"))
+            .Returns(null as Table);
         
         // Act
         void ResetSession()

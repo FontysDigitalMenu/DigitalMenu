@@ -9,6 +9,8 @@ public class Table
     public List<Order> Orders { get; set; }
     
     public string SessionId { get; set; }
+    
+    public string? HostId { get; set; }
 
     public string? QrCode { get; set; }
 

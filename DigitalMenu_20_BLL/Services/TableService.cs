@@ -53,7 +53,22 @@ public class TableService(ITableRepository tableRepository) : ITableService
             throw new NotFoundException("TableId does not exist");
         }
         
+        table.HostId = null;
         table.SessionId = Guid.NewGuid().ToString();
+        
+        return tableRepository.Update(table);
+    }
+    
+    public bool AddHost(string id, string deviceId)
+    {
+        Table? table = tableRepository.GetById(id);
+        
+        if (table == null)
+        {
+            throw new NotFoundException("TableId does not exist");
+        }
+        
+        table.HostId = deviceId;
         
         return tableRepository.Update(table);
     }
