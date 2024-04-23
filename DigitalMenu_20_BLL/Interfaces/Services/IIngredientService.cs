@@ -7,6 +7,6 @@ public interface IIngredientService
     Task<Ingredient?> GetIngredientByNameAsync(string name);
 
     Task<List<Ingredient>> GetIngredients();
-    
+
     public Task<bool> DeleteIngredientsByMenuItemId(int menuItemId);
 }

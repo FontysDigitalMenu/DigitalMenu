@@ -16,14 +16,14 @@ public class IngredientService(IIngredientRepository ingredientRepository) : IIn
     {
         return await ingredientRepository.GetIngredients();
     }
-    
+
     public async Task<bool> DeleteIngredientsByMenuItemId(int menuItemId)
     {
         if (menuItemId <= 0)
         {
             throw new NotFoundException("Menu item id not found.");
         }
-        
+
         return await ingredientRepository.DeleteIngredientsByMenuItemId(menuItemId);
     }
 }

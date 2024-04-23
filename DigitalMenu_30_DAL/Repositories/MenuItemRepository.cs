@@ -53,10 +53,10 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
             .Include(mii => mii.Ingredient)
             .Select(mii => new
             {
-                mii.MenuItem, mii.Ingredient,
+                mii.MenuItem, mii.Ingredient, mii.Pieces,
             })
             .ToList();
-        
+
         List<Category> categories = dbContext.CategoryMenuItems
             .Where(mc => mc.MenuItemId == id)
             .Select(mc => mc.Category)
@@ -72,20 +72,25 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
                 Description = firstMenuItem.Description,
                 ImageUrl = firstMenuItem.ImageUrl,
                 Price = firstMenuItem.Price,
-                Ingredients = menuItemWithIngredients.Select(m => m.Ingredient).ToList(),
+                Ingredients = menuItemWithIngredients.Select(m => new Ingredient
+                {
+                    Id = m.Ingredient.Id,
+                    Name = m.Ingredient.Name,
+                    Pieces = m.Pieces,
+                }).ToList(),
                 Categories = categories,
             };
 
             return menuItem;
         }
-        
+
         MenuItem? menuItemWithoutIngredient = dbContext.MenuItems.Find(id);
-        
+
         if (menuItemWithoutIngredient != null)
         {
             menuItemWithoutIngredient.Categories = categories;
         }
-        
+
         return menuItemWithoutIngredient;
     }
 
@@ -103,7 +108,7 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
         dbContext.MenuItems.Add(menuItem);
         return await dbContext.SaveChangesAsync() > 0 ? menuItem : null;
     }
-    
+
     public async Task<MenuItem?> UpdateMenuItem(MenuItem menuItem)
     {
         dbContext.MenuItems.Update(menuItem);

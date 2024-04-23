@@ -137,7 +137,7 @@ public class MenuItemController(
             {
                 Name = menuItemCreateRequest.Name,
                 Description = menuItemCreateRequest.Description,
-                Price = (int)(menuItemCreateRequest.Price),
+                Price = (int)menuItemCreateRequest.Price,
                 ImageUrl = string.Format("{0}://{1}{2}/Images/{3}", Request.Scheme, Request.Host, Request.PathBase,
                     menuItemUrl),
             };
@@ -202,7 +202,7 @@ public class MenuItemController(
             return BadRequest(new { e.Message });
         }
     }
-    
+
     [HttpPut]
     public async Task<ActionResult> UpdateMenuItem([FromForm] MenuItemUpdateRequest menuItemUpdateRequest)
     {
@@ -235,30 +235,33 @@ public class MenuItemController(
                     ingredients.Add(ingredient);
                 }
             }
-            
+
             string menuItemUrl = "";
-            
+
             if (menuItemUpdateRequest.Image != null)
             {
                 menuItemUrl = await _imageService.SaveImageAsync(menuItemUpdateRequest.Image);
             }
-            
+
             MenuItem menuItem = new()
             {
                 Id = menuItemUpdateRequest.Id,
                 Name = menuItemUpdateRequest.Name,
                 Description = menuItemUpdateRequest.Description,
-                Price = (int)(menuItemUpdateRequest.Price),
-                ImageUrl = menuItemUrl != "" ? $"{Request.Scheme}://{Request.Host}{Request.PathBase}/Images/{menuItemUrl}" : "",
+                Price = (int)menuItemUpdateRequest.Price,
+                ImageUrl = menuItemUrl != ""
+                    ? $"{Request.Scheme}://{Request.Host}{Request.PathBase}/Images/{menuItemUrl}"
+                    : "",
             };
-            
+
             MenuItem? updatedMenuItem = await menuItemService.UpdateMenuItem(menuItem);
             if (updatedMenuItem == null)
             {
                 return BadRequest(new { Message = "Menu item could not be updated" });
             }
-            
-            bool menuItemCategoriesDeleted = await categoryService.DeleteCategoriesByMenuItemId(menuItemUpdateRequest.Id);
+
+            bool menuItemCategoriesDeleted =
+                await categoryService.DeleteCategoriesByMenuItemId(menuItemUpdateRequest.Id);
             if (menuItemCategoriesDeleted)
             {
                 List<CategoryMenuItem>? createdCategoryMenuItems =
@@ -266,7 +269,7 @@ public class MenuItemController(
                 if (createdCategoryMenuItems == null)
                 {
                     return BadRequest(new { Message = "Categories could not be added to the menu item" });
-                }   
+                }
             }
 
             if (ingredients.Count != 0)
@@ -282,11 +285,12 @@ public class MenuItemController(
                             : 1,
                     })
                     .ToList();
-                
-                
-                bool menuItemIngredientsDeleted = await ingredientService.DeleteIngredientsByMenuItemId(menuItemUpdateRequest.Id);
+
+
+                bool menuItemIngredientsDeleted =
+                    await ingredientService.DeleteIngredientsByMenuItemId(menuItemUpdateRequest.Id);
                 if (!menuItemIngredientsDeleted) return NoContent();
-                
+
                 List<MenuItemIngredient>? createdMenuItemIngredients =
                     await menuItemService.AddIngredientsToMenuItem(menuItemIngredients);
                 if (createdMenuItemIngredients == null)
@@ -294,7 +298,7 @@ public class MenuItemController(
                     return BadRequest(new { Message = "Ingredients could not be added to the menu item" });
                 }
             }
-            
+
             return NoContent();
         }
         catch (NotFoundException e)

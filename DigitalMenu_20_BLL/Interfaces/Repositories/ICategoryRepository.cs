@@ -9,5 +9,6 @@ public interface ICategoryRepository
     public Task<Category?> GetCategoryByName(string categoryName);
 
     public Task<Category> CreateCategory(Category category);
+
     public Task<bool> DeleteCategoriesByMenuItemId(int menuItemId);
 }
