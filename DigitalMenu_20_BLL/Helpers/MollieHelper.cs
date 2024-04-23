@@ -1,4 +1,5 @@
 ﻿using DigitalMenu_20_BLL.Exceptions;
+using DigitalMenu_20_BLL.Models;
 using Mollie.Api.Client;
 using Mollie.Api.Models;
 using Mollie.Api.Models.Payment;
@@ -10,17 +11,17 @@ namespace DigitalMenu_20_BLL.Helpers;
 
 public class MollieHelper(string apiKey, string redirectUrl, string backendUrl) : IMollieHelper
 {
-    public async Task<PaymentResponse> CreatePayment(int totalAmount, string orderId)
+    public async Task<PaymentResponse> CreatePayment(Split split)
     {
         Log.Information("BackendUrl: {backendUrl}",
-            backendUrl.Contains("localhost") ? null : $"{backendUrl}/api/v1/order/webhook");
+            backendUrl.Contains("localhost") ? null : $"{backendUrl}/api/v1/split/webhook");
 
         using PaymentClient paymentClient = new($"{apiKey}", new HttpClient());
         PaymentRequest paymentRequest = new()
         {
-            Amount = new Amount(Currency.EUR, (decimal)totalAmount / 100),
+            Amount = new Amount(Currency.EUR, (decimal)split.Amount / 100),
             Description = "Order payment",
-            RedirectUrl = $"{redirectUrl}/{orderId}",
+            RedirectUrl = $"{redirectUrl}/{split.OrderId}",
             Method = PaymentMethod.Ideal,
             WebhookUrl = backendUrl.Contains("localhost") ? null : $"{backendUrl}/api/v1/order/webhook",
         };

@@ -1,5 +1,4 @@
-﻿using DigitalMenu_20_BLL.Enums;
-using DigitalMenu_20_BLL.Models;
+﻿using DigitalMenu_20_BLL.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MySqlConnector;
@@ -43,8 +42,6 @@ public class SeedData(ApplicationDbContext dbContext)
                 DeviceId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
                 TableId = "69AC2F65-5DE9-40D4-B930-624CA40D3F13",
                 TotalAmount = 6400,
-                PaymentStatus = PaymentStatus.Paid,
-                ExternalPaymentId = "tr_294TYYppc4",
                 OrderDate = DateTime.Parse("2024-04-09 14:54:02"),
                 OrderNumber = "092404jnWK",
             },
@@ -54,8 +51,6 @@ public class SeedData(ApplicationDbContext dbContext)
                 DeviceId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
                 TableId = "69AC2F65-5DE9-40D4-B930-624CA40D3F13",
                 TotalAmount = 2600,
-                PaymentStatus = PaymentStatus.Pending,
-                ExternalPaymentId = "tr_XvY5pWzhre",
                 OrderDate = DateTime.Parse("2024-04-16 14:54:02"),
                 OrderNumber = "162404QKAK",
             },
@@ -65,8 +60,6 @@ public class SeedData(ApplicationDbContext dbContext)
                 DeviceId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
                 TableId = "69AC2F65-5DE9-40D4-B930-624CA40D3F13",
                 TotalAmount = 700,
-                PaymentStatus = PaymentStatus.Canceled,
-                ExternalPaymentId = "tr_cxyPxPWWqC",
                 OrderDate = DateTime.Parse("2024-04-16 14:55:02"),
                 OrderNumber = "162404gzjE",
             }
@@ -218,6 +211,15 @@ public class SeedData(ApplicationDbContext dbContext)
                 UserName = "admin@gmail.com",
                 NormalizedUserName = "admin@gmail.com",
                 PasswordHash = new PasswordHasher<IdentityUser>().HashPassword(null, "Password123!"),
+            },
+            new IdentityUser
+            {
+                Id = "B8B80F1A-BC51-4246-8895-C33B83D0CA32",
+                Email = "employee@gmail.com",
+                NormalizedEmail = "employee@gmail.com",
+                UserName = "employee@gmail.com",
+                NormalizedUserName = "employee@gmail.com",
+                PasswordHash = new PasswordHasher<IdentityUser>().HashPassword(null, "Password123!"),
             }
         );
         await dbContext.SaveChangesAsync();
@@ -237,11 +239,16 @@ public class SeedData(ApplicationDbContext dbContext)
         );
         await dbContext.SaveChangesAsync();
 
-        dbContext.UserRoles.Add(new IdentityUserRole<string>
-        {
-            UserId = "0206A018-5AC6-492D-AB99-10105193D384",
-            RoleId = "8977148E-C765-410F-9A58-0C7D054E4536",
-        });
+        dbContext.UserRoles.AddRange(new IdentityUserRole<string>
+            {
+                UserId = "0206A018-5AC6-492D-AB99-10105193D384",
+                RoleId = "8977148E-C765-410F-9A58-0C7D054E4536",
+            }, new IdentityUserRole<string>
+            {
+                UserId = "B8B80F1A-BC51-4246-8895-C33B83D0CA32",
+                RoleId = "81659B09-5665-4E61-ACB9-5C43E28BE6A4",
+            }
+        );
         await dbContext.SaveChangesAsync();
     }
 
