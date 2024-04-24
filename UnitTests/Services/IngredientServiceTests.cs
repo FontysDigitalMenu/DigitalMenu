@@ -286,4 +286,36 @@ public class IngredientServiceTests
         // Assert
         Assert.That(result, Is.Null);
     }
+
+    [Test]
+    public async Task DeleteIngredient_ValidIngredientId_ReturnsTrue()
+    {
+        // Arrange
+        const int validIngredientId = 1;
+
+        _mockIngredientRepository.Setup(repo => repo.DeleteIngredient(validIngredientId))
+            .ReturnsAsync(true);
+
+        // Act
+        bool result = await _ingredientService.DeleteIngredient(validIngredientId);
+
+        // Assert
+        Assert.That(result, Is.True);
+    }
+
+    [Test]
+    public Task DeleteIngredient_InvalidIngredientId_ThrowsNotFoundException()
+    {
+        // Arrange
+        const int invalidIngredientId = -1;
+
+        // Act and Assert
+        NotFoundException ex = Assert.ThrowsAsync<NotFoundException>(async () =>
+        {
+            await _ingredientService.DeleteIngredient(invalidIngredientId);
+        });
+
+        Assert.That(ex.Message, Is.EqualTo("Ingredient id not found."));
+        return Task.CompletedTask;
+    }
 }

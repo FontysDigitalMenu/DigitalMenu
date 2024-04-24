@@ -15,4 +15,6 @@ public interface IIngredientRepository
     public Task<Ingredient?> GetIngredientById(int ingredientId);
 
     public Task<bool> UpdateIngredient(Ingredient ingredient);
+
+    public Task<bool> DeleteIngredient(int ingredientId);
 }
