@@ -180,4 +180,110 @@ public class IngredientServiceTests
         Assert.That(ex.Message, Is.EqualTo("Menu item id not found."));
         return Task.CompletedTask;
     }
+
+    [Test]
+    public async Task UpdateIngredient_ValidIngredient_ReturnsTrue()
+    {
+        // Arrange
+        Ingredient ingredient = new()
+        {
+            Id = 1,
+            Name = "Updated Ingredient",
+            Stock = 20,
+        };
+
+        _mockIngredientRepository.Setup(repo => repo.UpdateIngredient(ingredient))
+            .ReturnsAsync(true);
+
+        // Act
+        bool result = await _ingredientService.UpdateIngredient(ingredient);
+
+        // Assert
+        Assert.That(result, Is.True);
+    }
+
+    [Test]
+    public Task UpdateIngredient_NullName_ThrowsArgumentException()
+    {
+        // Arrange
+        Ingredient ingredient = new()
+        {
+            Id = 1,
+            Name = "",
+            Stock = 20,
+        };
+
+        // Act and Assert
+        ArgumentException ex = Assert.ThrowsAsync<ArgumentException>(async () =>
+        {
+            await _ingredientService.UpdateIngredient(ingredient);
+        });
+
+        Assert.That(ex.Message, Is.EqualTo("Ingredient name cannot be null or empty. (Parameter 'Name')"));
+        return Task.CompletedTask;
+    }
+
+    [Test]
+    public Task UpdateIngredient_NegativeStock_ThrowsArgumentOutOfRangeException()
+    {
+        // Arrange
+        Ingredient ingredient = new()
+        {
+            Id = 1,
+            Name = "Test Ingredient",
+            Stock = -10,
+        };
+
+        // Act and Assert
+        ArgumentOutOfRangeException ex = Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () =>
+        {
+            await _ingredientService.UpdateIngredient(ingredient);
+        });
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(ex.ParamName, Is.EqualTo("Stock"));
+            Assert.That(ex.Message, Is.EqualTo("Ingredient stock must be greater than 0. (Parameter 'Stock')"));
+        });
+        return Task.CompletedTask;
+    }
+
+    [Test]
+    public async Task GetIngredientById_ExistingIngredientId_ReturnsIngredient()
+    {
+        // Arrange
+        const int existingIngredientId = 1;
+        Ingredient existingIngredient = new()
+        {
+            Id = existingIngredientId,
+            Name = "Existing Ingredient",
+            Stock = 20,
+        };
+
+        _mockIngredientRepository.Setup(repo => repo.GetIngredientById(existingIngredientId))
+            .ReturnsAsync(existingIngredient);
+
+        // Act
+        Ingredient? result = await _ingredientService.GetIngredientById(existingIngredientId);
+
+        // Assert
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result, Is.EqualTo(existingIngredient));
+    }
+
+    [Test]
+    public async Task GetIngredientById_NonExistingIngredientId_ReturnsNull()
+    {
+        // Arrange
+        const int nonExistingIngredientId = 100;
+
+        _mockIngredientRepository.Setup(repo => repo.GetIngredientById(nonExistingIngredientId))
+            .ReturnsAsync((Ingredient)null);
+
+        // Act
+        Ingredient? result = await _ingredientService.GetIngredientById(nonExistingIngredientId);
+
+        // Assert
+        Assert.That(result, Is.Null);
+    }
 }

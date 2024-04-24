@@ -11,4 +11,8 @@ public interface IIngredientService
     public Task<bool> DeleteIngredientsByMenuItemId(int menuItemId);
 
     public Task<Ingredient?> CreateIngredient(Ingredient ingredient);
+
+    public Task<Ingredient?> GetIngredientById(int ingredientId);
+
+    public Task<bool> UpdateIngredient(Ingredient ingredient);
 }

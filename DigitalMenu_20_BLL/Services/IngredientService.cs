@@ -41,4 +41,29 @@ public class IngredientService(IIngredientRepository ingredientRepository) : IIn
 
         return await ingredientRepository.CreateIngredient(ingredient);
     }
+
+    public async Task<Ingredient?> GetIngredientById(int ingredientId)
+    {
+        if (ingredientId <= 0)
+        {
+            throw new NotFoundException("Ingredient id not found.");
+        }
+
+        return await ingredientRepository.GetIngredientById(ingredientId);
+    }
+
+    public async Task<bool> UpdateIngredient(Ingredient ingredient)
+    {
+        if (string.IsNullOrEmpty(ingredient.Name))
+        {
+            throw new ArgumentException("Ingredient name cannot be null or empty.", nameof(ingredient.Name));
+        }
+
+        if (ingredient.Stock <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(ingredient.Stock), "Ingredient stock must be greater than 0.");
+        }
+
+        return await ingredientRepository.UpdateIngredient(ingredient);
+    }
 }

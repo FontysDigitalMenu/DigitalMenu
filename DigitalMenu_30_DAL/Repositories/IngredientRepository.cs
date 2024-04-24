@@ -42,4 +42,15 @@ public class IngredientRepository(ApplicationDbContext dbContext) : IIngredientR
         dbContext.Ingredients.Add(ingredient);
         return await dbContext.SaveChangesAsync() > 0 ? ingredient : null;
     }
+
+    public async Task<Ingredient?> GetIngredientById(int ingredientId)
+    {
+        return await dbContext.Ingredients.FindAsync(ingredientId);
+    }
+
+    public async Task<bool> UpdateIngredient(Ingredient ingredient)
+    {
+        dbContext.Ingredients.Update(ingredient);
+        return await dbContext.SaveChangesAsync() > 0;
+    }
 }
