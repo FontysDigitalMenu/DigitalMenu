@@ -21,7 +21,8 @@ public class OrderService(
             throw new NotFoundException("DeviceId does not exist");
         }
 
-        if (tableRepository.GetById(tableId) == null)
+        Table? table = tableRepository.GetById(tableId);
+        if (table == null)
         {
             throw new NotFoundException("TableId does not exist");
         }
@@ -60,6 +61,7 @@ public class OrderService(
             Id = Guid.NewGuid().ToString(),
             DeviceId = deviceId,
             TableId = tableId,
+            SessionId = table.SessionId,
             OrderMenuItems = orderMenuItems,
             TotalAmount = totalAmount,
             OrderNumber = orderNumber,
@@ -83,12 +85,18 @@ public class OrderService(
             throw new NotFoundException("DeviceId does not exist");
         }
 
-        if (tableRepository.GetById(tableId) == null)
+        Table? table = tableRepository.GetById(tableId);
+        if (table == null)
         {
             throw new NotFoundException("TableId does not exist");
         }
 
-        return orderRepository.GetBy(deviceId, tableId);
+        if (!orderRepository.ExistsBySessionId(table.SessionId))
+        {
+            throw new NotFoundException("SessionId does not exist");
+        }
+
+        return orderRepository.GetBy(deviceId, table.SessionId);
     }
 
     public Order? GetBy(string id, string deviceId, string tableId)
@@ -136,7 +144,7 @@ public class OrderService(
         IEnumerable<Order> foodOnlyOrders = orders.Select(order =>
             {
                 order.OrderMenuItems = order.OrderMenuItems
-                    .Where(omi => omi.MenuItem.Categories.Any(c => c.Name != "Drinks"))
+                    .Where(omi => omi.MenuItem.CategoryMenuItems.Any(c => c.Category.Name != "Drinks"))
                     .ToList();
 
                 return order;
@@ -153,7 +161,7 @@ public class OrderService(
         IEnumerable<Order> drinkOnlyOrders = orders.Select(order =>
             {
                 order.OrderMenuItems = order.OrderMenuItems
-                    .Where(omi => omi.MenuItem.Categories.Any(c => c.Name == "Drinks"))
+                    .Where(omi => omi.MenuItem.CategoryMenuItems.Any(c => c.Category.Name == "Drinks"))
                     .ToList();
 
                 return order;

@@ -32,13 +32,13 @@ public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
             .FirstOrDefault(o => o.Id == id);
     }
 
-    public List<Order>? GetBy(string deviceId, string tableId)
+    public List<Order>? GetBy(string deviceId, string sessionId)
     {
         return dbContext.Orders
             .Include(o => o.Splits)
             .Include(o => o.OrderMenuItems)
             .ThenInclude(omi => omi.MenuItem)
-            .Where(o => o.DeviceId == deviceId && o.TableId == tableId)
+            .Where(o => o.DeviceId == deviceId && o.SessionId == sessionId)
             .ToList();
     }
 
@@ -48,7 +48,8 @@ public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
             .Include(o => o.Splits)
             .Include(o => o.OrderMenuItems)
             .ThenInclude(omi => omi.MenuItem)
-            .ThenInclude(mi => mi.Categories)
+            .ThenInclude(mi => mi.CategoryMenuItems)
+            .ThenInclude(cm => cm.Category)
             .Where(o => o.Splits.All(s => s.PaymentStatus == PaymentStatus.Paid))
             .Where(o => o.FoodStatus == OrderStatus.Pending || o.FoodStatus == OrderStatus.Processing ||
                         o.FoodStatus == OrderStatus.Completed)
@@ -64,5 +65,10 @@ public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
     public bool ExistsByDeviceId(string deviceId)
     {
         return dbContext.Orders.Any(o => o.DeviceId == deviceId);
+    }
+
+    public bool ExistsBySessionId(string sessionId)
+    {
+        return dbContext.Orders.Any(o => o.SessionId == sessionId);
     }
 }
