@@ -55,15 +55,15 @@ public class OrderController(
             OrderViewModel.FromOrder(createdOrder, cartItemService));
     }
 
-    [HttpGet("{deviceId}/{tableId}")]
+    [HttpGet("{tableId}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
-    public ActionResult<List<OrderViewModel>> Get([FromRoute] string deviceId, [FromRoute] string tableId)
+    public ActionResult<List<OrderViewModel>> Get([FromRoute] string tableId)
     {
         List<Order>? orders;
         try
         {
-            orders = orderService.GetBy(deviceId, tableId);
+            orders = orderService.GetByTableId(tableId);
         }
         catch (NotFoundException e)
         {

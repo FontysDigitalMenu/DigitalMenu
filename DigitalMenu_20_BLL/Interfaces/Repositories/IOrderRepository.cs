@@ -10,7 +10,7 @@ public interface IOrderRepository
 
     public Order? GetBy(string id);
 
-    public List<Order>? GetBy(string deviceId, string sessionId);
+    public List<Order>? GetByTableSessionId(string sessionId);
 
     public IEnumerable<Order> GetPaidOrders();
 

@@ -32,13 +32,14 @@ public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
             .FirstOrDefault(o => o.Id == id);
     }
 
-    public List<Order>? GetBy(string deviceId, string sessionId)
+    public List<Order>? GetByTableSessionId(string sessionId)
     {
         return dbContext.Orders
             .Include(o => o.Splits)
             .Include(o => o.OrderMenuItems)
             .ThenInclude(omi => omi.MenuItem)
-            .Where(o => o.DeviceId == deviceId && o.SessionId == sessionId)
+            .Where(o => o.SessionId == sessionId)
+            .OrderByDescending(o => o.OrderDate)
             .ToList();
     }
 

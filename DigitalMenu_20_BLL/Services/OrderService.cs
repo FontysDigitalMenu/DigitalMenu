@@ -78,13 +78,8 @@ public class OrderService(
         return createdOrder;
     }
 
-    public List<Order>? GetBy(string deviceId, string tableId)
+    public List<Order>? GetByTableId(string tableId)
     {
-        if (!orderRepository.ExistsByDeviceId(deviceId))
-        {
-            throw new NotFoundException("DeviceId does not exist");
-        }
-
         Table? table = tableRepository.GetById(tableId);
         if (table == null)
         {
@@ -96,7 +91,7 @@ public class OrderService(
             throw new NotFoundException("SessionId does not exist");
         }
 
-        return orderRepository.GetBy(deviceId, table.SessionId);
+        return orderRepository.GetByTableSessionId(table.SessionId);
     }
 
     public Order? GetBy(string id, string deviceId, string tableId)

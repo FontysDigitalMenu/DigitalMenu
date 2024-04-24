@@ -6,7 +6,7 @@ public interface IOrderService
 {
     public Order Create(string deviceId, string tableId, List<Split> splits);
 
-    public List<Order>? GetBy(string deviceId, string tableId);
+    public List<Order>? GetByTableId(string tableId);
 
     public Order? GetBy(string id, string deviceId, string tableId);
 

@@ -98,7 +98,6 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
     public async Task<List<MenuItem>> GetMenuItems()
     {
         return await dbContext.MenuItems
-            .Include(m => m.Categories)
             .OrderBy(m => m.Id)
             .Where(m => m.IsActive)
             .ToListAsync();
