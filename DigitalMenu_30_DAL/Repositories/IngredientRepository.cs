@@ -19,4 +19,21 @@ public class IngredientRepository(ApplicationDbContext dbContext) : IIngredientR
             .OrderBy(i => i.Id)
             .ToListAsync();
     }
+
+    public async Task<bool> DeleteIngredientsByMenuItemId(int menuItemId)
+    {
+        List<MenuItemIngredient> ingredientMenuItems = await dbContext.MenuItemIngredients
+            .Where(cmi => cmi.MenuItemId == menuItemId)
+            .ToListAsync();
+
+        if (ingredientMenuItems.Count == 0)
+        {
+            return true;
+        }
+
+        dbContext.MenuItemIngredients.RemoveRange(ingredientMenuItems);
+        await dbContext.SaveChangesAsync();
+
+        return true;
+    }
 }
