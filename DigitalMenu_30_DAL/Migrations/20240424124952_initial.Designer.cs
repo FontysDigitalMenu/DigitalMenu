@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DigitalMenu_30_DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240423142156_AddStockToIngredient")]
-    partial class AddStockToIngredient
+    [Migration("20240424124952_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,21 +24,6 @@ namespace DigitalMenu_30_DAL.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
-
-            modelBuilder.Entity("CategoryMenuItem", b =>
-                {
-                    b.Property<int>("CategoriesId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MenuItemsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("CategoriesId", "MenuItemsId");
-
-                    b.HasIndex("MenuItemsId");
-
-                    b.ToTable("CategoryMenuItem");
-                });
 
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.CartItem", b =>
                 {
@@ -245,6 +230,10 @@ namespace DigitalMenu_30_DAL.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("SessionId")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<string>("TableId")
                         .IsRequired()
                         .HasColumnType("varchar(255)");
@@ -329,11 +318,18 @@ namespace DigitalMenu_30_DAL.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<string>("HostId")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("QrCode")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("SessionId")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
@@ -552,21 +548,6 @@ namespace DigitalMenu_30_DAL.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("CategoryMenuItem", b =>
-                {
-                    b.HasOne("DigitalMenu_20_BLL.Models.Category", null)
-                        .WithMany()
-                        .HasForeignKey("CategoriesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DigitalMenu_20_BLL.Models.MenuItem", null)
-                        .WithMany()
-                        .HasForeignKey("MenuItemsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.CartItem", b =>
                 {
                     b.HasOne("DigitalMenu_20_BLL.Models.MenuItem", "MenuItem")
@@ -581,13 +562,13 @@ namespace DigitalMenu_30_DAL.Migrations
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.CategoryMenuItem", b =>
                 {
                     b.HasOne("DigitalMenu_20_BLL.Models.Category", "Category")
-                        .WithMany()
+                        .WithMany("CategoryMenuItems")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("DigitalMenu_20_BLL.Models.MenuItem", "MenuItem")
-                        .WithMany()
+                        .WithMany("CategoryMenuItems")
                         .HasForeignKey("MenuItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -764,6 +745,16 @@ namespace DigitalMenu_30_DAL.Migrations
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.CartItem", b =>
                 {
                     b.Navigation("ExcludedIngredients");
+                });
+
+            modelBuilder.Entity("DigitalMenu_20_BLL.Models.Category", b =>
+                {
+                    b.Navigation("CategoryMenuItems");
+                });
+
+            modelBuilder.Entity("DigitalMenu_20_BLL.Models.MenuItem", b =>
+                {
+                    b.Navigation("CategoryMenuItems");
                 });
 
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.Order", b =>

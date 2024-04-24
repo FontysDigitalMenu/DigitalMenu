@@ -10,6 +10,5 @@ public class Category
 
     public List<CategoryMenuItem> CategoryMenuItems { get; set; }
 
-    [NotMapped]
-    public List<MenuItem> MenuItems { get; set; }
+    [NotMapped] public List<MenuItem> MenuItems { get; set; }
 }

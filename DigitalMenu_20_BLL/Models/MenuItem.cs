@@ -15,9 +15,8 @@ public class MenuItem
     public string ImageUrl { get; set; }
 
     public List<CategoryMenuItem> CategoryMenuItems { get; set; }
-    
-    [NotMapped]
-    public List<Category> Categories { get; set; }
+
+    [NotMapped] public List<Category> Categories { get; set; }
 
     public List<Ingredient> Ingredients { get; set; } = [];
 
