@@ -139,7 +139,7 @@ public class MenuItemController(
             {
                 Name = menuItemCreateRequest.Name,
                 Description = menuItemCreateRequest.Description,
-                Price = (int)menuItemCreateRequest.Price,
+                Price = (int)(menuItemCreateRequest.Price * 100),
                 ImageUrl = string.Format("{0}://{1}{2}/Images/{3}", Request.Scheme, Request.Host, Request.PathBase,
                     menuItemUrl),
             };

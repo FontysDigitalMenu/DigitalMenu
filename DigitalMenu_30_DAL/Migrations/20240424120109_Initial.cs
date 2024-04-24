@@ -295,31 +295,6 @@ namespace DigitalMenu_30_DAL.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "CategoryMenuItem",
-                columns: table => new
-                {
-                    CategoriesId = table.Column<int>(type: "int", nullable: false),
-                    MenuItemsId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CategoryMenuItem", x => new { x.CategoriesId, x.MenuItemsId });
-                    table.ForeignKey(
-                        name: "FK_CategoryMenuItem_Categories_CategoriesId",
-                        column: x => x.CategoriesId,
-                        principalTable: "Categories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CategoryMenuItem_MenuItems_MenuItemsId",
-                        column: x => x.MenuItemsId,
-                        principalTable: "MenuItems",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
                 name: "CategoryMenuItems",
                 columns: table => new
                 {
@@ -583,11 +558,6 @@ namespace DigitalMenu_30_DAL.Migrations
                 column: "MenuItemId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CategoryMenuItem_MenuItemsId",
-                table: "CategoryMenuItem",
-                column: "MenuItemsId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_CategoryMenuItems_CategoryId",
                 table: "CategoryMenuItems",
                 column: "CategoryId");
@@ -665,9 +635,6 @@ namespace DigitalMenu_30_DAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
-
-            migrationBuilder.DropTable(
-                name: "CategoryMenuItem");
 
             migrationBuilder.DropTable(
                 name: "CategoryMenuItems");
