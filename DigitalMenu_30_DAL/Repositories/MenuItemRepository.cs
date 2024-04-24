@@ -113,23 +113,23 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
     public async Task<MenuItem?> UpdateMenuItem(MenuItem menuItem)
     {
         MenuItem? existingMenuItem = await dbContext.MenuItems.FindAsync(menuItem.Id);
-        
+
         if (existingMenuItem == null)
         {
             throw new NotFoundException("MenuItem does not exist");
         }
-        
+
         existingMenuItem.Name = menuItem.Name;
         existingMenuItem.Description = menuItem.Description;
         existingMenuItem.Price = menuItem.Price;
-        
+
         if (string.IsNullOrEmpty(menuItem.ImageUrl))
         {
             menuItem.ImageUrl = existingMenuItem.ImageUrl;
         }
-        
+
         existingMenuItem.ImageUrl = menuItem.ImageUrl;
-        
+
         return await dbContext.SaveChangesAsync() > 0 ? menuItem : null;
     }
 
