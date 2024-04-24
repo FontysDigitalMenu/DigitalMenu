@@ -1,4 +1,5 @@
-﻿using DigitalMenu_20_BLL.Interfaces.Repositories;
+﻿using DigitalMenu_20_BLL.Exceptions;
+using DigitalMenu_20_BLL.Interfaces.Repositories;
 using DigitalMenu_20_BLL.Models;
 using DigitalMenu_30_DAL.Data;
 using Microsoft.EntityFrameworkCore;
@@ -53,8 +54,13 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
             .Include(mii => mii.Ingredient)
             .Select(mii => new
             {
-                mii.MenuItem, mii.Ingredient,
+                mii.MenuItem, mii.Ingredient, mii.Pieces,
             })
+            .ToList();
+
+        List<Category> categories = dbContext.CategoryMenuItems
+            .Where(mc => mc.MenuItemId == id)
+            .Select(mc => mc.Category)
             .ToList();
 
         if (menuItemWithIngredients.Any())
@@ -67,13 +73,26 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
                 Description = firstMenuItem.Description,
                 ImageUrl = firstMenuItem.ImageUrl,
                 Price = firstMenuItem.Price,
-                Ingredients = menuItemWithIngredients.Select(m => m.Ingredient).ToList(),
+                Ingredients = menuItemWithIngredients.Select(m => new Ingredient
+                {
+                    Id = m.Ingredient.Id,
+                    Name = m.Ingredient.Name,
+                    Pieces = m.Pieces,
+                }).ToList(),
+                Categories = categories,
             };
 
             return menuItem;
         }
 
-        return dbContext.MenuItems.Find(id);
+        MenuItem? menuItemWithoutIngredient = dbContext.MenuItems.Find(id);
+
+        if (menuItemWithoutIngredient != null)
+        {
+            menuItemWithoutIngredient.Categories = categories;
+        }
+
+        return menuItemWithoutIngredient;
     }
 
     public async Task<List<MenuItem>> GetMenuItems()
@@ -88,7 +107,30 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
     public async Task<MenuItem?> CreateMenuItem(MenuItem menuItem)
     {
         dbContext.MenuItems.Add(menuItem);
-        return dbContext.SaveChanges() > 0 ? menuItem : null;
+        return await dbContext.SaveChangesAsync() > 0 ? menuItem : null;
+    }
+
+    public async Task<MenuItem?> UpdateMenuItem(MenuItem menuItem)
+    {
+        MenuItem? existingMenuItem = await dbContext.MenuItems.FindAsync(menuItem.Id);
+
+        if (existingMenuItem == null)
+        {
+            throw new NotFoundException("MenuItem does not exist");
+        }
+
+        existingMenuItem.Name = menuItem.Name;
+        existingMenuItem.Description = menuItem.Description;
+        existingMenuItem.Price = menuItem.Price;
+
+        if (string.IsNullOrEmpty(menuItem.ImageUrl))
+        {
+            menuItem.ImageUrl = existingMenuItem.ImageUrl;
+        }
+
+        existingMenuItem.ImageUrl = menuItem.ImageUrl;
+
+        return await dbContext.SaveChangesAsync() > 0 ? menuItem : null;
     }
 
     public async Task<List<MenuItemIngredient>?> AddIngredientsToMenuItem(List<MenuItemIngredient> menuItemIngredients)

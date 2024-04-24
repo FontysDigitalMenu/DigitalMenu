@@ -14,6 +14,8 @@ public interface IMenuItemService
 
     public Task<MenuItem?> CreateMenuItem(MenuItem menuItem);
 
+    public Task<MenuItem?> UpdateMenuItem(MenuItem menuItem);
+
     public Task<List<MenuItemIngredient>?> AddIngredientsToMenuItem(List<MenuItemIngredient> menuItemIngredients);
 
     public Task<List<CategoryMenuItem>?> AddCategoriesToMenuItem(List<Category> categories, int menuItemId);

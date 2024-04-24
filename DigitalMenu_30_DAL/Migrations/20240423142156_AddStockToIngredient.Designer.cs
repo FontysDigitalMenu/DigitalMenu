@@ -4,6 +4,7 @@ using DigitalMenu_30_DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DigitalMenu_30_DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240423142156_AddStockToIngredient")]
+    partial class AddStockToIngredient
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -242,10 +245,6 @@ namespace DigitalMenu_30_DAL.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("SessionId")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
                     b.Property<string>("TableId")
                         .IsRequired()
                         .HasColumnType("varchar(255)");
@@ -330,18 +329,11 @@ namespace DigitalMenu_30_DAL.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("HostId")
-                        .HasColumnType("longtext");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("QrCode")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("SessionId")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
@@ -589,13 +581,13 @@ namespace DigitalMenu_30_DAL.Migrations
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.CategoryMenuItem", b =>
                 {
                     b.HasOne("DigitalMenu_20_BLL.Models.Category", "Category")
-                        .WithMany("CategoryMenuItems")
+                        .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("DigitalMenu_20_BLL.Models.MenuItem", "MenuItem")
-                        .WithMany("CategoryMenuItems")
+                        .WithMany()
                         .HasForeignKey("MenuItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -772,16 +764,6 @@ namespace DigitalMenu_30_DAL.Migrations
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.CartItem", b =>
                 {
                     b.Navigation("ExcludedIngredients");
-                });
-
-            modelBuilder.Entity("DigitalMenu_20_BLL.Models.Category", b =>
-                {
-                    b.Navigation("CategoryMenuItems");
-                });
-
-            modelBuilder.Entity("DigitalMenu_20_BLL.Models.MenuItem", b =>
-                {
-                    b.Navigation("CategoryMenuItems");
                 });
 
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.Order", b =>
