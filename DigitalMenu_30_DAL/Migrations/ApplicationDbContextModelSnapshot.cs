@@ -22,21 +22,6 @@ namespace DigitalMenu_30_DAL.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
-            modelBuilder.Entity("CategoryMenuItem", b =>
-                {
-                    b.Property<int>("CategoriesId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MenuItemsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("CategoriesId", "MenuItemsId");
-
-                    b.HasIndex("MenuItemsId");
-
-                    b.ToTable("CategoryMenuItem");
-                });
-
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.CartItem", b =>
                 {
                     b.Property<int>("Id")
@@ -555,21 +540,6 @@ namespace DigitalMenu_30_DAL.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
-                });
-
-            modelBuilder.Entity("CategoryMenuItem", b =>
-                {
-                    b.HasOne("DigitalMenu_20_BLL.Models.Category", null)
-                        .WithMany()
-                        .HasForeignKey("CategoriesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DigitalMenu_20_BLL.Models.MenuItem", null)
-                        .WithMany()
-                        .HasForeignKey("MenuItemsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.CartItem", b =>

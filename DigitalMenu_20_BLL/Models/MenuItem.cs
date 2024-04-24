@@ -1,4 +1,6 @@
-﻿namespace DigitalMenu_20_BLL.Models;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace DigitalMenu_20_BLL.Models;
 
 public class MenuItem
 {
@@ -14,6 +16,7 @@ public class MenuItem
 
     public List<CategoryMenuItem> CategoryMenuItems { get; set; }
     
+    [NotMapped]
     public List<Category> Categories { get; set; }
 
     public List<Ingredient> Ingredients { get; set; } = [];
