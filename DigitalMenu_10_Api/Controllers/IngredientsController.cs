@@ -1,5 +1,6 @@
 ﻿using DigitalMenu_10_Api.RequestModels;
 using DigitalMenu_10_Api.ViewModels;
+using DigitalMenu_20_BLL.Exceptions;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -105,6 +106,33 @@ public class IngredientsController(IIngredientService ingredientService) : Contr
         catch (ArgumentException e)
         {
             return BadRequest(new { e.Message });
+        }
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpDelete("{id:int}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404)]
+    public async Task<ActionResult> DeleteIngredient(int id)
+    {
+        try
+        {
+            bool isIngredientDeleted = await ingredientService.DeleteIngredient(id);
+
+            if (!isIngredientDeleted)
+            {
+                return BadRequest(new { Message = "Could not delete ingredient." });
+            }
+
+            return NoContent();
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(new { e.Message });
+        }
+        catch (NotFoundException)
+        {
+            return NotFound();
         }
     }
 }

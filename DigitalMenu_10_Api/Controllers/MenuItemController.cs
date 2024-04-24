@@ -335,12 +335,16 @@ public class MenuItemController(
         {
             bool isDeleted = menuItemService.Delete(id);
 
-            if (isDeleted)
+            if (!isDeleted)
             {
-                return NoContent();
+                return BadRequest(new { Message = "Could not delete menu item." });
             }
 
-            return BadRequest(new { Message = "Could not delete menu item." });
+            return NoContent();
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(new { e.Message });
         }
         catch (NotFoundException)
         {

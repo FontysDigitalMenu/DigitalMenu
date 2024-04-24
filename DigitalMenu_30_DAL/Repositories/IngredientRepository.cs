@@ -53,4 +53,16 @@ public class IngredientRepository(ApplicationDbContext dbContext) : IIngredientR
         dbContext.Ingredients.Update(ingredient);
         return await dbContext.SaveChangesAsync() > 0;
     }
+
+    public async Task<bool> DeleteIngredient(int ingredientId)
+    {
+        Ingredient? ingredient = await dbContext.Ingredients.FindAsync(ingredientId);
+        if (ingredient == null)
+        {
+            return false;
+        }
+
+        dbContext.Ingredients.Remove(ingredient);
+        return await dbContext.SaveChangesAsync() > 0;
+    }
 }

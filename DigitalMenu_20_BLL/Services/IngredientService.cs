@@ -66,4 +66,14 @@ public class IngredientService(IIngredientRepository ingredientRepository) : IIn
 
         return await ingredientRepository.UpdateIngredient(ingredient);
     }
+
+    public async Task<bool> DeleteIngredient(int ingredientId)
+    {
+        if (ingredientId <= 0)
+        {
+            throw new NotFoundException("Ingredient id not found.");
+        }
+
+        return await ingredientRepository.DeleteIngredient(ingredientId);
+    }
 }
