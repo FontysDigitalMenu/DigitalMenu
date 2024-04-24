@@ -36,4 +36,10 @@ public class IngredientRepository(ApplicationDbContext dbContext) : IIngredientR
 
         return true;
     }
+
+    public async Task<Ingredient?> CreateIngredient(Ingredient ingredient)
+    {
+        dbContext.Ingredients.Add(ingredient);
+        return await dbContext.SaveChangesAsync() > 0 ? ingredient : null;
+    }
 }

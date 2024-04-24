@@ -26,4 +26,19 @@ public class IngredientService(IIngredientRepository ingredientRepository) : IIn
 
         return await ingredientRepository.DeleteIngredientsByMenuItemId(menuItemId);
     }
+
+    public async Task<Ingredient?> CreateIngredient(Ingredient ingredient)
+    {
+        if (string.IsNullOrEmpty(ingredient.Name))
+        {
+            throw new ArgumentException("Ingredient name cannot be null or empty.", nameof(ingredient.Name));
+        }
+
+        if (ingredient.Stock <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(ingredient.Stock), "Ingredient stock must be greater than 0.");
+        }
+
+        return await ingredientRepository.CreateIngredient(ingredient);
+    }
 }

@@ -9,4 +9,6 @@ public interface IIngredientRepository
     Task<List<Ingredient>> GetIngredients();
 
     public Task<bool> DeleteIngredientsByMenuItemId(int menuItemId);
+
+    public Task<Ingredient?> CreateIngredient(Ingredient ingredient);
 }
