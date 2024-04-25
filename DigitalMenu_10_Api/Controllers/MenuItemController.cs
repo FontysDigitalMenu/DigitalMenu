@@ -139,7 +139,7 @@ public class MenuItemController(
             {
                 Name = menuItemCreateRequest.Name,
                 Description = menuItemCreateRequest.Description,
-                Price = (int)(menuItemCreateRequest.Price),
+                Price = (int)menuItemCreateRequest.Price,
                 ImageUrl = string.Format("{0}://{1}{2}/Images/{3}", Request.Scheme, Request.Host, Request.PathBase,
                     menuItemUrl),
             };
@@ -277,7 +277,7 @@ public class MenuItemController(
                     return BadRequest(new { Message = "Categories could not be added to the menu item" });
                 }
             }
-            
+
             bool menuItemIngredientsDeleted =
                 await ingredientService.DeleteIngredientsByMenuItemId(menuItemUpdateRequest.Id);
             if (!menuItemIngredientsDeleted) return NoContent();
