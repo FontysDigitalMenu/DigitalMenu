@@ -118,18 +118,22 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
             throw new NotFoundException("MenuItem does not exist");
         }
 
+        if (existingMenuItem.Name == menuItem.Name &&
+            existingMenuItem.Description == menuItem.Description &&
+            existingMenuItem.Price == menuItem.Price &&
+            existingMenuItem.ImageUrl == menuItem.ImageUrl)
+        {
+            return menuItem;
+        }
+
         existingMenuItem.Name = menuItem.Name;
         existingMenuItem.Description = menuItem.Description;
         existingMenuItem.Price = menuItem.Price;
+        existingMenuItem.ImageUrl =
+            string.IsNullOrEmpty(menuItem.ImageUrl) ? existingMenuItem.ImageUrl : menuItem.ImageUrl;
 
-        if (string.IsNullOrEmpty(menuItem.ImageUrl))
-        {
-            menuItem.ImageUrl = existingMenuItem.ImageUrl;
-        }
-
-        existingMenuItem.ImageUrl = menuItem.ImageUrl;
-
-        return await dbContext.SaveChangesAsync() > 0 ? menuItem : null;
+        await dbContext.SaveChangesAsync();
+        return menuItem;
     }
 
     public async Task<List<MenuItemIngredient>?> AddIngredientsToMenuItem(List<MenuItemIngredient> menuItemIngredients)

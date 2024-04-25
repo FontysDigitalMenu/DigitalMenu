@@ -139,7 +139,7 @@ public class MenuItemController(
             {
                 Name = menuItemCreateRequest.Name,
                 Description = menuItemCreateRequest.Description,
-                Price = (int)(menuItemCreateRequest.Price * 100),
+                Price = (int)menuItemCreateRequest.Price,
                 ImageUrl = string.Format("{0}://{1}{2}/Images/{3}", Request.Scheme, Request.Host, Request.PathBase,
                     menuItemUrl),
             };
@@ -278,6 +278,10 @@ public class MenuItemController(
                 }
             }
 
+            bool menuItemIngredientsDeleted =
+                await ingredientService.DeleteIngredientsByMenuItemId(menuItemUpdateRequest.Id);
+            if (!menuItemIngredientsDeleted) return NoContent();
+
             if (ingredients.Count != 0)
             {
                 List<MenuItemIngredient> menuItemIngredients = ingredients
@@ -291,11 +295,6 @@ public class MenuItemController(
                             : 1,
                     })
                     .ToList();
-
-
-                bool menuItemIngredientsDeleted =
-                    await ingredientService.DeleteIngredientsByMenuItemId(menuItemUpdateRequest.Id);
-                if (!menuItemIngredientsDeleted) return NoContent();
 
                 List<MenuItemIngredient>? createdMenuItemIngredients =
                     await menuItemService.AddIngredientsToMenuItem(menuItemIngredients);
