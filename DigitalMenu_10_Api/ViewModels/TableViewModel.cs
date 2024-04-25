@@ -9,4 +9,6 @@ public class TableViewModel
     public string QrCode { get; set; }
 
     public string SessionId { get; set; }
+    
+    public string HostId { get; set; }
 }

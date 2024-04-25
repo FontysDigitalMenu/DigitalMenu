@@ -6,19 +6,19 @@ namespace DigitalMenu_20_BLL.Services;
 
 public class CartItemService(ICartItemRepository cartItemRepository) : ICartItemService
 {
-    public List<CartItem> GetByDeviceId(string deviceId)
+    public List<CartItem> GetByTableSessionId(string tableSessionId)
     {
-        return cartItemRepository.GetByDeviceId(deviceId);
+        return cartItemRepository.GetByTableSessionId(tableSessionId);
     }
 
-    public CartItem? GetByMenuItemIdAndDeviceId(int menuItemId, string deviceId)
+    public CartItem? GetByMenuItemIdAndTableSessionId(int menuItemId, string tableSessionId)
     {
-        return cartItemRepository.GetByMenuItemIdAndDeviceId(menuItemId, deviceId);
+        return cartItemRepository.GetByMenuItemIdAndTableSessionId(menuItemId, tableSessionId);
     }
 
-    public List<CartItem?> GetCartItemsByMenuItemIdAndDeviceId(int menuItemId, string deviceId)
+    public List<CartItem?> GetCartItemsByMenuItemIdAndTableSessionId(int menuItemId, string tableSessionId)
     {
-        return cartItemRepository.GetCartItemsByMenuItemIdAndDeviceId(menuItemId, deviceId);
+        return cartItemRepository.GetCartItemsByMenuItemIdAndTableSessionId(menuItemId, tableSessionId);
     }
 
     public bool Create(CartItem cartItem)
@@ -26,10 +26,10 @@ public class CartItemService(ICartItemRepository cartItemRepository) : ICartItem
         return cartItemRepository.Create(cartItem);
     }
 
-    public bool ExistsByDeviceId(string deviceId)
+    public bool ExistsByTableSessionId(string tableSessionId)
     {
-        return cartItemRepository.ExistsByDeviceId(deviceId) && !string.IsNullOrWhiteSpace(deviceId) &&
-               deviceId != "null";
+        return cartItemRepository.ExistsByTableSessionId(tableSessionId) && !string.IsNullOrWhiteSpace(tableSessionId) &&
+               tableSessionId != "null";
     }
 
     public bool Delete(CartItem cartItem)
@@ -57,9 +57,9 @@ public class CartItemService(ICartItemRepository cartItemRepository) : ICartItem
         return cartItemRepository.GetExcludedIngredientsByOrderMenuItemId(orderMenuItemId);
     }
 
-    public CartItem? GetByCartItemIdAndDeviceId(int cartItemId, string deviceId)
+    public CartItem? GetByCartItemIdAndTableSessionId(int cartItemId, string tableSessionId)
     {
-        return cartItemRepository.GetByCartItemIdAndDeviceId(cartItemId, deviceId);
+        return cartItemRepository.GetByCartItemIdAndTableSessionId(cartItemId, tableSessionId);
     }
 
     public bool DeleteExcludedIngredientsFromCartItem(int cartItemId)

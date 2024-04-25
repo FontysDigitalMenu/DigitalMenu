@@ -40,4 +40,9 @@ public class TableRepository(ApplicationDbContext dbContext) : ITableRepository
         dbContext.Tables.Remove(table);
         return dbContext.SaveChanges() > 0;
     }
+    
+    public Table? GetBySessionId(string sessionId)
+    {
+        return dbContext.Tables.FirstOrDefault(t => t.SessionId == sessionId);
+    }
 }

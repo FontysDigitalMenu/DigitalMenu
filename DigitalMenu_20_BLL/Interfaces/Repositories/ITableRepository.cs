@@ -13,4 +13,6 @@ public interface ITableRepository
     public bool Update(Table table);
 
     public bool Delete(string id);
+    
+    public Table? GetBySessionId(string sessionId);
 }

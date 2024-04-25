@@ -13,37 +13,37 @@ public class CartItemRepository(ApplicationDbContext dbContext) : ICartItemRepos
         return dbContext.SaveChanges() > 0;
     }
 
-    public CartItem? GetByMenuItemIdAndDeviceId(int menuItemId, string deviceId)
+    public CartItem? GetByMenuItemIdAndTableSessionId(int menuItemId, string tableSessionId)
     {
-        return dbContext.CartItems.FirstOrDefault(ci => ci.MenuItemId == menuItemId && ci.DeviceId == deviceId);
+        return dbContext.CartItems.FirstOrDefault(ci => ci.MenuItemId == menuItemId && ci.TableSessionId == tableSessionId);
     }
 
-    public CartItem? GetByCartItemIdAndDeviceId(int cartItemId, string deviceId)
+    public CartItem? GetByCartItemIdAndTableSessionId(int cartItemId, string tableSessionId)
     {
         return dbContext.CartItems
             .Include(ci => ci.MenuItem)
-            .FirstOrDefault(ci => ci.Id == cartItemId && ci.DeviceId == deviceId);
+            .FirstOrDefault(ci => ci.Id == cartItemId && ci.TableSessionId == tableSessionId);
     }
 
-    public List<CartItem?> GetCartItemsByMenuItemIdAndDeviceId(int menuItemId, string deviceId)
+    public List<CartItem?> GetCartItemsByMenuItemIdAndTableSessionId(int menuItemId, string tableSessionId)
     {
         return dbContext.CartItems
-            .Where(ci => ci.MenuItemId == menuItemId && ci.DeviceId == deviceId)
+            .Where(ci => ci.MenuItemId == menuItemId && ci.TableSessionId == tableSessionId)
             .ToList();
     }
 
 
-    public List<CartItem> GetByDeviceId(string deviceId)
+    public List<CartItem> GetByTableSessionId(string tableSessionId)
     {
         return dbContext.CartItems
             .Include(ci => ci.MenuItem)
-            .Where(ci => ci.DeviceId == deviceId)
+            .Where(ci => ci.TableSessionId == tableSessionId)
             .ToList();
     }
 
-    public bool ExistsByDeviceId(string deviceId)
+    public bool ExistsByTableSessionId(string tableSessionId)
     {
-        return dbContext.CartItems.Any(ci => ci.DeviceId == deviceId);
+        return dbContext.CartItems.Any(ci => ci.TableSessionId == tableSessionId);
     }
 
     public bool Delete(CartItem cartItem)
@@ -110,7 +110,7 @@ public class CartItemRepository(ApplicationDbContext dbContext) : ICartItemRepos
 
     public bool ClearByDeviceId(string deviceId)
     {
-        List<CartItem> cartItems = dbContext.CartItems.Where(ci => ci.DeviceId == deviceId).ToList();
+        List<CartItem> cartItems = dbContext.CartItems.Where(ci => ci.TableSessionId == deviceId).ToList();
         dbContext.CartItems.RemoveRange(cartItems);
         return dbContext.SaveChanges() > 0;
     }

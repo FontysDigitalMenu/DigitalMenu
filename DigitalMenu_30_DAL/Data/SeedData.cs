@@ -130,7 +130,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 1,
                 MenuItemId = 1,
                 Quantity = 2,
-                DeviceId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
+                TableSessionId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
                 Note = "No onions and no pickles",
             },
             new CartItem
@@ -138,21 +138,21 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 2,
                 MenuItemId = 2,
                 Quantity = 1,
-                DeviceId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
+                TableSessionId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
             },
             new CartItem
             {
                 Id = 3,
                 MenuItemId = 3,
                 Quantity = 3,
-                DeviceId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
+                TableSessionId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
             },
             new CartItem
             {
                 Id = 4,
                 MenuItemId = 4,
                 Quantity = 1,
-                DeviceId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
+                TableSessionId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
                 Note = "No salt and no ketchup",
             },
             new CartItem
@@ -160,35 +160,35 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 5,
                 MenuItemId = 5,
                 Quantity = 2,
-                DeviceId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
+                TableSessionId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
             },
             new CartItem
             {
                 Id = 6,
                 MenuItemId = 6,
                 Quantity = 1,
-                DeviceId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
+                TableSessionId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
             },
             new CartItem
             {
                 Id = 7,
                 MenuItemId = 7,
                 Quantity = 1,
-                DeviceId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
+                TableSessionId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
             },
             new CartItem
             {
                 Id = 8,
                 MenuItemId = 8,
                 Quantity = 1,
-                DeviceId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
+                TableSessionId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
             },
             new CartItem
             {
                 Id = 9,
                 MenuItemId = 9,
                 Quantity = 1,
-                DeviceId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
+                TableSessionId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
                 Note = "No ice and no sugar",
             },
             new CartItem
@@ -196,7 +196,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 10,
                 MenuItemId = 10,
                 Quantity = 1,
-                DeviceId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
+                TableSessionId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
                 Note = "No ice",
             }
         );

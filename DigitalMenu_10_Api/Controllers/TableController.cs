@@ -21,6 +21,7 @@ public class TableController(ITableService tableService) : ControllerBase
             { Id = t.Id, Name = t.Name, SessionId = t.SessionId }));
     }
 
+    [AllowAnonymous]
     [HttpGet("{id}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
@@ -32,7 +33,24 @@ public class TableController(ITableService tableService) : ControllerBase
             return NotFound();
         }
 
-        TableViewModel tableViewModel = new() { Id = table.Id, Name = table.Name };
+        TableViewModel tableViewModel = new() { Id = table.Id, Name = table.Name, SessionId = table.SessionId};
+
+        return Ok(tableViewModel);
+    }
+    
+    [AllowAnonymous]
+    [HttpGet("sessionId/{sessionId}")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(404)]
+    public IActionResult GetBySessionId([FromRoute] string sessionId)
+    {
+        Table? table = tableService.GetBySessionId(sessionId);
+        if (table == null)
+        {
+            return NotFound();
+        }
+
+        TableViewModel tableViewModel = new() { Id = table.Id, Name = table.Name, SessionId = table.SessionId, HostId = table.HostId};
 
         return Ok(tableViewModel);
     }

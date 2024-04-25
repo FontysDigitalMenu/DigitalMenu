@@ -6,15 +6,15 @@ public interface ICartItemRepository
 {
     public bool Create(CartItem cartItem);
 
-    public CartItem? GetByMenuItemIdAndDeviceId(int menuItemId, string deviceId);
+    public CartItem? GetByMenuItemIdAndTableSessionId(int menuItemId, string tableSessionId);
 
-    public CartItem? GetByCartItemIdAndDeviceId(int cartItemId, string deviceId);
+    public CartItem? GetByCartItemIdAndTableSessionId(int cartItemId, string tableSessionId);
 
-    public List<CartItem?> GetCartItemsByMenuItemIdAndDeviceId(int menuItemId, string deviceId);
+    public List<CartItem?> GetCartItemsByMenuItemIdAndTableSessionId(int menuItemId, string tableSessionId);
 
-    public List<CartItem> GetByDeviceId(string deviceId);
+    public List<CartItem> GetByTableSessionId(string tableSessionId);
 
-    public bool ExistsByDeviceId(string deviceId);
+    public bool ExistsByTableSessionId(string tableSessionId);
 
     public bool Delete(CartItem cartItem);
 

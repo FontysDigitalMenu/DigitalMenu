@@ -17,7 +17,7 @@ public class CartItemController(
     public async Task<ActionResult> AddToCart([FromBody] CartRequest cartRequest)
     {
         List<CartItem?> cartItems =
-            cartItemService.GetCartItemsByMenuItemIdAndDeviceId(cartRequest.MenuItemId, cartRequest.DeviceId);
+            cartItemService.GetCartItemsByMenuItemIdAndTableSessionId(cartRequest.MenuItemId, cartRequest.TableSessionId);
 
         foreach (CartItem? cartItem in cartItems)
         {
@@ -45,7 +45,7 @@ public class CartItemController(
         {
             Note = cartRequest.Note,
             Quantity = 1,
-            DeviceId = cartRequest.DeviceId,
+            TableSessionId = cartRequest.TableSessionId,
             MenuItemId = cartRequest.MenuItemId,
         };
 
@@ -75,9 +75,9 @@ public class CartItemController(
     }
 
     [HttpGet]
-    public IActionResult GetCartItem(int cartItemId, string deviceId)
+    public IActionResult GetCartItem(int cartItemId, string tableSessionId)
     {
-        CartItem? cartItem = cartItemService.GetByCartItemIdAndDeviceId(cartItemId, deviceId);
+        CartItem? cartItem = cartItemService.GetByCartItemIdAndTableSessionId(cartItemId, tableSessionId);
 
         if (cartItem == null)
         {
@@ -103,16 +103,16 @@ public class CartItemController(
         return Ok(cartItemWithIngredients);
     }
 
-    [HttpGet("{deviceId}")]
-    public IActionResult ViewCart([FromRoute] string deviceId)
+    [HttpGet("{tableSessionId}")]
+    public IActionResult ViewCart([FromRoute] string tableSessionId)
     {
-        bool cartItemsExists = cartItemService.ExistsByDeviceId(deviceId);
+        bool cartItemsExists = cartItemService.ExistsByTableSessionId(tableSessionId);
         if (!cartItemsExists)
         {
             return NotFound();
         }
 
-        List<CartItem> cartItems = cartItemService.GetByDeviceId(deviceId);
+        List<CartItem> cartItems = cartItemService.GetByTableSessionId(tableSessionId);
 
         CartItemViewModel cartViewModel = new()
         {
@@ -126,7 +126,7 @@ public class CartItemController(
     [HttpPut("minus")]
     public IActionResult Minus1FromCart([FromBody] CartUpdateRequest cartRequest)
     {
-        CartItem? cartItem = cartItemService.GetByCartItemIdAndDeviceId(cartRequest.CartItemId, cartRequest.DeviceId);
+        CartItem? cartItem = cartItemService.GetByCartItemIdAndTableSessionId(cartRequest.CartItemId, cartRequest.TableSessionId);
 
         if (cartItem == null)
         {
@@ -150,7 +150,7 @@ public class CartItemController(
     [HttpPost("plus")]
     public IActionResult Plus1ToCart([FromBody] CartUpdateRequest cartRequest)
     {
-        CartItem? cartItem = cartItemService.GetByCartItemIdAndDeviceId(cartRequest.CartItemId, cartRequest.DeviceId);
+        CartItem? cartItem = cartItemService.GetByCartItemIdAndTableSessionId(cartRequest.CartItemId, cartRequest.TableSessionId);
 
         if (cartItem == null)
         {
@@ -166,7 +166,7 @@ public class CartItemController(
     [HttpPut("updateDetails")]
     public async Task<ActionResult> UpdateCartItem([FromBody] CartItemRequest cartRequest)
     {
-        CartItem? cartItem = cartItemService.GetByCartItemIdAndDeviceId(cartRequest.CartItemId, cartRequest.DeviceId);
+        CartItem? cartItem = cartItemService.GetByCartItemIdAndTableSessionId(cartRequest.CartItemId, cartRequest.TableSessionId);
 
         if (cartItem == null)
         {

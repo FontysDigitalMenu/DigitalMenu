@@ -29,7 +29,7 @@ public class CartItemServiceTests
                 Id = 1,
                 Note = "Without salt",
                 Quantity = 2,
-                DeviceId = "testDeviceId",
+                TableSessionId = "testDeviceId",
                 MenuItemId = 1,
             },
             new CartItem
@@ -37,14 +37,14 @@ public class CartItemServiceTests
                 Id = 2,
                 Note = "Without salt",
                 Quantity = 4,
-                DeviceId = "testDeviceId",
+                TableSessionId = "testDeviceId",
                 MenuItemId = 1,
             },
         ];
-        _mockCartItemRepository.Setup(repo => repo.GetByDeviceId(deviceId)).Returns(expectedCartItems);
+        _mockCartItemRepository.Setup(repo => repo.GetByTableSessionId(deviceId)).Returns(expectedCartItems);
 
         // Act
-        List<CartItem> result = _cartItemService.GetByDeviceId(deviceId);
+        List<CartItem> result = _cartItemService.GetByTableSessionId(deviceId);
 
         // Assert
         Assert.That(result, Is.Not.Null);
@@ -57,12 +57,12 @@ public class CartItemServiceTests
         // Arrange
         const int menuItemId = 1;
         const string deviceId = "testDeviceId";
-        CartItem expectedCartItem = new() { Id = 1, MenuItemId = menuItemId, DeviceId = deviceId };
-        _mockCartItemRepository.Setup(repo => repo.GetByMenuItemIdAndDeviceId(menuItemId, deviceId))
+        CartItem expectedCartItem = new() { Id = 1, MenuItemId = menuItemId, TableSessionId = deviceId };
+        _mockCartItemRepository.Setup(repo => repo.GetByMenuItemIdAndTableSessionId(menuItemId, deviceId))
             .Returns(expectedCartItem);
 
         // Act
-        CartItem? result = _cartItemService.GetByMenuItemIdAndDeviceId(menuItemId, deviceId);
+        CartItem? result = _cartItemService.GetByMenuItemIdAndTableSessionId(menuItemId, deviceId);
 
         // Assert
         Assert.That(result, Is.Not.Null);
@@ -82,15 +82,15 @@ public class CartItemServiceTests
                 Id = 1,
                 Note = "Without salt",
                 Quantity = 2,
-                DeviceId = "testDeviceId",
+                TableSessionId = "testDeviceId",
                 MenuItemId = 1,
             },
         ];
-        _mockCartItemRepository.Setup(repo => repo.GetCartItemsByMenuItemIdAndDeviceId(menuItemId, deviceId))
+        _mockCartItemRepository.Setup(repo => repo.GetCartItemsByMenuItemIdAndTableSessionId(menuItemId, deviceId))
             .Returns(expectedCartItems);
 
         // Act
-        List<CartItem?> result = _cartItemService.GetCartItemsByMenuItemIdAndDeviceId(menuItemId, deviceId);
+        List<CartItem?> result = _cartItemService.GetCartItemsByMenuItemIdAndTableSessionId(menuItemId, deviceId);
 
         // Assert
         Assert.That(result, Is.Not.Null);
@@ -106,7 +106,7 @@ public class CartItemServiceTests
             Id = 1,
             Note = "Without salt",
             Quantity = 2,
-            DeviceId = "testDeviceId",
+            TableSessionId = "testDeviceId",
             MenuItemId = 1,
         };
 
@@ -125,10 +125,10 @@ public class CartItemServiceTests
         // Arrange
         const string deviceId = "testDeviceId";
 
-        _mockCartItemRepository.Setup(repo => repo.ExistsByDeviceId(deviceId)).Returns(true);
+        _mockCartItemRepository.Setup(repo => repo.ExistsByTableSessionId(deviceId)).Returns(true);
 
         // Act
-        bool result = _cartItemService.ExistsByDeviceId(deviceId);
+        bool result = _cartItemService.ExistsByTableSessionId(deviceId);
 
         // Assert
         Assert.That(result, Is.True);
@@ -207,12 +207,12 @@ public class CartItemServiceTests
         // Arrange
         const int cartItemId = 1;
         const string deviceId = "testDeviceId";
-        CartItem expectedCartItem = new() { Id = cartItemId, DeviceId = deviceId };
-        _mockCartItemRepository.Setup(repo => repo.GetByCartItemIdAndDeviceId(cartItemId, deviceId))
+        CartItem expectedCartItem = new() { Id = cartItemId, TableSessionId = deviceId };
+        _mockCartItemRepository.Setup(repo => repo.GetByCartItemIdAndTableSessionId(cartItemId, deviceId))
             .Returns(expectedCartItem);
 
         // Act
-        CartItem? result = _cartItemService.GetByCartItemIdAndDeviceId(cartItemId, deviceId);
+        CartItem? result = _cartItemService.GetByCartItemIdAndTableSessionId(cartItemId, deviceId);
 
         // Assert
         Assert.That(result, Is.Not.Null);

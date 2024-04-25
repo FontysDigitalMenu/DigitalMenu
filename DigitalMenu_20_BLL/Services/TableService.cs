@@ -76,4 +76,9 @@ public class TableService(ITableRepository tableRepository) : ITableService
 
         return false;
     }
+    
+    public Table? GetBySessionId(string sessionId)
+    {
+        return tableRepository.GetBySessionId(sessionId);
+    }
 }

@@ -19,4 +19,6 @@ public interface ITableService
     public bool ResetSession(string id);
 
     public bool AddHost(string id, string deviceId);
+    
+    public Table? GetBySessionId(string sessionId);
 }
