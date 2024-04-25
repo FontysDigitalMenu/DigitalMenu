@@ -115,7 +115,12 @@ app.UseSwagger();
 app.UseSwaggerUI();
 // }
 
-PhysicalFileProvider imagesProvider = new(Path.Combine(Directory.GetCurrentDirectory(), "Images"));
+string imageFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "Images");
+if (!Directory.Exists(imageFolderPath))
+{
+    Directory.CreateDirectory(imageFolderPath);
+}
+PhysicalFileProvider imagesProvider = new(imageFolderPath);
 
 app.UseStaticFiles(new StaticFileOptions
 {
