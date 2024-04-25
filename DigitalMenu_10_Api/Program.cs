@@ -7,6 +7,7 @@ using DigitalMenu_30_DAL.Data;
 using DigitalMenu_30_DAL.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.OpenApi.Models;
 using Mollie.Api;
 using Mollie.Api.Framework;
@@ -42,6 +43,10 @@ builder.Services.AddScoped<IIngredientService, IngredientService>();
 builder.Services.AddScoped<IIngredientRepository, IngredientRepository>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ISplitService, SplitService>();
+builder.Services.AddScoped<ISplitRepository, SplitRepository>();
 builder.Services.AddScoped<IMollieHelper>(_ => new MollieHelper(
     builder.Configuration.GetValue<string>("Mollie:ApiKey")!,
     builder.Configuration.GetValue<string>("Mollie:RedirectUrl")!,
@@ -109,6 +114,14 @@ app.MapGroup("/api").MapIdentityApi<IdentityUser>();
 app.UseSwagger();
 app.UseSwaggerUI();
 // }
+
+PhysicalFileProvider imagesProvider = new(Path.Combine(Directory.GetCurrentDirectory(), "Images"));
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = imagesProvider,
+    RequestPath = "/Images",
+});
 
 app.UseCors();
 

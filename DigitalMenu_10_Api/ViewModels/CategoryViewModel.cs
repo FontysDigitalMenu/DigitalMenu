@@ -6,5 +6,5 @@ public class CategoryViewModel
 
     public string Name { get; set; }
 
-    public List<MenuItemViewModel> MenuItemViewModels { get; set; }
+    public List<MenuItemViewModel> MenuItems { get; set; }
 }

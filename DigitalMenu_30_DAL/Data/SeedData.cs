@@ -1,5 +1,4 @@
-﻿using DigitalMenu_20_BLL.Enums;
-using DigitalMenu_20_BLL.Models;
+﻿using DigitalMenu_20_BLL.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MySqlConnector;
@@ -42,11 +41,30 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = "12d7eaff-5f3c-456d-92c4-7de2220b2d05",
                 DeviceId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
                 TableId = "69AC2F65-5DE9-40D4-B930-624CA40D3F13",
+                SessionId = "0449DB90-66AF-4E17-8086-C1452270B52D",
                 TotalAmount = 6400,
-                PaymentStatus = PaymentStatus.Paid,
-                ExternalPaymentId = "tr_294TYYppc4",
                 OrderDate = DateTime.Parse("2024-04-09 14:54:02"),
                 OrderNumber = "092404jnWK",
+            },
+            new Order
+            {
+                Id = "6befb25e-0207-4a54-82e8-2d29b8b616c0",
+                DeviceId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
+                TableId = "69AC2F65-5DE9-40D4-B930-624CA40D3F13",
+                SessionId = "0449DB90-66AF-4E17-8086-C1452270B52D",
+                TotalAmount = 2600,
+                OrderDate = DateTime.Parse("2024-04-16 14:54:02"),
+                OrderNumber = "162404QKAK",
+            },
+            new Order
+            {
+                Id = "897dbd82-dd96-476e-83a4-5d9ca59fc8d7",
+                DeviceId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
+                TableId = "69AC2F65-5DE9-40D4-B930-624CA40D3F13",
+                SessionId = "CBF261E5-A710-4611-A423-87943EB5DC32",
+                TotalAmount = 700,
+                OrderDate = DateTime.Parse("2024-04-16 14:55:02"),
+                OrderNumber = "162404gzjE",
             }
         );
         await dbContext.SaveChangesAsync();
@@ -74,6 +92,30 @@ public class SeedData(ApplicationDbContext dbContext)
             {
                 OrderId = "12d7eaff-5f3c-456d-92c4-7de2220b2d05",
                 MenuItemId = 4,
+                Quantity = 1,
+            },
+            new OrderMenuItem
+            {
+                OrderId = "6befb25e-0207-4a54-82e8-2d29b8b616c0",
+                MenuItemId = 1,
+                Quantity = 2,
+            },
+            new OrderMenuItem
+            {
+                OrderId = "6befb25e-0207-4a54-82e8-2d29b8b616c0",
+                MenuItemId = 5,
+                Quantity = 3,
+            },
+            new OrderMenuItem
+            {
+                OrderId = "897dbd82-dd96-476e-83a4-5d9ca59fc8d7",
+                MenuItemId = 4,
+                Quantity = 1,
+            },
+            new OrderMenuItem
+            {
+                OrderId = "897dbd82-dd96-476e-83a4-5d9ca59fc8d7",
+                MenuItemId = 8,
                 Quantity = 1,
             }
         );
@@ -172,6 +214,15 @@ public class SeedData(ApplicationDbContext dbContext)
                 UserName = "admin@gmail.com",
                 NormalizedUserName = "admin@gmail.com",
                 PasswordHash = new PasswordHasher<IdentityUser>().HashPassword(null, "Password123!"),
+            },
+            new IdentityUser
+            {
+                Id = "B8B80F1A-BC51-4246-8895-C33B83D0CA32",
+                Email = "employee@gmail.com",
+                NormalizedEmail = "employee@gmail.com",
+                UserName = "employee@gmail.com",
+                NormalizedUserName = "employee@gmail.com",
+                PasswordHash = new PasswordHasher<IdentityUser>().HashPassword(null, "Password123!"),
             }
         );
         await dbContext.SaveChangesAsync();
@@ -191,11 +242,16 @@ public class SeedData(ApplicationDbContext dbContext)
         );
         await dbContext.SaveChangesAsync();
 
-        dbContext.UserRoles.Add(new IdentityUserRole<string>
-        {
-            UserId = "0206A018-5AC6-492D-AB99-10105193D384",
-            RoleId = "8977148E-C765-410F-9A58-0C7D054E4536",
-        });
+        dbContext.UserRoles.AddRange(new IdentityUserRole<string>
+            {
+                UserId = "0206A018-5AC6-492D-AB99-10105193D384",
+                RoleId = "8977148E-C765-410F-9A58-0C7D054E4536",
+            }, new IdentityUserRole<string>
+            {
+                UserId = "B8B80F1A-BC51-4246-8895-C33B83D0CA32",
+                RoleId = "81659B09-5665-4E61-ACB9-5C43E28BE6A4",
+            }
+        );
         await dbContext.SaveChangesAsync();
     }
 
@@ -332,35 +388,35 @@ public class SeedData(ApplicationDbContext dbContext)
     private async Task SeedIngredientsToMenuItem()
     {
         dbContext.MenuItemIngredients.AddRange(
-            new MenuItemIngredient { MenuItemId = 1, IngredientId = 1 },
-            new MenuItemIngredient { MenuItemId = 1, IngredientId = 2 },
-            new MenuItemIngredient { MenuItemId = 1, IngredientId = 3 },
-            new MenuItemIngredient { MenuItemId = 1, IngredientId = 4 },
-            new MenuItemIngredient { MenuItemId = 1, IngredientId = 5 },
-            new MenuItemIngredient { MenuItemId = 1, IngredientId = 6 },
-            new MenuItemIngredient { MenuItemId = 1, IngredientId = 7 },
-            new MenuItemIngredient { MenuItemId = 1, IngredientId = 8 },
-            new MenuItemIngredient { MenuItemId = 1, IngredientId = 9 },
-            new MenuItemIngredient { MenuItemId = 1, IngredientId = 10 },
-            new MenuItemIngredient { MenuItemId = 1, IngredientId = 11 },
-            new MenuItemIngredient { MenuItemId = 2, IngredientId = 12 },
-            new MenuItemIngredient { MenuItemId = 2, IngredientId = 13 },
-            new MenuItemIngredient { MenuItemId = 2, IngredientId = 14 },
-            new MenuItemIngredient { MenuItemId = 2, IngredientId = 15 },
-            new MenuItemIngredient { MenuItemId = 2, IngredientId = 16 },
-            new MenuItemIngredient { MenuItemId = 2, IngredientId = 17 },
-            new MenuItemIngredient { MenuItemId = 2, IngredientId = 18 },
-            new MenuItemIngredient { MenuItemId = 2, IngredientId = 19 },
-            new MenuItemIngredient { MenuItemId = 2, IngredientId = 20 },
-            new MenuItemIngredient { MenuItemId = 3, IngredientId = 21 },
-            new MenuItemIngredient { MenuItemId = 3, IngredientId = 13 },
-            new MenuItemIngredient { MenuItemId = 3, IngredientId = 22 },
-            new MenuItemIngredient { MenuItemId = 3, IngredientId = 23 },
-            new MenuItemIngredient { MenuItemId = 3, IngredientId = 20 },
-            new MenuItemIngredient { MenuItemId = 3, IngredientId = 24 },
-            new MenuItemIngredient { MenuItemId = 4, IngredientId = 25 },
-            new MenuItemIngredient { MenuItemId = 4, IngredientId = 26 },
-            new MenuItemIngredient { MenuItemId = 4, IngredientId = 27 }
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 1, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 2, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 3, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 4, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 5, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 6, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 7, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 8, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 9, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 10, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 1, IngredientId = 11, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 2, IngredientId = 12, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 2, IngredientId = 13, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 2, IngredientId = 14, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 2, IngredientId = 15, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 2, IngredientId = 16, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 2, IngredientId = 17, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 2, IngredientId = 18, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 2, IngredientId = 19, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 2, IngredientId = 20, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 3, IngredientId = 21, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 3, IngredientId = 13, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 3, IngredientId = 22, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 3, IngredientId = 23, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 3, IngredientId = 20, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 3, IngredientId = 24, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 4, IngredientId = 25, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 4, IngredientId = 26, Pieces = 1 },
+            new MenuItemIngredient { MenuItemId = 4, IngredientId = 27, Pieces = 1 }
         );
         await dbContext.SaveChangesAsync();
     }
@@ -374,18 +430,32 @@ public class SeedData(ApplicationDbContext dbContext)
         );
         await dbContext.SaveChangesAsync();
 
-        List<int> ids1 = [2, 3];
-        List<MenuItem> menuItems1 = dbContext.MenuItems.Where(mi => ids1.Contains(mi.Id)).ToList();
-        dbContext.Categories.First(c => c.Id == 1).MenuItems = [..menuItems1];
+        dbContext.CategoryMenuItems.AddRange(new List<CategoryMenuItem>
+        {
+            new() { CategoryId = 1, MenuItemId = 2 },
+            new() { CategoryId = 1, MenuItemId = 3 },
+            new() { CategoryId = 2, MenuItemId = 1 },
+            new() { CategoryId = 2, MenuItemId = 4 },
+            new() { CategoryId = 3, MenuItemId = 5 },
+            new() { CategoryId = 3, MenuItemId = 6 },
+            new() { CategoryId = 3, MenuItemId = 7 },
+            new() { CategoryId = 3, MenuItemId = 8 },
+            new() { CategoryId = 3, MenuItemId = 9 },
+            new() { CategoryId = 3, MenuItemId = 10 },
+        });
 
-        List<int> ids2 = [1, 4];
-        List<MenuItem> menuItems2 = dbContext.MenuItems.Where(mi => ids2.Contains(mi.Id)).ToList();
-        dbContext.Categories.First(c => c.Id == 2).MenuItems = [..menuItems2];
+        /*        List<int> ids1 = [2, 3];
+                List<MenuItem> menuItems1 = dbContext.MenuItems.Where(mi => ids1.Contains(mi.Id)).ToList();
+                dbContext.Categories.First(c => c.Id == 1).MenuItems = [..menuItems1];
 
-        List<int> ids3 = [5, 6, 7, 8, 9, 10];
-        List<MenuItem> menuItems3 = dbContext.MenuItems.Where(mi => ids3.Contains(mi.Id)).ToList();
-        dbContext.Categories.First(c => c.Id == 3).MenuItems = [..menuItems3];
+                List<int> ids2 = [1, 4];
+                List<MenuItem> menuItems2 = dbContext.MenuItems.Where(mi => ids2.Contains(mi.Id)).ToList();
+                dbContext.Categories.First(c => c.Id == 2).MenuItems = [..menuItems2];*/
 
+        /*        List<int> ids3 = [5, 6, 7, 8, 9, 10];
+                List<MenuItem> menuItems3 = dbContext.MenuItems.Where(mi => ids3.Contains(mi.Id)).ToList();
+                dbContext.Categories.First(c => c.Id == 3).MenuItems = [..menuItems3];
+        */
         await dbContext.SaveChangesAsync();
     }
 
@@ -396,6 +466,7 @@ public class SeedData(ApplicationDbContext dbContext)
             {
                 Id = "69AC2F65-5DE9-40D4-B930-624CA40D3F13",
                 Name = "Table 1",
+                SessionId = "0449DB90-66AF-4E17-8086-C1452270B52D",
                 QrCode = "n/a",
                 CreatedAt = DateTime.Parse("2023-09-01 12:00:00"),
             },
@@ -403,6 +474,7 @@ public class SeedData(ApplicationDbContext dbContext)
             {
                 Id = "C158F7B2-3F05-4C9F-BC95-3246D20A8A45",
                 Name = "Table 2",
+                SessionId = "7EAE8F7F-C969-4FCD-869E-07AC2E62EB44",
                 QrCode = "n/a",
                 CreatedAt = DateTime.Parse("2023-09-01 12:00:00").AddMinutes(10),
             },
@@ -410,6 +482,7 @@ public class SeedData(ApplicationDbContext dbContext)
             {
                 Id = "46673854-0888-4309-AD33-71A306C1D026",
                 Name = "Table 3",
+                SessionId = "CBF261E5-A710-4611-A423-87943EB5DC32",
                 QrCode = "n/a",
                 CreatedAt = DateTime.Parse("2023-09-01 12:00:00").AddMinutes(20),
             },
@@ -417,6 +490,7 @@ public class SeedData(ApplicationDbContext dbContext)
             {
                 Id = "493FAF89-7344-403C-8D89-C9DF5BDFCB0F",
                 Name = "Table 4",
+                SessionId = "F2740A4E-2E7F-4E5E-A8BE-5680599D4357",
                 QrCode = "n/a",
                 CreatedAt = DateTime.Parse("2023-09-01 12:00:00").AddMinutes(30),
             },
@@ -424,6 +498,7 @@ public class SeedData(ApplicationDbContext dbContext)
             {
                 Id = "AE15A89C-0CF0-47DA-83F0-6E232B819BBD",
                 Name = "Table 5",
+                SessionId = "FD9EADC3-1CBC-417D-9CFB-62202E242356",
                 QrCode = "n/a",
                 CreatedAt = DateTime.Parse("2023-09-01 12:00:00").AddMinutes(30),
             }

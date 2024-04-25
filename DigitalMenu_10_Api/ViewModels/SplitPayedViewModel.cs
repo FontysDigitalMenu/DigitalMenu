@@ -1,6 +1,6 @@
 ﻿namespace DigitalMenu_10_Api.ViewModels;
 
-public class OrderCreatedViewModel
+public class SplitPayedViewModel
 {
     public string RedirectUrl { get; set; }
 

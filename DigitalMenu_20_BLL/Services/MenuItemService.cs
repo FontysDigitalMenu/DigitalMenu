@@ -1,4 +1,5 @@
-﻿using DigitalMenu_20_BLL.Interfaces.Repositories;
+﻿using DigitalMenu_20_BLL.Exceptions;
+using DigitalMenu_20_BLL.Interfaces.Repositories;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
 
@@ -32,5 +33,69 @@ public class MenuItemService(IMenuItemRepository menuItemRepository) : IMenuItem
     public MenuItem? GetMenuItemById(int id)
     {
         return menuItemRepository.GetMenuItemBy(id);
+    }
+
+    public async Task<List<MenuItem>> GetMenuItems()
+    {
+        return await menuItemRepository.GetMenuItems();
+    }
+
+    public async Task<MenuItem?> CreateMenuItem(MenuItem menuItem)
+    {
+        return await menuItemRepository.CreateMenuItem(menuItem);
+    }
+
+    public async Task<MenuItem?> UpdateMenuItem(MenuItem menuItem)
+    {
+        /*MenuItem? originalMenuItem = menuItemRepository.GetMenuItemBy(menuItem.Id);
+
+        if (originalMenuItem == null)
+        {
+            throw new NotFoundException("MenuItem does not exist");
+        }
+
+        originalMenuItem.Name = menuItem.Name;
+        originalMenuItem.Description = menuItem.Description;
+        originalMenuItem.Price = menuItem.Price;
+        originalMenuItem.Ingredients = [];
+        originalMenuItem.Categories = null;
+
+        if (string.IsNullOrEmpty(menuItem.ImageUrl))
+        {
+            menuItem.ImageUrl = originalMenuItem.ImageUrl;
+        }
+
+        originalMenuItem.ImageUrl = menuItem.ImageUrl;*/
+
+        return await menuItemRepository.UpdateMenuItem(menuItem);
+    }
+
+    public async Task<List<MenuItemIngredient>?> AddIngredientsToMenuItem(List<MenuItemIngredient> menuItemIngredients)
+    {
+        return await menuItemRepository.AddIngredientsToMenuItem(menuItemIngredients);
+    }
+
+    public async Task<List<CategoryMenuItem>?> AddCategoriesToMenuItem(List<Category> categories, int menuItemId)
+    {
+        List<CategoryMenuItem> menuItemCategories = categories
+            .Select(category => new CategoryMenuItem
+            {
+                CategoryId = category.Id,
+                MenuItemId = menuItemId,
+            })
+            .ToList();
+
+        return await menuItemRepository.AddCategoriesToMenuItem(menuItemCategories);
+    }
+
+    public bool Delete(int id)
+    {
+        MenuItem? existingMenuItem = GetMenuItemById(id);
+        if (existingMenuItem == null || !existingMenuItem.IsActive)
+        {
+            throw new NotFoundException("MenuItem does not exist");
+        }
+
+        return menuItemRepository.Delete(id);
     }
 }

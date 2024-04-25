@@ -16,6 +16,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
     public DbSet<MenuItem> MenuItems { get; set; }
 
+    public DbSet<CategoryMenuItem> CategoryMenuItems { get; set; }
+
     public DbSet<MenuItemIngredient> MenuItemIngredients { get; set; }
 
     public DbSet<Order> Orders { get; set; }
@@ -27,4 +29,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<ExcludedIngredientCartItem> ExcludedIngredientCartItems { get; set; }
 
     public DbSet<Table> Tables { get; set; }
+
+    public DbSet<Split> Splits { get; set; }
 }

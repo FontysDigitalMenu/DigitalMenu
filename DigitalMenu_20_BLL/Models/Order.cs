@@ -12,17 +12,19 @@ public class Order
 
     public Table Table { get; set; }
 
+    public string SessionId { get; set; }
+
     public int TotalAmount { get; set; }
 
-    public OrderStatus Status { get; set; }
+    public OrderStatus FoodStatus { get; set; } = OrderStatus.Pending;
 
-    public PaymentStatus PaymentStatus { get; set; } = PaymentStatus.Pending;
-
-    public string ExternalPaymentId { get; set; }
+    public OrderStatus DrinkStatus { get; set; } = OrderStatus.Pending;
 
     public DateTime OrderDate { get; set; } = DateTime.Now;
 
     public List<OrderMenuItem> OrderMenuItems { get; set; } = [];
 
     public string OrderNumber { get; set; }
+
+    public List<Split> Splits { get; set; }
 }
