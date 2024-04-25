@@ -14,20 +14,20 @@ public class OrderService(
     ITableRepository tableRepository,
     ISplitRepository splitRepository) : IOrderService
 {
-    public Order Create(string deviceId, string tableId, List<Split> splits)
+    public Order Create(string deviceId, string tableSessionId, List<Split> splits)
     {
-        if (!cartItemRepository.ExistsByTableSessionId(deviceId))
+        if (!cartItemRepository.ExistsByTableSessionId(tableSessionId))
         {
-            throw new NotFoundException("DeviceId does not exist");
+            throw new NotFoundException("TableSession does not exist");
         }
 
-        Table? table = tableRepository.GetById(tableId);
+        Table? table = tableRepository.GetBySessionId(tableSessionId);
         if (table == null)
         {
-            throw new NotFoundException("TableId does not exist");
+            throw new NotFoundException("TableSessionId does not exist");
         }
 
-        List<CartItem> cartItems = cartItemRepository.GetByTableSessionId(deviceId);
+        List<CartItem> cartItems = cartItemRepository.GetByTableSessionId(tableSessionId);
         if (cartItems.Count == 0)
         {
             throw new NotFoundException("CartItems do not exist");
@@ -46,7 +46,7 @@ public class OrderService(
                 }).ToList(),
         }).ToList();
 
-        int totalAmount = GetTotalAmount(deviceId, tableId);
+        int totalAmount = GetTotalAmount(tableSessionId);
         if (splits.Sum(s => s.Amount) != totalAmount)
         {
             throw new ValidationException("Total amount does not match with splits amount");
@@ -60,7 +60,7 @@ public class OrderService(
         {
             Id = Guid.NewGuid().ToString(),
             DeviceId = deviceId,
-            TableId = tableId,
+            TableId = table.Id,
             SessionId = table.SessionId,
             OrderMenuItems = orderMenuItems,
             TotalAmount = totalAmount,
@@ -94,19 +94,14 @@ public class OrderService(
         return orderRepository.GetByTableSessionId(table.SessionId);
     }
 
-    public Order? GetBy(string id, string deviceId, string tableId)
+    public Order? GetBy(string id, string tableSessionId)
     {
-        if (!orderRepository.ExistsByDeviceId(deviceId))
+        if (tableRepository.GetBySessionId(tableSessionId) == null)
         {
-            throw new NotFoundException("DeviceId does not exist");
+            throw new NotFoundException("TableSession does not exist");
         }
 
-        if (tableRepository.GetById(tableId) == null)
-        {
-            throw new NotFoundException("TableId does not exist");
-        }
-
-        return orderRepository.GetBy(id, deviceId, tableId);
+        return orderRepository.GetBy(id, tableSessionId);
     }
 
     public Order? GetBy(string id)
@@ -166,19 +161,19 @@ public class OrderService(
         return drinkOnlyOrders;
     }
 
-    public int GetTotalAmount(string deviceId, string tableId)
+    public int GetTotalAmount(string tableSessionId)
     {
-        if (!cartItemRepository.ExistsByTableSessionId(deviceId))
+        if (!cartItemRepository.ExistsByTableSessionId(tableSessionId))
         {
-            throw new NotFoundException("DeviceId does not exist");
+            throw new NotFoundException("TableSession does not exist");
         }
 
-        if (tableRepository.GetById(tableId) == null)
+        if (tableRepository.GetBySessionId(tableSessionId) == null)
         {
-            throw new NotFoundException("TableId does not exist");
+            throw new NotFoundException("TableSessionId does not exist");
         }
 
-        List<CartItem> cartItems = cartItemRepository.GetByTableSessionId(deviceId);
+        List<CartItem> cartItems = cartItemRepository.GetByTableSessionId(tableSessionId);
         if (cartItems.Count == 0)
         {
             throw new NotFoundException("CartItems do not exist");

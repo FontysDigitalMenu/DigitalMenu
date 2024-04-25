@@ -35,7 +35,7 @@ public class OrderController(
         Order createdOrder;
         try
         {
-            createdOrder = orderService.Create(orderRequest.DeviceId, orderRequest.TableId, splits);
+            createdOrder = orderService.Create(orderRequest.DeviceId, orderRequest.TableSessionId, splits);
         }
         catch (ValidationException e)
         {
@@ -78,16 +78,15 @@ public class OrderController(
         return Ok(orders.Select(o => OrderViewModel.FromOrder(o, cartItemService)));
     }
 
-    [HttpGet("{id}/{deviceId}/{tableId}")]
+    [HttpGet("{id}/{tableSessionId}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
-    public ActionResult<OrderViewModel> Get([FromRoute] string id, [FromRoute] string deviceId,
-        [FromRoute] string tableId)
+    public ActionResult<OrderViewModel> Get([FromRoute] string id, [FromRoute] string tableSessionId)
     {
         Order? order;
         try
         {
-            order = orderService.GetBy(id, deviceId, tableId);
+            order = orderService.GetBy(id, tableSessionId);
         }
         catch (NotFoundException e)
         {

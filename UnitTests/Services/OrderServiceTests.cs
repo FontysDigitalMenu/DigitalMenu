@@ -42,7 +42,7 @@ public class OrderServiceTests
             ]);
 
         // Act
-        int result = _orderService.GetTotalAmount(deviceId, tableId);
+        int result = _orderService.GetTotalAmount(tableId);
 
         // Assert
         Assert.That(result, Is.EqualTo(1259));
@@ -66,7 +66,7 @@ public class OrderServiceTests
 
         // Act
         // Assert
-        Assert.Throws<NotFoundException>(() => _orderService.GetTotalAmount(deviceId, tableId));
+        Assert.Throws<NotFoundException>(() => _orderService.GetTotalAmount(tableId));
     }
 
     [Test]
@@ -87,7 +87,7 @@ public class OrderServiceTests
 
         // Act
         // Assert
-        Assert.Throws<NotFoundException>(() => _orderService.GetTotalAmount(deviceId, tableId));
+        Assert.Throws<NotFoundException>(() => _orderService.GetTotalAmount(tableId));
     }
 
     [Test]
@@ -105,7 +105,7 @@ public class OrderServiceTests
 
         // Act
         // Assert
-        Assert.Throws<NotFoundException>(() => _orderService.GetTotalAmount(deviceId, tableId));
+        Assert.Throws<NotFoundException>(() => _orderService.GetTotalAmount(tableId));
     }
 
     [Test]
@@ -294,7 +294,7 @@ public class OrderServiceTests
             TableId = tableId,
             TotalAmount = 1259,
         };
-        _orderRepositoryMock.Setup(x => x.GetBy(orderId, deviceId, tableId))
+        _orderRepositoryMock.Setup(x => x.GetBy(orderId, tableId))
             .Returns(order);
         _orderRepositoryMock.Setup(x => x.ExistsByDeviceId(deviceId))
             .Returns(true);
@@ -302,7 +302,7 @@ public class OrderServiceTests
             .Returns(new Table());
 
         // Act
-        Order? result = _orderService.GetBy(orderId, deviceId, tableId);
+        Order? result = _orderService.GetBy(orderId, tableId);
 
         // Assert
         Assert.That(result, Is.EqualTo(order));
@@ -322,7 +322,7 @@ public class OrderServiceTests
             TableId = tableId,
             TotalAmount = 1259,
         };
-        _orderRepositoryMock.Setup(x => x.GetBy(orderId, deviceId, tableId))
+        _orderRepositoryMock.Setup(x => x.GetBy(orderId, tableId))
             .Returns(order);
         _orderRepositoryMock.Setup(x => x.ExistsByDeviceId(deviceId))
             .Returns(false);
@@ -331,7 +331,7 @@ public class OrderServiceTests
 
         // Act
         // Assert
-        Assert.Throws<NotFoundException>(() => _orderService.GetBy(orderId, deviceId, tableId));
+        Assert.Throws<NotFoundException>(() => _orderService.GetBy(orderId, tableId));
     }
 
     [Test]
@@ -348,7 +348,7 @@ public class OrderServiceTests
             TableId = tableId,
             TotalAmount = 1259,
         };
-        _orderRepositoryMock.Setup(x => x.GetBy(orderId, deviceId, tableId))
+        _orderRepositoryMock.Setup(x => x.GetBy(orderId, tableId))
             .Returns(order);
         _orderRepositoryMock.Setup(x => x.ExistsByDeviceId(deviceId))
             .Returns(true);
@@ -357,7 +357,7 @@ public class OrderServiceTests
 
         // Act
         // Assert
-        Assert.Throws<NotFoundException>(() => _orderService.GetBy(orderId, deviceId, tableId));
+        Assert.Throws<NotFoundException>(() => _orderService.GetBy(orderId, tableId));
     }
 
     [Test]

@@ -6,5 +6,5 @@ public class OrderRequest
 
     public string DeviceId { get; set; }
 
-    public string TableId { get; set; }
+    public string TableSessionId { get; set; }
 }

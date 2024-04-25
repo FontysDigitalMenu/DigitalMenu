@@ -14,13 +14,13 @@ public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
         return dbContext.SaveChanges() > 0 ? order : null;
     }
 
-    public Order? GetBy(string id, string deviceId, string tableId)
+    public Order? GetBy(string id, string tableSessionId)
     {
         return dbContext.Orders
             .Include(o => o.Splits)
             .Include(o => o.OrderMenuItems)
             .ThenInclude(omi => omi.MenuItem)
-            .FirstOrDefault(o => o.Id == id && o.DeviceId == deviceId && o.TableId == tableId);
+            .FirstOrDefault(o => o.Id == id && o.SessionId == tableSessionId);
     }
 
     public Order? GetBy(string id)
