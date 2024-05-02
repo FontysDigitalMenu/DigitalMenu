@@ -14,39 +14,46 @@ public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
         return dbContext.SaveChanges() > 0 ? order : null;
     }
 
-    public Order? GetByExternalPaymentId(string id)
-    {
-        return dbContext.Orders
-            .Include(o => o.OrderMenuItems)
-            .ThenInclude(omi => omi.MenuItem)
-            .FirstOrDefault(o => o.ExternalPaymentId == id);
-    }
-
     public Order? GetBy(string id, string deviceId, string tableId)
     {
         return dbContext.Orders
+            .Include(o => o.Splits)
             .Include(o => o.OrderMenuItems)
             .ThenInclude(omi => omi.MenuItem)
             .FirstOrDefault(o => o.Id == id && o.DeviceId == deviceId && o.TableId == tableId);
     }
 
-    public List<Order>? GetBy(string deviceId, string tableId)
+    public Order? GetBy(string id)
     {
         return dbContext.Orders
+            .Include(o => o.Splits)
             .Include(o => o.OrderMenuItems)
             .ThenInclude(omi => omi.MenuItem)
-            .Where(o => o.DeviceId == deviceId && o.TableId == tableId)
+            .FirstOrDefault(o => o.Id == id);
+    }
+
+    public List<Order>? GetByTableSessionId(string sessionId)
+    {
+        return dbContext.Orders
+            .Include(o => o.Splits)
+            .Include(o => o.OrderMenuItems)
+            .ThenInclude(omi => omi.MenuItem)
+            .Where(o => o.SessionId == sessionId)
+            .OrderByDescending(o => o.OrderDate)
             .ToList();
     }
 
     public IEnumerable<Order> GetPaidOrders()
     {
         return dbContext.Orders
+            .Include(o => o.Splits)
             .Include(o => o.OrderMenuItems)
             .ThenInclude(omi => omi.MenuItem)
-            .Where(o => o.PaymentStatus == PaymentStatus.Paid)
-            .Where(o => o.Status == OrderStatus.Pending || o.Status == OrderStatus.Processing ||
-                        o.Status == OrderStatus.Completed)
+            .ThenInclude(mi => mi.CategoryMenuItems)
+            .ThenInclude(cm => cm.Category)
+            .Where(o => o.Splits.All(s => s.PaymentStatus == PaymentStatus.Paid))
+            .Where(o => o.FoodStatus == OrderStatus.Pending || o.FoodStatus == OrderStatus.Processing ||
+                        o.FoodStatus == OrderStatus.Completed)
             .ToList();
     }
 
@@ -59,5 +66,10 @@ public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
     public bool ExistsByDeviceId(string deviceId)
     {
         return dbContext.Orders.Any(o => o.DeviceId == deviceId);
+    }
+
+    public bool ExistsBySessionId(string sessionId)
+    {
+        return dbContext.Orders.Any(o => o.SessionId == sessionId);
     }
 }

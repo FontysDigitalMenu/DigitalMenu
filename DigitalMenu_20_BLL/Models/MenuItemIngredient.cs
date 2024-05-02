@@ -12,4 +12,6 @@ public class MenuItemIngredient
     public int IngredientId { get; set; }
 
     public Ingredient Ingredient { get; set; }
+
+    public int Pieces { get; set; }
 }
