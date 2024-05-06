@@ -140,7 +140,7 @@ public class MenuItemController(
                 Name = menuItemCreateRequest.Name,
                 Description = menuItemCreateRequest.Description,
                 Price = (int)menuItemCreateRequest.Price,
-                ImageUrl = string.Format("{0}://{1}{2}/Images/{3}", Request.Scheme, Request.Host, Request.PathBase,
+                ImageUrl = string.Format("{0}://{1}{2}/api/Images/{3}", Request.Scheme, Request.Host, Request.PathBase,
                     menuItemUrl),
             };
 
