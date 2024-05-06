@@ -104,7 +104,7 @@ public class OrderController(
 
     [Authorize(Roles = "Admin, Employee")]
     [HttpGet("paid/{type}")]
-    public ActionResult<List<OrderViewModel>> GetPaidOrders(string type)
+    public ActionResult<List<OrderViewModel>> GetPaidOrders([FromRoute] string type)
     {
         IEnumerable<Order> orders;
 
