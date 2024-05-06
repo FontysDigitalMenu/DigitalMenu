@@ -122,11 +122,24 @@ if (!Directory.Exists(imageFolderPath))
 }
 PhysicalFileProvider imagesProvider = new(imageFolderPath);
 
-app.UseStaticFiles(new StaticFileOptions
+
+if (app.Environment.IsDevelopment())
 {
-    FileProvider = imagesProvider,
-    RequestPath = "/Images",
-});
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = imagesProvider,
+        RequestPath = "/Images",
+    });
+}
+else
+{
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = imagesProvider,
+        RequestPath = "api/Images",
+    });
+}
+
 
 app.UseCors();
 
