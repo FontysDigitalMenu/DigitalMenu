@@ -110,8 +110,17 @@ public class CartItemRepository(ApplicationDbContext dbContext) : ICartItemRepos
 
     public bool ClearByDeviceId(string deviceId)
     {
-        List<CartItem> cartItems = dbContext.CartItems.Where(ci => ci.DeviceId == deviceId).ToList();
-        dbContext.CartItems.RemoveRange(cartItems);
-        return dbContext.SaveChanges() > 0;
+        try
+        {
+            List<CartItem> cartItems = dbContext.CartItems.Where(ci => ci.DeviceId == deviceId).ToList();
+            dbContext.CartItems.RemoveRange(cartItems);
+            dbContext.SaveChanges();
+
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
     }
 }
