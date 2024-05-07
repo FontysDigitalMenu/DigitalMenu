@@ -30,7 +30,7 @@ public class ImageService(IWebHostEnvironment webHostEnvironment)
             new string(Path.GetFileNameWithoutExtension(menuItemFile.FileName).Take(10).ToArray()).Replace(' ', '-');
         menuItemImageName = menuItemImageName + DateTime.Now.ToString("yymmssfff") + myUuid +
                             Path.GetExtension(menuItemFile.FileName);
-        string imagePath = Path.Combine(webHostEnvironment.ContentRootPath, "Images", menuItemImageName);
+        string imagePath = Path.Combine(webHostEnvironment.ContentRootPath, "api/Images", menuItemImageName);
 
         using (FileStream fileStream = new(imagePath, FileMode.Create))
         {

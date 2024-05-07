@@ -115,17 +115,18 @@ app.UseSwagger();
 app.UseSwaggerUI();
 // }
 
-string imageFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "Images");
+string imageFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "api", "Images");
 if (!Directory.Exists(imageFolderPath))
 {
     Directory.CreateDirectory(imageFolderPath);
 }
+
 PhysicalFileProvider imagesProvider = new(imageFolderPath);
 
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = imagesProvider,
-    RequestPath = "/Images",
+    RequestPath = "/api/Images",
 });
 
 app.UseCors();
