@@ -13,6 +13,7 @@ namespace DigitalMenu_10_Api.Controllers;
 [ApiController]
 public class TableController(ITableService tableService) : ControllerBase
 {
+    [Authorize(Roles = "Admin, Employee")]
     [HttpGet]
     [ProducesResponseType(200)]
     public IActionResult Get()
@@ -98,7 +99,8 @@ public class TableController(ITableService tableService) : ControllerBase
         return NoContent();
     }
 
-    [HttpPost("ResetSession")]
+    [Authorize(Roles = "Admin, Employee")]
+    [HttpPost("ResetSession/{id}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
