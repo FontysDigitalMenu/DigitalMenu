@@ -99,15 +99,22 @@ public class SplitController(
         if (split.Order.Splits.All(s => s.PaymentStatus == DigitalMenu_20_BLL.Enums.PaymentStatus.Paid))
         {
             orderService.ProcessPaidOrder(split.Order);
-            await SendOrderToKitchen(split.Order);
+            await SendOrderInfoToKitchenAndCustomers(split.Order);
         }
 
         return Ok();
     }
 
-    private async Task SendOrderToKitchen(Order order)
+    private async Task SendOrderInfoToKitchenAndCustomers(Order order)
     {
-        OrderViewModel orderViewModel = OrderViewModel.FromOrder(order, cartItemService);
+        Order? orderWithNewSplitData = orderService.GetBy(order.Id);
+        if (orderWithNewSplitData == null)
+        {
+            return;
+        }
+
+        OrderViewModel orderViewModel = OrderViewModel.FromOrder(orderWithNewSplitData, cartItemService);
         await hubContext.Clients.All.ReceiveOrder(orderViewModel);
+        await hubContext.Clients.Group($"order-{orderWithNewSplitData.Id}").ReceiveOrderUpdate(orderViewModel);
     }
 }

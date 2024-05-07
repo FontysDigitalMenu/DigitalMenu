@@ -47,6 +47,11 @@ public class OrderService(
         }).ToList();
 
         int totalAmount = GetTotalAmount(deviceId, tableId);
+        if (splits.Any(s => s.Amount <= 0))
+        {
+            throw new ValidationException("Split amount must be greater than 0");
+        }
+
         if (splits.Sum(s => s.Amount) != totalAmount)
         {
             throw new ValidationException("Total amount does not match with splits amount");

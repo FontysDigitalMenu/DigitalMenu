@@ -98,7 +98,7 @@ public class TableController(ITableService tableService) : ControllerBase
 
         return NoContent();
     }
-    
+
     [Authorize(Roles = "Admin, Employee")]
     [HttpPost("ResetSession/{id}")]
     [ProducesResponseType(204)]
