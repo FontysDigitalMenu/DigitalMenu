@@ -1,9 +1,8 @@
-﻿using DigitalMenu_20_BLL.Exceptions;
-using DigitalMenu_20_BLL.Helpers;
+﻿using System.ComponentModel.DataAnnotations;
+using DigitalMenu_20_BLL.Exceptions;
 using DigitalMenu_20_BLL.Interfaces.Repositories;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
-using Mollie.Api.Models.Payment.Response;
 using shortid;
 using shortid.Configuration;
 
@@ -13,30 +12,9 @@ public class OrderService(
     IOrderRepository orderRepository,
     ICartItemRepository cartItemRepository,
     ITableRepository tableRepository,
-    IMollieHelper mollieHelper) : IOrderService
+    ISplitRepository splitRepository) : IOrderService
 {
-    public int GetTotalAmount(string deviceId, string tableId)
-    {
-        if (!cartItemRepository.ExistsByDeviceId(deviceId))
-        {
-            throw new NotFoundException("DeviceId does not exist");
-        }
-
-        if (tableRepository.GetById(tableId) == null)
-        {
-            throw new NotFoundException("TableId does not exist");
-        }
-
-        List<CartItem> cartItems = cartItemRepository.GetByDeviceId(deviceId);
-        if (cartItems.Count == 0)
-        {
-            throw new NotFoundException("CartItems do not exist");
-        }
-
-        return cartItems.Sum(item => item.MenuItem.Price * item.Quantity);
-    }
-
-    public Order Create(string deviceId, string tableId, string paymentId, string orderId)
+    public Order Create(string deviceId, string tableId, List<Split> splits)
     {
         if (!cartItemRepository.ExistsByDeviceId(deviceId))
         {
@@ -69,24 +47,30 @@ public class OrderService(
         }).ToList();
 
         int totalAmount = GetTotalAmount(deviceId, tableId);
+        if (splits.Sum(s => s.Amount) != totalAmount)
+        {
+            throw new ValidationException("Total amount does not match with splits amount");
+        }
 
         string orderNumber = DateTime.Now.ToString("ddyyMM") +
                              ShortId.Generate(new GenerationOptions(length: 8, useSpecialCharacters: false,
                                  useNumbers: false))[..4];
+
         Order order = new()
         {
-            Id = orderId,
+            Id = Guid.NewGuid().ToString(),
             DeviceId = deviceId,
             TableId = tableId,
             SessionId = table.SessionId,
-            ExternalPaymentId = paymentId,
             OrderMenuItems = orderMenuItems,
             TotalAmount = totalAmount,
             OrderNumber = orderNumber,
         };
-
         Order? createdOrder = orderRepository.Create(order);
-        if (createdOrder == null)
+
+        splits.ForEach(s => s.OrderId = order.Id);
+        bool hasCreatedSplits = splitRepository.CreateSplits(splits);
+        if (!hasCreatedSplits || createdOrder == null)
         {
             throw new DatabaseCreationException("Order could not be created");
         }
@@ -94,20 +78,14 @@ public class OrderService(
         return createdOrder;
     }
 
-    public Order? GetByExternalPaymentId(string id)
-    {
-        return orderRepository.GetByExternalPaymentId(id);
-    }
-
     public List<Order>? GetBy(string deviceId, string tableId)
     {
-        Table? table = tableRepository.GetById(tableId);
-
         if (!orderRepository.ExistsByDeviceId(deviceId))
         {
             throw new NotFoundException("DeviceId does not exist");
         }
 
+        Table? table = tableRepository.GetById(tableId);
         if (table == null)
         {
             throw new NotFoundException("TableId does not exist");
@@ -144,16 +122,6 @@ public class OrderService(
     public bool Update(Order order)
     {
         return orderRepository.Update(order);
-    }
-
-    public async Task<PaymentResponse> CreateMolliePayment(int totalAmount, string orderId)
-    {
-        return await mollieHelper.CreatePayment(totalAmount, orderId);
-    }
-
-    public async Task<PaymentResponse> GetPaymentFromMollie(string externalPaymentId)
-    {
-        return await mollieHelper.GetPayment(externalPaymentId);
     }
 
     public void ProcessPaidOrder(Order order)
@@ -201,5 +169,26 @@ public class OrderService(
             .Where(order => order.OrderMenuItems.Count != 0);
 
         return drinkOnlyOrders;
+    }
+
+    public int GetTotalAmount(string deviceId, string tableId)
+    {
+        if (!cartItemRepository.ExistsByDeviceId(deviceId))
+        {
+            throw new NotFoundException("DeviceId does not exist");
+        }
+
+        if (tableRepository.GetById(tableId) == null)
+        {
+            throw new NotFoundException("TableId does not exist");
+        }
+
+        List<CartItem> cartItems = cartItemRepository.GetByDeviceId(deviceId);
+        if (cartItems.Count == 0)
+        {
+            throw new NotFoundException("CartItems do not exist");
+        }
+
+        return cartItems.Sum(item => item.MenuItem.Price * item.Quantity);
     }
 }
