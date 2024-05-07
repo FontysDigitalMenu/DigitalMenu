@@ -12,27 +12,27 @@ public class CartItemRepository(ApplicationDbContext dbContext) : ICartItemRepos
         dbContext.CartItems.Add(cartItem);
         return dbContext.SaveChanges() > 0;
     }
-    
+
     public CartItem? GetByMenuItemIdAndDeviceId(int menuItemId, string deviceId)
     {
         return dbContext.CartItems.FirstOrDefault(ci => ci.MenuItemId == menuItemId && ci.DeviceId == deviceId);
     }
-    
+
     public CartItem? GetByCartItemIdAndDeviceId(int cartItemId, string deviceId)
     {
         return dbContext.CartItems
             .Include(ci => ci.MenuItem)
             .FirstOrDefault(ci => ci.Id == cartItemId && ci.DeviceId == deviceId);
     }
-    
+
     public List<CartItem?> GetCartItemsByMenuItemIdAndDeviceId(int menuItemId, string deviceId)
     {
         return dbContext.CartItems
             .Where(ci => ci.MenuItemId == menuItemId && ci.DeviceId == deviceId)
             .ToList();
     }
-    
-    
+
+
     public List<CartItem> GetByDeviceId(string deviceId)
     {
         return dbContext.CartItems
@@ -40,31 +40,31 @@ public class CartItemRepository(ApplicationDbContext dbContext) : ICartItemRepos
             .Where(ci => ci.DeviceId == deviceId)
             .ToList();
     }
-    
+
     public bool ExistsByDeviceId(string deviceId)
     {
         return dbContext.CartItems.Any(ci => ci.DeviceId == deviceId);
     }
-    
+
     public bool Delete(CartItem cartItem)
     {
         dbContext.CartItems.Remove(cartItem);
         return dbContext.SaveChanges() > 0;
     }
-    
+
     public bool Update(CartItem cartItem)
     {
         dbContext.CartItems.Update(cartItem);
         return dbContext.SaveChanges() > 0;
     }
-    
+
     public bool AddExcludedIngredientToCartItem(ExcludedIngredientCartItem excludedIngredientCartItem)
     {
         try
         {
             dbContext.ExcludedIngredientCartItems.Add(excludedIngredientCartItem);
             dbContext.SaveChanges();
-            
+
             return true;
         }
         catch
@@ -72,7 +72,7 @@ public class CartItemRepository(ApplicationDbContext dbContext) : ICartItemRepos
             return false;
         }
     }
-    
+
     public List<Ingredient> GetExcludedIngredientsByCartItemId(int cartItemId)
     {
         return dbContext.ExcludedIngredientCartItems
@@ -80,7 +80,7 @@ public class CartItemRepository(ApplicationDbContext dbContext) : ICartItemRepos
             .Select(e => e.Ingredient)
             .ToList();
     }
-    
+
     public List<Ingredient> GetExcludedIngredientsByOrderMenuItemId(int orderMenuItemId)
     {
         return dbContext.ExcludedIngredientOrderMenuItems
@@ -88,7 +88,7 @@ public class CartItemRepository(ApplicationDbContext dbContext) : ICartItemRepos
             .Select(e => e.Ingredient)
             .ToList();
     }
-    
+
     public bool DeleteExcludedIngredientsFromCartItem(int cartItemId)
     {
         try
@@ -96,10 +96,10 @@ public class CartItemRepository(ApplicationDbContext dbContext) : ICartItemRepos
             List<ExcludedIngredientCartItem> excludedIngredients = dbContext.ExcludedIngredientCartItems
                 .Where(eic => eic.CartItemId == cartItemId)
                 .ToList();
-            
+
             dbContext.ExcludedIngredientCartItems.RemoveRange(excludedIngredients);
             dbContext.SaveChanges();
-            
+
             return true;
         }
         catch
@@ -107,7 +107,7 @@ public class CartItemRepository(ApplicationDbContext dbContext) : ICartItemRepos
             return false;
         }
     }
-    
+
     public bool ClearByDeviceId(string deviceId)
     {
         try
