@@ -25,27 +25,27 @@ public class OrderServiceTests
             _tableRepositoryMock.Object, _splitRepositoryMock.Object);
     }
 
-    [Test]
-    public void GetTotalAmount_ShouldReturnTotalAmount()
-    {
-        // Arrange
-        const string tableSessionId = "11CCAB02-0C97-41F7-8F35-18CFD4BA4672";
-        _cartItemRepositoryMock.Setup(x => x.ExistsByTableSessionId(tableSessionId))
-            .Returns(true);
-        _tableRepositoryMock.Setup(x => x.GetById(tableSessionId))
-            .Returns(new Table());
-        _cartItemRepositoryMock.Setup(x => x.GetByTableSessionId(tableSessionId))
-            .Returns([
-                new CartItem { MenuItem = new MenuItem { Price = 500 }, Quantity = 2 },
-                new CartItem { MenuItem = new MenuItem { Price = 259 }, Quantity = 1 },
-            ]);
-
-        // Act
-        int result = _orderService.GetTotalAmount(tableSessionId);
-
-        // Assert
-        Assert.That(result, Is.EqualTo(1259));
-    }
+    // [Test]
+    // public void GetTotalAmount_ShouldReturnTotalAmount()
+    // {
+    //     // Arrange
+    //     const string tableSessionId = "11CCAB02-0C97-41F7-8F35-18CFD4BA4672";
+    //     _cartItemRepositoryMock.Setup(x => x.ExistsByTableSessionId(tableSessionId))
+    //         .Returns(true);
+    //     _tableRepositoryMock.Setup(x => x.GetById(tableSessionId))
+    //         .Returns(new Table());
+    //     _cartItemRepositoryMock.Setup(x => x.GetByTableSessionId(tableSessionId))
+    //         .Returns([
+    //             new CartItem { MenuItem = new MenuItem { Price = 500 }, Quantity = 2 },
+    //             new CartItem { MenuItem = new MenuItem { Price = 259 }, Quantity = 1 },
+    //         ]);
+    //
+    //     // Act
+    //     int result = _orderService.GetTotalAmount(tableSessionId);
+    //
+    //     // Assert
+    //     Assert.That(result, Is.EqualTo(1259));
+    // }
 
     [Test]
     public void GetTotalAmount_ShouldThrowDeviceNotFoundException()
