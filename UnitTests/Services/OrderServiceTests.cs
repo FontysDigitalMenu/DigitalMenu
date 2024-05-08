@@ -31,11 +31,11 @@ public class OrderServiceTests
         // Arrange
         const string deviceId = "77C10784-D645-406F-869D-C653B19948F5";
         const string tableId = "11CCAB02-0C97-41F7-8F35-18CFD4BA4672";
-        _cartItemRepositoryMock.Setup(x => x.ExistsByDeviceId(deviceId))
+        _cartItemRepositoryMock.Setup(x => x.ExistsByTableSessionId(deviceId))
             .Returns(true);
         _tableRepositoryMock.Setup(x => x.GetById(tableId))
             .Returns(new Table());
-        _cartItemRepositoryMock.Setup(x => x.GetByDeviceId(deviceId))
+        _cartItemRepositoryMock.Setup(x => x.GetByTableSessionId(deviceId))
             .Returns([
                 new CartItem { MenuItem = new MenuItem { Price = 500 }, Quantity = 2 },
                 new CartItem { MenuItem = new MenuItem { Price = 259 }, Quantity = 1 },
@@ -54,11 +54,11 @@ public class OrderServiceTests
         // Arrange
         const string deviceId = "77C10784-D645-406F-869D-C653B19948F5";
         const string tableId = "11CCAB02-0C97-41F7-8F35-18CFD4BA4672";
-        _cartItemRepositoryMock.Setup(x => x.ExistsByDeviceId(deviceId))
+        _cartItemRepositoryMock.Setup(x => x.ExistsByTableSessionId(deviceId))
             .Returns(false);
         _tableRepositoryMock.Setup(x => x.GetById(tableId))
             .Returns(new Table());
-        _cartItemRepositoryMock.Setup(x => x.GetByDeviceId(deviceId))
+        _cartItemRepositoryMock.Setup(x => x.GetByTableSessionId(deviceId))
             .Returns([
                 new CartItem { MenuItem = new MenuItem { Price = 500 }, Quantity = 2 },
                 new CartItem { MenuItem = new MenuItem { Price = 259 }, Quantity = 1 },
@@ -75,11 +75,11 @@ public class OrderServiceTests
         // Arrange
         const string deviceId = "77C10784-D645-406F-869D-C653B19948F5";
         const string tableId = "11CCAB02-0C97-41F7-8F35-18CFD4BA4672";
-        _cartItemRepositoryMock.Setup(x => x.ExistsByDeviceId(deviceId))
+        _cartItemRepositoryMock.Setup(x => x.ExistsByTableSessionId(deviceId))
             .Returns(true);
         _tableRepositoryMock.Setup(x => x.GetById(tableId))
             .Returns((Table)null!);
-        _cartItemRepositoryMock.Setup(x => x.GetByDeviceId(deviceId))
+        _cartItemRepositoryMock.Setup(x => x.GetByTableSessionId(deviceId))
             .Returns([
                 new CartItem { MenuItem = new MenuItem { Price = 500 }, Quantity = 2 },
                 new CartItem { MenuItem = new MenuItem { Price = 259 }, Quantity = 1 },
@@ -96,11 +96,11 @@ public class OrderServiceTests
         // Arrange
         const string deviceId = "77C10784-D645-406F-869D-C653B19948F5";
         const string tableId = "11CCAB02-0C97-41F7-8F35-18CFD4BA4672";
-        _cartItemRepositoryMock.Setup(x => x.ExistsByDeviceId(deviceId))
+        _cartItemRepositoryMock.Setup(x => x.ExistsByTableSessionId(deviceId))
             .Returns(true);
         _tableRepositoryMock.Setup(x => x.GetById(tableId))
             .Returns(new Table());
-        _cartItemRepositoryMock.Setup(x => x.GetByDeviceId(deviceId))
+        _cartItemRepositoryMock.Setup(x => x.GetByTableSessionId(deviceId))
             .Returns([]);
 
         // Act
@@ -123,11 +123,11 @@ public class OrderServiceTests
             TotalAmount = 1259,
         };
         List<Split> splits = [new Split { Amount = 1259, Name = "Split 1" }];
-        _cartItemRepositoryMock.Setup(x => x.ExistsByDeviceId(deviceId))
+        _cartItemRepositoryMock.Setup(x => x.ExistsByTableSessionId(deviceId))
             .Returns(true);
         _tableRepositoryMock.Setup(x => x.GetById(tableId))
             .Returns(new Table());
-        _cartItemRepositoryMock.Setup(x => x.GetByDeviceId(deviceId))
+        _cartItemRepositoryMock.Setup(x => x.GetByTableSessionId(deviceId))
             .Returns([
                 new CartItem { MenuItem = new MenuItem { Price = 500 }, Quantity = 2 },
                 new CartItem { MenuItem = new MenuItem { Price = 259 }, Quantity = 1 },
@@ -164,11 +164,11 @@ public class OrderServiceTests
             TotalAmount = 1259,
         };
         List<Split> splits = [new Split { Amount = 1259, Name = "Split 1" }];
-        _cartItemRepositoryMock.Setup(x => x.ExistsByDeviceId(deviceId))
+        _cartItemRepositoryMock.Setup(x => x.ExistsByTableSessionId(deviceId))
             .Returns(false);
         _tableRepositoryMock.Setup(x => x.GetById(tableId))
             .Returns(new Table());
-        _cartItemRepositoryMock.Setup(x => x.GetByDeviceId(deviceId))
+        _cartItemRepositoryMock.Setup(x => x.GetByTableSessionId(deviceId))
             .Returns([
                 new CartItem { MenuItem = new MenuItem { Price = 500 }, Quantity = 2 },
                 new CartItem { MenuItem = new MenuItem { Price = 259 }, Quantity = 1 },
@@ -199,11 +199,11 @@ public class OrderServiceTests
             TotalAmount = 1259,
         };
         List<Split> splits = [new Split { Amount = 1259, Name = "Split 1" }];
-        _cartItemRepositoryMock.Setup(x => x.ExistsByDeviceId(deviceId))
+        _cartItemRepositoryMock.Setup(x => x.ExistsByTableSessionId(deviceId))
             .Returns(true);
         _tableRepositoryMock.Setup(x => x.GetById(tableId))
             .Returns((Table)null!);
-        _cartItemRepositoryMock.Setup(x => x.GetByDeviceId(deviceId))
+        _cartItemRepositoryMock.Setup(x => x.GetByTableSessionId(deviceId))
             .Returns([
                 new CartItem { MenuItem = new MenuItem { Price = 500 }, Quantity = 2 },
                 new CartItem { MenuItem = new MenuItem { Price = 259 }, Quantity = 1 },
@@ -234,11 +234,11 @@ public class OrderServiceTests
             TotalAmount = 1259,
         };
         List<Split> splits = [new Split { Amount = 1259, Name = "Split 1" }];
-        _cartItemRepositoryMock.Setup(x => x.ExistsByDeviceId(deviceId))
+        _cartItemRepositoryMock.Setup(x => x.ExistsByTableSessionId(deviceId))
             .Returns(true);
         _tableRepositoryMock.Setup(x => x.GetById(tableId))
             .Returns(new Table());
-        _cartItemRepositoryMock.Setup(x => x.GetByDeviceId(deviceId))
+        _cartItemRepositoryMock.Setup(x => x.GetByTableSessionId(deviceId))
             .Returns([]);
         _orderRepositoryMock.Setup(x => x.Create(It.IsAny<Order>()))
             .Returns(order);
@@ -259,11 +259,11 @@ public class OrderServiceTests
         const string paymentId = "F91178CE-FFCE-40ED-955F-3471BC6A0586";
         const string orderId = "F91178CE-FFCE-40ED-955F-3471BC6A0586";
         List<Split> splits = [new Split { Amount = 1259, Name = "Split 1" }];
-        _cartItemRepositoryMock.Setup(x => x.ExistsByDeviceId(deviceId))
+        _cartItemRepositoryMock.Setup(x => x.ExistsByTableSessionId(deviceId))
             .Returns(true);
         _tableRepositoryMock.Setup(x => x.GetById(tableId))
             .Returns(new Table());
-        _cartItemRepositoryMock.Setup(x => x.GetByDeviceId(deviceId))
+        _cartItemRepositoryMock.Setup(x => x.GetByTableSessionId(deviceId))
             .Returns([
                 new CartItem { MenuItem = new MenuItem { Price = 500 }, Quantity = 2 },
                 new CartItem { MenuItem = new MenuItem { Price = 259 }, Quantity = 1 },

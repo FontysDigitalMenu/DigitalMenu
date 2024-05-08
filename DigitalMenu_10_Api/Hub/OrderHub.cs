@@ -4,8 +4,8 @@ namespace DigitalMenu_10_Api.Hub;
 
 public class OrderHub : Hub<IOrderHubClient>
 {
-    public async Task AddToOrderGroup(OrderGroupRequest orderGroupRequest)
+    public async Task AddToGroup(GroupRequest groupRequest)
     {
-        await Groups.AddToGroupAsync(Context.ConnectionId, orderGroupRequest.GroupName);
+        await Groups.AddToGroupAsync(Context.ConnectionId, groupRequest.GroupName);
     }
 }

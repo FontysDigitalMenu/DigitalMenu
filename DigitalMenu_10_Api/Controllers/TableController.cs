@@ -22,6 +22,7 @@ public class TableController(ITableService tableService) : ControllerBase
             { Id = t.Id, Name = t.Name, SessionId = t.SessionId }));
     }
 
+    [AllowAnonymous]
     [HttpGet("{id}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
@@ -33,7 +34,7 @@ public class TableController(ITableService tableService) : ControllerBase
             return NotFound();
         }
 
-        TableViewModel tableViewModel = new() { Id = table.Id, Name = table.Name };
+        TableViewModel tableViewModel = new() { Id = table.Id, Name = table.Name, SessionId = table.SessionId };
 
         return Ok(tableViewModel);
     }

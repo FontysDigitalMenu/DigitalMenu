@@ -16,7 +16,7 @@ public class OrderService(
 {
     public Order Create(string deviceId, string tableId, List<Split> splits)
     {
-        if (!cartItemRepository.ExistsByDeviceId(deviceId))
+        if (!cartItemRepository.ExistsByTableSessionId(deviceId))
         {
             throw new NotFoundException("DeviceId does not exist");
         }
@@ -27,7 +27,7 @@ public class OrderService(
             throw new NotFoundException("TableId does not exist");
         }
 
-        List<CartItem> cartItems = cartItemRepository.GetByDeviceId(deviceId);
+        List<CartItem> cartItems = cartItemRepository.GetByTableSessionId(deviceId);
         if (cartItems.Count == 0)
         {
             throw new NotFoundException("CartItems do not exist");
@@ -173,7 +173,7 @@ public class OrderService(
 
     public int GetTotalAmount(string deviceId, string tableId)
     {
-        if (!cartItemRepository.ExistsByDeviceId(deviceId))
+        if (!cartItemRepository.ExistsByTableSessionId(deviceId))
         {
             throw new NotFoundException("DeviceId does not exist");
         }
@@ -183,7 +183,7 @@ public class OrderService(
             throw new NotFoundException("TableId does not exist");
         }
 
-        List<CartItem> cartItems = cartItemRepository.GetByDeviceId(deviceId);
+        List<CartItem> cartItems = cartItemRepository.GetByTableSessionId(deviceId);
         if (cartItems.Count == 0)
         {
             throw new NotFoundException("CartItems do not exist");
