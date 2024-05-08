@@ -4,11 +4,11 @@ namespace DigitalMenu_20_BLL.Interfaces.Services;
 
 public interface IOrderService
 {
-    public Order Create(string deviceId, string tableId, List<Split> splits);
+    public Order Create(string tableSessionId, List<Split> splits);
 
-    public List<Order>? GetByTableId(string tableId);
+    public List<Order>? GetByTableSessionId(string tableSessionId);
 
-    public Order? GetBy(string id, string deviceId, string tableId);
+    public Order? GetBy(string id, string tableSessionId);
 
     public Order? GetBy(string id);
 
@@ -21,4 +21,6 @@ public interface IOrderService
     public bool Update(Order order);
 
     public void ProcessPaidOrder(Order order);
+
+    public List<Order> GetUnpaidOrdersByTableSessionId(string tableSessionId);
 }

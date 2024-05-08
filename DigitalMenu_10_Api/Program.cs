@@ -99,7 +99,7 @@ builder.Services.AddMollieApi(options =>
     options.RetryPolicy = MollieHttpRetryPolicies.TransientHttpErrorRetryPolicy();
 });
 
-builder.Services.AddSignalR();
+builder.Services.AddSignalR(options => { options.EnableDetailedErrors = true; });
 
 Log.Logger = new LoggerConfiguration().MinimumLevel.Debug().WriteTo.Console().WriteTo
     .File("logs/mollie-.txt", rollingInterval: RollingInterval.Day).CreateLogger();

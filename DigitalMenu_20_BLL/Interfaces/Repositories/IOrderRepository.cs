@@ -6,7 +6,7 @@ public interface IOrderRepository
 {
     public Order? Create(Order order);
 
-    public Order? GetBy(string id, string deviceId, string tableId);
+    public Order? GetBy(string id, string tableSessionId);
 
     public Order? GetBy(string id);
 
@@ -16,7 +16,7 @@ public interface IOrderRepository
 
     public bool Update(Order order);
 
-    public bool ExistsByDeviceId(string deviceId);
-
     public bool ExistsBySessionId(string sessionId);
+
+    public List<Order> GetUnPaidOrders(string sessionId);
 }

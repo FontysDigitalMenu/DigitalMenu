@@ -34,6 +34,11 @@ public class TableService(ITableRepository tableRepository) : ITableService
         return tableRepository.GetById(id);
     }
 
+    public Table? GetBySessionId(string sessionId)
+    {
+        return tableRepository.GetBySessionId(sessionId);
+    }
+
     public bool Update(Table table)
     {
         return tableRepository.Update(table);
@@ -74,6 +79,6 @@ public class TableService(ITableRepository tableRepository) : ITableService
             return tableRepository.Update(table);
         }
 
-        return false;
+        return true;
     }
 }

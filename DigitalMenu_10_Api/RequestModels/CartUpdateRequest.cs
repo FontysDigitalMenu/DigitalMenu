@@ -2,7 +2,7 @@
 
 public class CartUpdateRequest
 {
-    public string DeviceId { get; set; }
+    public string TableSessionId { get; set; }
 
     public int CartItemId { get; set; }
 }

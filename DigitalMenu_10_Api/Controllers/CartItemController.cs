@@ -1,8 +1,11 @@
-﻿using DigitalMenu_10_Api.RequestModels;
+﻿using DigitalMenu_10_Api.Hub;
+using DigitalMenu_10_Api.RequestModels;
+using DigitalMenu_10_Api.Services;
 using DigitalMenu_10_Api.ViewModels;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace DigitalMenu_10_Api.Controllers;
 
@@ -11,15 +14,24 @@ namespace DigitalMenu_10_Api.Controllers;
 public class CartItemController(
     ICartItemService cartItemService,
     IMenuItemService menuItemService,
-    IIngredientService ingredientService) : ControllerBase
+    ITableService tableService,
+    IIngredientService ingredientService,
+    IOrderService orderService,
+    IHubContext<OrderHub, IOrderHubClient> hubContext) : ControllerBase
 {
     [HttpPost]
     public async Task<ActionResult> AddToCart([FromBody] CartRequest cartRequest)
     {
-        List<CartItem?> cartItems =
-            cartItemService.GetCartItemsByMenuItemIdAndDeviceId(cartRequest.MenuItemId, cartRequest.DeviceId);
+        if (tableService.GetBySessionId(cartRequest.TableSessionId) == null)
+        {
+            return NotFound();
+        }
 
-        foreach (CartItem? cartItem in cartItems)
+        List<CartItem> cartItems =
+            cartItemService.GetCartItemsByMenuItemIdAndTableSessionId(cartRequest.MenuItemId,
+                cartRequest.TableSessionId);
+
+        foreach (CartItem cartItem in cartItems)
         {
             List<Ingredient> existingExcludedIngredients =
                 cartItemService.GetExcludedIngredientsByCartItemId(cartItem.Id);
@@ -31,6 +43,10 @@ public class CartItemController(
             {
                 cartItem.Quantity++;
                 cartItemService.Update(cartItem);
+
+                await hubContext.Clients.Group($"cart-{cartRequest.TableSessionId}")
+                    .ReceiveCartUpdate(CartService.GetCartViewModel(orderService, cartItemService,
+                        cartRequest.TableSessionId));
 
                 return NoContent();
             }
@@ -45,7 +61,7 @@ public class CartItemController(
         {
             Note = cartRequest.Note,
             Quantity = 1,
-            DeviceId = cartRequest.DeviceId,
+            TableSessionId = cartRequest.TableSessionId,
             MenuItemId = cartRequest.MenuItemId,
         };
 
@@ -71,13 +87,21 @@ public class CartItemController(
             }
         }
 
+        await hubContext.Clients.Group($"cart-{cartRequest.TableSessionId}")
+            .ReceiveCartUpdate(CartService.GetCartViewModel(orderService, cartItemService, cartRequest.TableSessionId));
+
         return NoContent();
     }
 
     [HttpGet]
-    public IActionResult GetCartItem(int cartItemId, string deviceId)
+    public IActionResult GetCartItem(int cartItemId, string tableSessionId)
     {
-        CartItem? cartItem = cartItemService.GetByCartItemIdAndDeviceId(cartItemId, deviceId);
+        if (tableService.GetBySessionId(tableSessionId) == null)
+        {
+            return NotFound();
+        }
+
+        CartItem? cartItem = cartItemService.GetByCartItemIdAndTableSessionId(cartItemId, tableSessionId);
 
         if (cartItem == null)
         {
@@ -103,30 +127,27 @@ public class CartItemController(
         return Ok(cartItemWithIngredients);
     }
 
-    [HttpGet("{deviceId}")]
-    public IActionResult ViewCart([FromRoute] string deviceId)
+    [HttpGet("{tableSessionId}")]
+    public IActionResult ViewCart([FromRoute] string tableSessionId)
     {
-        bool cartItemsExists = cartItemService.ExistsByDeviceId(deviceId);
-        if (!cartItemsExists)
+        if (tableService.GetBySessionId(tableSessionId) == null)
         {
             return NotFound();
         }
 
-        List<CartItem> cartItems = cartItemService.GetByDeviceId(deviceId);
-
-        CartItemViewModel cartViewModel = new()
-        {
-            CartItems = cartItems,
-            TotalAmount = cartItems.Sum(item => item.MenuItem.Price * item.Quantity),
-        };
-
-        return Ok(cartViewModel);
+        return Ok(CartService.GetCartViewModel(orderService, cartItemService, tableSessionId));
     }
 
     [HttpPut("minus")]
-    public IActionResult Minus1FromCart([FromBody] CartUpdateRequest cartRequest)
+    public async Task<IActionResult> Minus1FromCart([FromBody] CartUpdateRequest cartRequest)
     {
-        CartItem? cartItem = cartItemService.GetByCartItemIdAndDeviceId(cartRequest.CartItemId, cartRequest.DeviceId);
+        if (tableService.GetBySessionId(cartRequest.TableSessionId) == null)
+        {
+            return NotFound();
+        }
+
+        CartItem? cartItem =
+            cartItemService.GetByCartItemIdAndTableSessionId(cartRequest.CartItemId, cartRequest.TableSessionId);
 
         if (cartItem == null)
         {
@@ -144,13 +165,22 @@ public class CartItemController(
             cartItemService.Delete(cartItem);
         }
 
+        await hubContext.Clients.Group($"cart-{cartRequest.TableSessionId}")
+            .ReceiveCartUpdate(CartService.GetCartViewModel(orderService, cartItemService, cartRequest.TableSessionId));
+
         return NoContent();
     }
 
     [HttpPost("plus")]
-    public IActionResult Plus1ToCart([FromBody] CartUpdateRequest cartRequest)
+    public async Task<IActionResult> Plus1ToCart([FromBody] CartUpdateRequest cartRequest)
     {
-        CartItem? cartItem = cartItemService.GetByCartItemIdAndDeviceId(cartRequest.CartItemId, cartRequest.DeviceId);
+        if (tableService.GetBySessionId(cartRequest.TableSessionId) == null)
+        {
+            return NotFound();
+        }
+
+        CartItem? cartItem =
+            cartItemService.GetByCartItemIdAndTableSessionId(cartRequest.CartItemId, cartRequest.TableSessionId);
 
         if (cartItem == null)
         {
@@ -160,13 +190,22 @@ public class CartItemController(
         cartItem.Quantity++;
         cartItemService.Update(cartItem);
 
+        await hubContext.Clients.Group($"cart-{cartRequest.TableSessionId}")
+            .ReceiveCartUpdate(CartService.GetCartViewModel(orderService, cartItemService, cartRequest.TableSessionId));
+
         return NoContent();
     }
 
     [HttpPut("updateDetails")]
     public async Task<ActionResult> UpdateCartItem([FromBody] CartItemRequest cartRequest)
     {
-        CartItem? cartItem = cartItemService.GetByCartItemIdAndDeviceId(cartRequest.CartItemId, cartRequest.DeviceId);
+        if (tableService.GetBySessionId(cartRequest.TableSessionId) == null)
+        {
+            return NotFound();
+        }
+
+        CartItem? cartItem =
+            cartItemService.GetByCartItemIdAndTableSessionId(cartRequest.CartItemId, cartRequest.TableSessionId);
 
         if (cartItem == null)
         {
@@ -198,6 +237,9 @@ public class CartItemController(
                 }
             }
         }
+
+        await hubContext.Clients.Group($"cart-{cartRequest.TableSessionId}")
+            .ReceiveCartUpdate(CartService.GetCartViewModel(orderService, cartItemService, cartRequest.TableSessionId));
 
         return NoContent();
     }

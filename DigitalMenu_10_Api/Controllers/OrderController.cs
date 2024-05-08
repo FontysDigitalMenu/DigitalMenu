@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using DigitalMenu_10_Api.Hub;
 using DigitalMenu_10_Api.RequestModels;
+using DigitalMenu_10_Api.Services;
 using DigitalMenu_10_Api.ViewModels;
 using DigitalMenu_20_BLL.Enums;
 using DigitalMenu_20_BLL.Exceptions;
@@ -24,7 +25,7 @@ public class OrderController(
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
-    public ActionResult<SplitPayedViewModel> Post([FromBody] OrderRequest orderRequest)
+    public async Task<ActionResult<SplitPayedViewModel>> Post([FromBody] OrderRequest orderRequest)
     {
         List<Split> splits = orderRequest.Splits.Select(s => new Split
         {
@@ -35,7 +36,7 @@ public class OrderController(
         Order createdOrder;
         try
         {
-            createdOrder = orderService.Create(orderRequest.DeviceId, orderRequest.TableId, splits);
+            createdOrder = orderService.Create(orderRequest.TableSessionId, splits);
         }
         catch (ValidationException e)
         {
@@ -50,20 +51,24 @@ public class OrderController(
             return BadRequest(new { e.Message });
         }
 
+        await hubContext.Clients.Group($"cart-{orderRequest.TableSessionId}")
+            .ReceiveCartUpdate(CartService.GetCartViewModel(orderService, cartItemService,
+                orderRequest.TableSessionId));
+
         return CreatedAtAction("Get",
-            new { id = createdOrder.Id, deviceId = createdOrder.DeviceId, tableId = createdOrder.TableId },
+            new { id = createdOrder.Id, tableSessionId = createdOrder.SessionId },
             OrderViewModel.FromOrder(createdOrder, cartItemService));
     }
 
-    [HttpGet("{tableId}")]
+    [HttpGet("{tableSessionId}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
-    public ActionResult<List<OrderViewModel>> Get([FromRoute] string tableId)
+    public ActionResult<List<OrderViewModel>> Get([FromRoute] string tableSessionId)
     {
         List<Order>? orders;
         try
         {
-            orders = orderService.GetByTableId(tableId);
+            orders = orderService.GetByTableSessionId(tableSessionId);
         }
         catch (NotFoundException e)
         {
@@ -78,16 +83,15 @@ public class OrderController(
         return Ok(orders.Select(o => OrderViewModel.FromOrder(o, cartItemService)));
     }
 
-    [HttpGet("{id}/{deviceId}/{tableId}")]
+    [HttpGet("{id}/{tableSessionId}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
-    public ActionResult<OrderViewModel> Get([FromRoute] string id, [FromRoute] string deviceId,
-        [FromRoute] string tableId)
+    public ActionResult<OrderViewModel> Get([FromRoute] string id, [FromRoute] string tableSessionId)
     {
         Order? order;
         try
         {
-            order = orderService.GetBy(id, deviceId, tableId);
+            order = orderService.GetBy(id, tableSessionId);
         }
         catch (NotFoundException e)
         {

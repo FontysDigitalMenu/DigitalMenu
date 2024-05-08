@@ -14,13 +14,13 @@ public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
         return dbContext.SaveChanges() > 0 ? order : null;
     }
 
-    public Order? GetBy(string id, string deviceId, string tableId)
+    public Order? GetBy(string id, string tableSessionId)
     {
         return dbContext.Orders
             .Include(o => o.Splits)
             .Include(o => o.OrderMenuItems)
             .ThenInclude(omi => omi.MenuItem)
-            .FirstOrDefault(o => o.Id == id && o.DeviceId == deviceId && o.TableId == tableId);
+            .FirstOrDefault(o => o.Id == id && o.SessionId == tableSessionId);
     }
 
     public Order? GetBy(string id)
@@ -63,13 +63,16 @@ public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
         return dbContext.SaveChanges() > 0;
     }
 
-    public bool ExistsByDeviceId(string deviceId)
-    {
-        return dbContext.Orders.Any(o => o.DeviceId == deviceId);
-    }
-
     public bool ExistsBySessionId(string sessionId)
     {
         return dbContext.Orders.Any(o => o.SessionId == sessionId);
+    }
+
+    public List<Order> GetUnPaidOrders(string sessionId)
+    {
+        return dbContext.Orders
+            .Where(o => o.SessionId == sessionId)
+            .Where(o => o.Splits.Any(s => s.PaymentStatus != PaymentStatus.Paid))
+            .ToList();
     }
 }
