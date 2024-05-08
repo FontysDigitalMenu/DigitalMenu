@@ -1,5 +1,6 @@
 ﻿using DigitalMenu_10_Api.Hub;
 using DigitalMenu_10_Api.RequestModels;
+using DigitalMenu_10_Api.Services;
 using DigitalMenu_10_Api.ViewModels;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
@@ -15,6 +16,7 @@ public class CartItemController(
     IMenuItemService menuItemService,
     ITableService tableService,
     IIngredientService ingredientService,
+    IOrderService orderService,
     IHubContext<OrderHub, IOrderHubClient> hubContext) : ControllerBase
 {
     [HttpPost]
@@ -42,8 +44,9 @@ public class CartItemController(
                 cartItem.Quantity++;
                 cartItemService.Update(cartItem);
 
-                CartViewModel reuslt = GetCartViewModel(cartRequest.TableSessionId);
-                await hubContext.Clients.Group($"cart-{cartRequest.TableSessionId}").ReceiveCartUpdate(reuslt);
+                await hubContext.Clients.Group($"cart-{cartRequest.TableSessionId}")
+                    .ReceiveCartUpdate(CartService.GetCartViewModel(orderService, cartItemService,
+                        cartRequest.TableSessionId));
 
                 return NoContent();
             }
@@ -84,9 +87,8 @@ public class CartItemController(
             }
         }
 
-        CartViewModel reuslt2 = GetCartViewModel(cartRequest.TableSessionId);
-
-        await hubContext.Clients.Group($"cart-{cartRequest.TableSessionId}").ReceiveCartUpdate(reuslt2);
+        await hubContext.Clients.Group($"cart-{cartRequest.TableSessionId}")
+            .ReceiveCartUpdate(CartService.GetCartViewModel(orderService, cartItemService, cartRequest.TableSessionId));
 
         return NoContent();
     }
@@ -133,13 +135,7 @@ public class CartItemController(
             return NotFound();
         }
 
-        bool cartItemsExists = cartItemService.ExistsByTableSessionId(tableSessionId);
-        if (!cartItemsExists)
-        {
-            return NotFound();
-        }
-
-        return Ok(GetCartViewModel(tableSessionId));
+        return Ok(CartService.GetCartViewModel(orderService, cartItemService, tableSessionId));
     }
 
     [HttpPut("minus")]
@@ -170,7 +166,7 @@ public class CartItemController(
         }
 
         await hubContext.Clients.Group($"cart-{cartRequest.TableSessionId}")
-            .ReceiveCartUpdate(GetCartViewModel(cartRequest.TableSessionId));
+            .ReceiveCartUpdate(CartService.GetCartViewModel(orderService, cartItemService, cartRequest.TableSessionId));
 
         return NoContent();
     }
@@ -195,7 +191,7 @@ public class CartItemController(
         cartItemService.Update(cartItem);
 
         await hubContext.Clients.Group($"cart-{cartRequest.TableSessionId}")
-            .ReceiveCartUpdate(GetCartViewModel(cartRequest.TableSessionId));
+            .ReceiveCartUpdate(CartService.GetCartViewModel(orderService, cartItemService, cartRequest.TableSessionId));
 
         return NoContent();
     }
@@ -243,33 +239,8 @@ public class CartItemController(
         }
 
         await hubContext.Clients.Group($"cart-{cartRequest.TableSessionId}")
-            .ReceiveCartUpdate(GetCartViewModel(cartRequest.TableSessionId));
+            .ReceiveCartUpdate(CartService.GetCartViewModel(orderService, cartItemService, cartRequest.TableSessionId));
 
         return NoContent();
-    }
-
-    private CartViewModel GetCartViewModel(string tableSessionId)
-    {
-        List<CartItem> cartItems = cartItemService.GetByTableSessionId(tableSessionId);
-
-        return new CartViewModel
-        {
-            CartItems = cartItems.Select(cartItem => new CartItemViewModel
-            {
-                Id = cartItem.Id,
-                Note = cartItem.Note,
-                Quantity = cartItem.Quantity,
-                TableSessionId = cartItem.TableSessionId,
-                MenuItemId = cartItem.MenuItemId,
-                MenuItem = new MenuItemViewModel
-                {
-                    Id = cartItem.MenuItem.Id,
-                    Name = cartItem.MenuItem.Name,
-                    Price = cartItem.MenuItem.Price,
-                    ImageUrl = cartItem.MenuItem.ImageUrl,
-                },
-            }).ToList(),
-            TotalAmount = cartItems.Sum(item => item.MenuItem.Price * item.Quantity),
-        };
     }
 }

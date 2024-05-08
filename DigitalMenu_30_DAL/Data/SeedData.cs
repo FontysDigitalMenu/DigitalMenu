@@ -39,7 +39,6 @@ public class SeedData(ApplicationDbContext dbContext)
             new Order
             {
                 Id = "12d7eaff-5f3c-456d-92c4-7de2220b2d05",
-                DeviceId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
                 TableId = "69AC2F65-5DE9-40D4-B930-624CA40D3F13",
                 SessionId = "0449DB90-66AF-4E17-8086-C1452270B52D",
                 TotalAmount = 6400,
@@ -49,7 +48,6 @@ public class SeedData(ApplicationDbContext dbContext)
             new Order
             {
                 Id = "6befb25e-0207-4a54-82e8-2d29b8b616c0",
-                DeviceId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
                 TableId = "69AC2F65-5DE9-40D4-B930-624CA40D3F13",
                 SessionId = "0449DB90-66AF-4E17-8086-C1452270B52D",
                 TotalAmount = 2600,
@@ -59,7 +57,6 @@ public class SeedData(ApplicationDbContext dbContext)
             new Order
             {
                 Id = "897dbd82-dd96-476e-83a4-5d9ca59fc8d7",
-                DeviceId = "90FC58F8-88A0-49A1-A7B5-217A54F8191A",
                 TableId = "69AC2F65-5DE9-40D4-B930-624CA40D3F13",
                 SessionId = "CBF261E5-A710-4611-A423-87943EB5DC32",
                 TotalAmount = 700,

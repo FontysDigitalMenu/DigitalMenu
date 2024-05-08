@@ -20,7 +20,7 @@ public interface ICartItemRepository
 
     public bool Update(CartItem cartItem);
 
-    public bool ClearByDeviceId(string deviceId);
+    public bool ClearByTableSessionId(string tableSessionId);
 
     public bool AddExcludedIngredientToCartItem(ExcludedIngredientCartItem excludedIngredientCartItem);
 
