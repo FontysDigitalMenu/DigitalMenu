@@ -113,14 +113,6 @@ public class OrderService(
         return orderRepository.Update(order);
     }
 
-    public void ProcessPaidOrder(Order order)
-    {
-        if (!cartItemRepository.ClearByTableSessionId(order.SessionId))
-        {
-            throw new DatabaseUpdateException("CartItems could not be cleared");
-        }
-    }
-
     public List<Order> GetUnpaidOrdersByTableSessionId(string tableSessionId)
     {
         return orderRepository.GetUnPaidOrders(tableSessionId);

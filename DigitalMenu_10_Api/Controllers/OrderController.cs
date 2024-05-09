@@ -51,6 +51,8 @@ public class OrderController(
             return BadRequest(new { e.Message });
         }
 
+        cartItemService.ClearByTableSessionId(orderRequest.TableSessionId);
+
         await hubContext.Clients.Group($"cart-{orderRequest.TableSessionId}")
             .ReceiveCartUpdate(CartService.GetCartViewModel(orderService, cartItemService,
                 orderRequest.TableSessionId));

@@ -27,4 +27,6 @@ public interface ICartItemService
     List<Ingredient> GetExcludedIngredientsByOrderMenuItemId(int orderMenuItemId);
 
     public bool DeleteExcludedIngredientsFromCartItem(int cartItemId);
+
+    public bool ClearByTableSessionId(string tableSessionId);
 }
