@@ -20,7 +20,5 @@ public interface IOrderService
 
     public bool Update(Order order);
 
-    public void ProcessPaidOrder(Order order);
-
     public List<Order> GetUnpaidOrdersByTableSessionId(string tableSessionId);
 }

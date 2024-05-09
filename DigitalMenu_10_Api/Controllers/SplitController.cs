@@ -98,7 +98,6 @@ public class SplitController(
 
         if (split.Order.Splits.All(s => s.PaymentStatus == DigitalMenu_20_BLL.Enums.PaymentStatus.Paid))
         {
-            orderService.ProcessPaidOrder(split.Order);
             await SendOrderInfoToKitchenAndCustomers(split.Order);
         }
 

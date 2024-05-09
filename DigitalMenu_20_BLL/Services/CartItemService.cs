@@ -65,4 +65,9 @@ public class CartItemService(ICartItemRepository cartItemRepository) : ICartItem
     {
         return cartItemRepository.DeleteExcludedIngredientsFromCartItem(cartItemId);
     }
+
+    public bool ClearByTableSessionId(string tableSessionId)
+    {
+        return cartItemRepository.ClearByTableSessionId(tableSessionId);
+    }
 }
