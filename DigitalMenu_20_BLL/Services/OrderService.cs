@@ -13,9 +13,11 @@ public class OrderService(
     IOrderRepository orderRepository,
     ICartItemRepository cartItemRepository,
     ITableRepository tableRepository,
-    ISplitRepository splitRepository) : IOrderService
+    ISplitRepository splitRepository,
+    IMenuItemRepository menuItemRepository,
+    IIngredientRepository ingredientRepository) : IOrderService
 {
-    public Order Create(string tableSessionId, List<Split> splits)
+    public async Task<Order> Create(string tableSessionId, List<Split> splits)
     {
         Table? table = tableRepository.GetBySessionId(tableSessionId);
         if (table == null)
@@ -41,6 +43,55 @@ public class OrderService(
                     IngredientId = ei.Id,
                 }).ToList(),
         }).ToList();
+        
+        
+        foreach (OrderMenuItem orderMenuItem in orderMenuItems)
+        {
+            MenuItem? menuItem = menuItemRepository.GetMenuItemBy(orderMenuItem.MenuItemId);
+            
+            if (menuItem == null)
+            {
+                throw new NotFoundException("Menu item does not exist");
+            }
+            
+            foreach (Ingredient ingredient in menuItem.Ingredients)
+            {
+                Ingredient? ingredientWithStock = await ingredientRepository.GetIngredientById(ingredient.Id);
+                
+                if (ingredientWithStock != null)
+                {
+                    ingredient.Stock = ingredientWithStock.Stock;
+                }
+                
+                if (ingredient.Stock < ingredient.Pieces || (ingredient.Stock - ingredient.Pieces) < 0)
+                {
+                    throw new Exception("Insufficient stock for ingredient: " + ingredient.Name);
+                }
+            }
+            
+            foreach (Ingredient ingredient in menuItem.Ingredients)
+            {
+                Ingredient? ingredientWithStock = await ingredientRepository.GetIngredientById(ingredient.Id);
+                
+                if (ingredientWithStock != null)
+                {
+                    ingredient.Stock = ingredientWithStock.Stock;
+                }
+                
+                ingredient.Stock -= ingredient.Pieces;
+                
+                Ingredient updatedIngredient = new()
+                {
+                    Id = ingredient.Id,
+                    Name = ingredient.Name,
+                    Stock = ingredient.Stock,
+                };
+                
+                await ingredientRepository.UpdateIngredient(updatedIngredient);
+            }
+        }
+        
+        
 
         int totalAmount = GetTotalAmount(tableSessionId);
         if (splits.Any(s => s.Amount <= 0))

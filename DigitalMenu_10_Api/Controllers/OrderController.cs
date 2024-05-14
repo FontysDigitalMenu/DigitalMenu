@@ -36,9 +36,13 @@ public class OrderController(
         Order createdOrder;
         try
         {
-            createdOrder = orderService.Create(orderRequest.TableSessionId, splits);
+            createdOrder = await orderService.Create(orderRequest.TableSessionId, splits);
         }
-        catch (ValidationException e)
+        catch (Exception e)
+        {
+            return BadRequest(new { e.Message });
+        }
+        /*catch (ValidationException e)
         {
             return BadRequest(new { e.Message });
         }
@@ -49,7 +53,7 @@ public class OrderController(
         catch (DatabaseCreationException e)
         {
             return BadRequest(new { e.Message });
-        }
+        }*/
 
         cartItemService.ClearByTableSessionId(orderRequest.TableSessionId);
 
