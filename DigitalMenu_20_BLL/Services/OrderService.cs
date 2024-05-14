@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using DigitalMenu_20_BLL.Enums;
 using DigitalMenu_20_BLL.Exceptions;
 using DigitalMenu_20_BLL.Interfaces.Repositories;
 using DigitalMenu_20_BLL.Interfaces.Services;
@@ -129,9 +130,20 @@ public class OrderService(
 
         IEnumerable<Order> foodOnlyOrders = orders.Select(order =>
             {
-                order.OrderMenuItems = order.OrderMenuItems
+                List<OrderMenuItem> foodOrderMenuItems = order.OrderMenuItems
                     .Where(omi => omi.MenuItem.CategoryMenuItems.Any(c => c.Category.Name != "Drinks"))
                     .ToList();
+
+                List<OrderMenuItem> drinkOrderMenuItems = order.OrderMenuItems
+                    .Where(omi => omi.MenuItem.CategoryMenuItems.Any(c => c.Category.Name == "Drinks"))
+                    .ToList();
+
+                if (drinkOrderMenuItems.Count <= 0)
+                {
+                    order.DrinkStatus = OrderStatus.None;
+                }
+
+                order.OrderMenuItems = foodOrderMenuItems;
 
                 return order;
             })
@@ -146,9 +158,20 @@ public class OrderService(
 
         IEnumerable<Order> drinkOnlyOrders = orders.Select(order =>
             {
-                order.OrderMenuItems = order.OrderMenuItems
+                List<OrderMenuItem> foodOrderMenuItems = order.OrderMenuItems
+                    .Where(omi => omi.MenuItem.CategoryMenuItems.Any(c => c.Category.Name != "Drinks"))
+                    .ToList();
+
+                List<OrderMenuItem> drinkOrderMenuItems = order.OrderMenuItems
                     .Where(omi => omi.MenuItem.CategoryMenuItems.Any(c => c.Category.Name == "Drinks"))
                     .ToList();
+
+                if (foodOrderMenuItems.Count <= 0)
+                {
+                    order.FoodStatus = OrderStatus.None;
+                }
+
+                order.OrderMenuItems = drinkOrderMenuItems;
 
                 return order;
             })
