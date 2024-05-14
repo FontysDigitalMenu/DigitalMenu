@@ -8,7 +8,7 @@ public class CartItem
 
     public int Quantity { get; set; }
 
-    public string DeviceId { get; set; }
+    public string TableSessionId { get; set; }
 
     public int MenuItemId { get; set; }
 

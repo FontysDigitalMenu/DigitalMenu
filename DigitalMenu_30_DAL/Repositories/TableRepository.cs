@@ -23,10 +23,16 @@ public class TableRepository(ApplicationDbContext dbContext) : ITableRepository
         return dbContext.Tables.Find(id);
     }
 
+    public Table? GetBySessionId(string sessionId)
+    {
+        return dbContext.Tables.FirstOrDefault(t => t.SessionId == sessionId);
+    }
+
     public bool Update(Table table)
     {
         dbContext.Tables.Update(table);
-        return dbContext.SaveChanges() > 0;
+        dbContext.SaveChanges();
+        return true;
     }
 
     public bool Delete(string id)

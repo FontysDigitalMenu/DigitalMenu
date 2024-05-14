@@ -8,19 +8,19 @@ public interface ICartItemRepository
 
     public CartItem? GetByMenuItemIdAndDeviceId(int menuItemId, string deviceId);
 
-    public CartItem? GetByCartItemIdAndDeviceId(int cartItemId, string deviceId);
+    public CartItem? GetByCartItemIdAndTableSessionId(int cartItemId, string tableSessionId);
 
-    public List<CartItem?> GetCartItemsByMenuItemIdAndDeviceId(int menuItemId, string deviceId);
+    public List<CartItem> GetCartItemsByMenuItemIdAndTableSessionId(int menuItemId, string tableSessionId);
 
-    public List<CartItem> GetByDeviceId(string deviceId);
+    public List<CartItem> GetByTableSessionId(string tableSessionId);
 
-    public bool ExistsByDeviceId(string deviceId);
+    public bool ExistsByTableSessionId(string tableSessionId);
 
     public bool Delete(CartItem cartItem);
 
     public bool Update(CartItem cartItem);
 
-    public bool ClearByDeviceId(string deviceId);
+    public bool ClearByTableSessionId(string tableSessionId);
 
     public bool AddExcludedIngredientToCartItem(ExcludedIngredientCartItem excludedIngredientCartItem);
 

@@ -8,5 +8,7 @@ public interface IOrderHubClient
 
     Task ReceiveOrderUpdate(OrderViewModel orderViewModel);
 
-    Task AddToOrderGroup(OrderGroupRequest auctionGroupRequest);
+    Task AddToGroup(GroupRequest groupRequest);
+
+    Task ReceiveCartUpdate(CartViewModel cartViewModel);
 }
