@@ -111,9 +111,31 @@ public class SplitController(
         {
             return;
         }
-
-        OrderViewModel orderViewModel = OrderViewModel.FromOrder(orderWithNewSplitData, cartItemService);
-        await hubContext.Clients.All.ReceiveOrder(orderViewModel);
+            
+        OrderViewModel orderViewModel = OrderViewModel.FromOrderWithCatagory(orderWithNewSplitData, cartItemService);
+        
+        OrderViewModel drinkOrderViewModel = OrderViewModel.FromOrderWithCatagory(orderWithNewSplitData, cartItemService);
+        
+        OrderViewModel foodOrderViewModel = OrderViewModel.FromOrderWithCatagory(orderWithNewSplitData, cartItemService);
+        
+        
+        drinkOrderViewModel.MenuItems = drinkOrderViewModel.MenuItems
+            .Where(mi => mi.Categories!.Contains("Drinks"))
+            .ToList();
+        
+        foodOrderViewModel.MenuItems = foodOrderViewModel.MenuItems
+            .Where(mi => !mi.Categories!.Contains("Drinks"))
+            .ToList();
+        
+        //await hubContext.Clients.All.ReceiveOrder(orderViewModel);
+        if (drinkOrderViewModel.MenuItems.Count != 0)
+        {
+            await hubContext.Clients.Group("Drinks").ReceiveOrder(drinkOrderViewModel);
+        }
+        if (foodOrderViewModel.MenuItems.Count != 0)
+        {
+            await hubContext.Clients.Group("Foods").ReceiveOrder(foodOrderViewModel);
+        }
         await hubContext.Clients.Group($"order-{orderWithNewSplitData.Id}").ReceiveOrderUpdate(orderViewModel);
     }
 }
