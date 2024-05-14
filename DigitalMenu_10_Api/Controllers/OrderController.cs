@@ -187,6 +187,8 @@ public class OrderController(
             hubContext.Clients.Group($"order-{order.Id}").ReceiveOrderUpdate(orderViewModel);
         }
 
+        hubContext.Clients.All.ReceiveOrderDrinksUpdate();
+
         return NoContent();
     }
 }

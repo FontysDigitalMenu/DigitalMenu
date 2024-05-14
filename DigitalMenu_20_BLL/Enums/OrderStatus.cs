@@ -13,4 +13,6 @@ public enum OrderStatus
     Cancelled,
 
     Refund,
+
+    None,
 }
