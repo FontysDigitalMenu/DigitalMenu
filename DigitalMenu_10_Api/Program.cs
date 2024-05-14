@@ -140,5 +140,6 @@ app.MapControllers();
 app.UseCors();
 
 app.MapHub<OrderHub>("/api/orderHub");
+app.MapHub<IngredientHub>("/api/ingredientHub");
 
 app.Run();
