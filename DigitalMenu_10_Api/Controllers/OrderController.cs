@@ -85,6 +85,32 @@ public class OrderController(
         return Ok(orders.Select(o => OrderViewModel.FromOrder(o, cartItemService)));
     }
 
+    [HttpGet("completed")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(404)]
+    public ActionResult<List<OrderViewModel>> GetCompletedOrders()
+    {
+        IEnumerable<Order>? orders;
+        try
+        {
+            orders = orderService.GetPaidOrders();
+        }
+        catch (NotFoundException e)
+        {
+            return NotFound(new { e.Message });
+        }
+
+        if (orders == null)
+        {
+            return NotFound(new { Message = "Order not found" });
+        }
+
+        IEnumerable<Order> completedOrders = orders
+            .Where(o => o.DrinkStatus == OrderStatus.Completed || o.FoodStatus == OrderStatus.Completed);
+
+        return Ok(completedOrders.Select(o => OrderViewModel.FromOrder(o, cartItemService)));
+    }
+
     [HttpGet("{id}/{tableSessionId}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
