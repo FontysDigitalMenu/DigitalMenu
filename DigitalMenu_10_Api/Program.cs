@@ -47,10 +47,19 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ISplitService, SplitService>();
 builder.Services.AddScoped<ISplitRepository, SplitRepository>();
+builder.Services.AddScoped<IReservationService, ReservationService>();
+builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
 builder.Services.AddScoped<IMollieHelper>(_ => new MollieHelper(
     builder.Configuration.GetValue<string>("Mollie:ApiKey")!,
     builder.Configuration.GetValue<string>("Mollie:RedirectUrl")!,
     builder.Configuration.GetValue<string>("BackendUrl")!
+));
+builder.Services.AddScoped<IEmailService>(_ => new EmailService(
+    builder.Configuration.GetValue<string>("Email:FromAddress")!,
+    builder.Configuration.GetValue<string>("Email:FromName")!,
+    builder.Configuration.GetValue<string>("Email:Password")!,
+    builder.Configuration.GetValue<int>("Email:Port")!,
+    builder.Configuration.GetValue<string>("Email:Host")!
 ));
 
 builder.Services.AddSwaggerGen(options =>

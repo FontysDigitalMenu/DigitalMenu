@@ -31,4 +31,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Table> Tables { get; set; }
 
     public DbSet<Split> Splits { get; set; }
+
+    public DbSet<Reservation> Reservations { get; set; }
 }
