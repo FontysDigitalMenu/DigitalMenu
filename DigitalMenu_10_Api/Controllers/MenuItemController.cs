@@ -6,6 +6,7 @@ using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
 using Serilog;
 
 namespace DigitalMenu_10_Api.Controllers;
@@ -24,6 +25,9 @@ public class MenuItemController(
     [HttpGet]
     public IActionResult Get(int lastId, int amount)
     {
+        Request.Headers.TryGetValue("Accept-Language", out StringValues locale);
+        string localeValue = locale.FirstOrDefault() ?? "en";
+
         List<MenuItem> menuItems = (List<MenuItem>)menuItemService.GetNextMenuItems(lastId, amount);
         List<MenuItemViewModel> menuItemViewModels = new();
         foreach (MenuItem menuItem in menuItems)
@@ -31,7 +35,9 @@ public class MenuItemController(
             MenuItemViewModel menuItemViewModel = new()
             {
                 Id = menuItem.Id,
-                Name = menuItem.Name,
+                Name = menuItem.Translations?.FirstOrDefault(t => t.LanguageCode == localeValue)?.Name ?? menuItem.Name,
+                Description = menuItem.Translations?.FirstOrDefault(t => t.LanguageCode == localeValue)?.Description ??
+                              menuItem.Description,
                 Price = menuItem.Price,
                 ImageUrl = menuItem.ImageUrl,
             };
@@ -46,16 +52,21 @@ public class MenuItemController(
     [HttpGet("getCategories")]
     public IActionResult GetCategories(int lastId, int amount)
     {
+        Request.Headers.TryGetValue("Accept-Language", out StringValues locale);
+        string localeValue = locale.FirstOrDefault() ?? "en";
+
         List<Category> categories = (List<Category>)menuItemService.GetCategoriesWithNextMenuItems(lastId, amount);
 
         List<CategoryViewModel> categoryViewModels = categories.Select(category => new CategoryViewModel
         {
             Id = category.Id,
-            Name = category.Name,
+            Name = category.Translations?.FirstOrDefault(t => t.LanguageCode == localeValue)?.Name ?? category.Name,
             MenuItems = category.MenuItems.Select(menuItem => new MenuItemViewModel
             {
                 Id = menuItem.Id,
-                Name = menuItem.Name,
+                Name = menuItem.Translations?.FirstOrDefault(t => t.LanguageCode == localeValue)?.Name ?? menuItem.Name,
+                Description = menuItem.Translations?.FirstOrDefault(t => t.LanguageCode == localeValue)?.Description ??
+                              menuItem.Description,
                 Price = menuItem.Price,
                 ImageUrl = menuItem.ImageUrl,
             }).ToList(),
@@ -67,13 +78,30 @@ public class MenuItemController(
     [HttpGet("{id:int}")]
     public IActionResult GetMenuItem(int id)
     {
-        MenuItem? menuitem = menuItemService.GetMenuItemById(id);
-        if (menuitem == null)
+        Request.Headers.TryGetValue("Accept-Language", out StringValues locale);
+        string localeValue = locale.FirstOrDefault() ?? "en";
+
+        MenuItem? menuItem = menuItemService.GetMenuItemById(id);
+        if (menuItem == null)
         {
             return NotFound();
         }
 
-        return Ok(menuitem);
+        return Ok(new MenuItemViewModel
+        {
+            Id = menuItem.Id,
+            Name = menuItem.Translations?.FirstOrDefault(t => t.LanguageCode == localeValue)?.Name ?? menuItem.Name,
+            Description = menuItem.Translations?.FirstOrDefault(t => t.LanguageCode == localeValue)?.Description ??
+                          menuItem.Description,
+            Price = menuItem.Price,
+            ImageUrl = menuItem.ImageUrl,
+            Ingredients = menuItem.Ingredients.Select(i => new IngredientViewModel
+            {
+                Id = i.Id,
+                Name = i.Translations?.FirstOrDefault(t => t.LanguageCode == localeValue)?.Name ?? i.Name,
+                Stock = i.Stock,
+            }).ToList(),
+        });
     }
 
     [Authorize(Roles = "Admin")]
@@ -83,12 +111,17 @@ public class MenuItemController(
     [ProducesResponseType(403)]
     public async Task<ActionResult> GetMenuItems()
     {
+        Request.Headers.TryGetValue("Accept-Language", out StringValues locale);
+        string localeValue = locale.FirstOrDefault() ?? "en";
+
         List<MenuItem> menuItems = await menuItemService.GetMenuItems();
 
         List<MenuItemViewModel> menuItemViewModels = menuItems.Select(menuItem => new MenuItemViewModel
         {
             Id = menuItem.Id,
-            Name = menuItem.Name,
+            Name = menuItem.Translations?.FirstOrDefault(t => t.LanguageCode == localeValue)?.Name ?? menuItem.Name,
+            Description = menuItem.Translations?.FirstOrDefault(t => t.LanguageCode == localeValue)?.Description ??
+                          menuItem.Description,
             Price = menuItem.Price,
             ImageUrl = menuItem.ImageUrl,
         }).ToList();

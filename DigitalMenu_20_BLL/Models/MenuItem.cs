@@ -21,4 +21,6 @@ public class MenuItem
     public List<Ingredient> Ingredients { get; set; } = [];
 
     public bool IsActive { get; set; } = true;
+
+    public List<MenuItemTranslation>? Translations { get; set; }
 }

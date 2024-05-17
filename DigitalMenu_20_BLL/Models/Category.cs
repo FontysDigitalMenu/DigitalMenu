@@ -11,4 +11,6 @@ public class Category
     public List<CategoryMenuItem> CategoryMenuItems { get; set; }
 
     [NotMapped] public List<MenuItem> MenuItems { get; set; }
+
+    public List<CategoryTranslation> Translations { get; set; }
 }
