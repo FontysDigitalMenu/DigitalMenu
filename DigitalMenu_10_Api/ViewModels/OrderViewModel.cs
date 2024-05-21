@@ -59,4 +59,44 @@ public class OrderViewModel
             }).ToList(),
         };
     }
+
+    public static OrderViewModel FromOrderWithCatagory(Order order, ICartItemService cartItemService)
+    {
+        return new OrderViewModel
+        {
+            Id = order.Id,
+            IsPaymentSuccess = order.Splits.All(s => s.PaymentStatus == PaymentStatus.Paid),
+            FoodStatus = order.FoodStatus.ToString(),
+            DrinkStatus = order.DrinkStatus.ToString(),
+            TotalAmount = order.TotalAmount,
+            OrderDate = order.OrderDate,
+            OrderNumber = order.OrderNumber,
+            MenuItems = order.OrderMenuItems.Select(omi => new MenuItemViewModel
+            {
+                Id = omi.MenuItem.Id,
+                Name = omi.MenuItem.Name,
+                Price = omi.MenuItem.Price,
+                ImageUrl = omi.MenuItem.ImageUrl,
+                Quantity = omi.Quantity,
+                Note = omi.Note,
+                Categories = omi.MenuItem.CategoryMenuItems
+                    .Where(cmi => cmi.Category != null)
+                    .Select(cmi => cmi.Category!.Name)
+                    .ToList(),
+                ExcludedIngredients = cartItemService.GetExcludedIngredientsByOrderMenuItemId(omi.Id).Select(i =>
+                    new IngredientViewModel
+                    {
+                        Id = i.Id,
+                        Name = i.Name,
+                    }).ToList(),
+            }).ToList(),
+            Splits = order.Splits.Select(s => new SplitViewModel
+            {
+                Id = s.Id,
+                Amount = s.Amount,
+                Name = s.Name,
+                PaymentStatus = s.PaymentStatus.ToString(),
+            }).ToList(),
+        };
+    }
 }

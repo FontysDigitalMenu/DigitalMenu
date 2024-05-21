@@ -13,6 +13,9 @@ public class SplitRepository(ApplicationDbContext dbContext) : ISplitRepository
             .Include(s => s.Order)
             .ThenInclude(o => o.OrderMenuItems)
             .ThenInclude(omi => omi.MenuItem)
+            .Include(s => s.Order)
+            .ThenInclude(o => o.Splits)
+            .Where(s => s.OrderId == s.Order.Id)
             .FirstOrDefault(o => o.ExternalPaymentId == id);
     }
 

@@ -17,6 +17,7 @@ public class MenuItemService(IMenuItemRepository menuItemRepository) : IMenuItem
             {
                 Id = c.Id,
                 Name = c.Name,
+                Translations = c.Translations,
                 MenuItems = menuItems.Where(mi => mi.Categories.Any(mc => mc.Name == c.Name)).ToList(),
             })
             .Where(c => c.MenuItems.Count != 0)
