@@ -58,6 +58,7 @@ public class MenuItemController(
                 Name = menuItem.Name,
                 Price = menuItem.Price,
                 ImageUrl = menuItem.ImageUrl,
+                IsActive = menuItem.AreIngredientStocksSufficient(),
             }).ToList(),
         }).ToList();
 
@@ -67,13 +68,15 @@ public class MenuItemController(
     [HttpGet("{id:int}")]
     public IActionResult GetMenuItem(int id)
     {
-        MenuItem? menuitem = menuItemService.GetMenuItemById(id);
-        if (menuitem == null)
+        MenuItem? menuItem = menuItemService.GetMenuItemById(id);
+        if (menuItem == null)
         {
             return NotFound();
         }
 
-        return Ok(menuitem);
+        menuItem.IsActive = menuItem.AreIngredientStocksSufficient();
+
+        return Ok(menuItem);
     }
 
     [Authorize(Roles = "Admin")]

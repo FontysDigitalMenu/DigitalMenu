@@ -4,7 +4,7 @@ namespace DigitalMenu_20_BLL.Interfaces.Services;
 
 public interface IOrderService
 {
-    public Order Create(string tableSessionId, List<Split> splits);
+    public Task<Order> Create(string tableSessionId, List<Split> splits);
 
     public List<Order>? GetByTableSessionId(string tableSessionId);
 
