@@ -137,7 +137,7 @@ public class SplitController(
 
         if (foodOrderViewModel.MenuItems.Count != 0)
         {
-            await hubContext.Clients.Group("Foods").ReceiveOrder(foodOrderViewModel);
+            await hubContext.Clients.Group("Food").ReceiveOrder(foodOrderViewModel);
         }
 
         await hubContext.Clients.Group($"order-{orderWithNewSplitData.Id}").ReceiveOrderUpdate(orderViewModel);
