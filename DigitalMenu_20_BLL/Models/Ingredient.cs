@@ -13,4 +13,9 @@ public class Ingredient
     [NotMapped] public int Pieces { get; set; }
 
     public List<MenuItem> MenuItems { get; set; } = new();
+
+    public bool IsStockSufficient()
+    {
+        return Stock >= Pieces;
+    }
 }

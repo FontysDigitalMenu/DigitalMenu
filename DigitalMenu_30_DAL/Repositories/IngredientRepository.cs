@@ -51,7 +51,7 @@ public class IngredientRepository(ApplicationDbContext dbContext) : IIngredientR
     public async Task<bool> UpdateIngredient(Ingredient ingredient)
     {
         Ingredient? trackedIngredient = await dbContext.Ingredients.FindAsync(ingredient.Id);
-        
+
         if (trackedIngredient != null)
         {
             trackedIngredient.Name = ingredient.Name;
@@ -61,7 +61,7 @@ public class IngredientRepository(ApplicationDbContext dbContext) : IIngredientR
         {
             dbContext.Ingredients.Update(ingredient);
         }
-        
+
         await dbContext.SaveChangesAsync();
         return true;
     }

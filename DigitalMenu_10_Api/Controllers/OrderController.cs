@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using DigitalMenu_10_Api.Hub;
+﻿using DigitalMenu_10_Api.Hub;
 using DigitalMenu_10_Api.RequestModels;
 using DigitalMenu_10_Api.Services;
 using DigitalMenu_10_Api.ViewModels;

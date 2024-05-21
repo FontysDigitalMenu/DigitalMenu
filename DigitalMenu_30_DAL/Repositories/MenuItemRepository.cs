@@ -20,13 +20,14 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
 
     public IEnumerable<MenuItem> GetNextMenuItemsWithCategory(int lastId, int amount)
     {
-        IEnumerable<MenuItem> menuItems = dbContext.CategoryMenuItems
+        List<MenuItem> menuItems = dbContext.CategoryMenuItems
             .OrderBy(cm => cm.CategoryId)
             .Skip(lastId)
             .Take(amount)
             .Include(cm => cm.MenuItem)
             .Include(cm => cm.Category)
             .Where(cm => cm.MenuItem.IsActive)
+            .ToList()
             .Select(cm => new MenuItem
             {
                 Id = cm.MenuItem.Id,
@@ -34,7 +35,16 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
                 Description = cm.MenuItem.Description,
                 Price = cm.MenuItem.Price,
                 ImageUrl = cm.MenuItem.ImageUrl,
-                Categories = new List<Category> { cm.Category },
+                Categories = [cm.Category],
+                Ingredients = dbContext.MenuItemIngredients
+                    .Where(mii => mii.MenuItemId == cm.MenuItem.Id)
+                    .Select(mii => new Ingredient
+                    {
+                        Id = mii.Ingredient.Id,
+                        Name = mii.Ingredient.Name,
+                        Pieces = mii.Pieces,
+                        Stock = mii.Ingredient.Stock,
+                    }).ToList(),
             })
             .ToList();
 
@@ -78,6 +88,7 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
                     Id = m.Ingredient.Id,
                     Name = m.Ingredient.Name,
                     Pieces = m.Pieces,
+                    Stock = m.Ingredient.Stock,
                 }).ToList(),
                 Categories = categories,
             };

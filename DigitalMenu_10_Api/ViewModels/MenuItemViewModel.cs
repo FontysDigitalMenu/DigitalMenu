@@ -14,5 +14,7 @@ public class MenuItemViewModel
 
     public string? Note { get; set; }
 
+    public bool IsActive { get; set; } = true;
+
     public List<IngredientViewModel> ExcludedIngredients { get; set; } = [];
 }

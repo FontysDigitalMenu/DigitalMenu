@@ -20,5 +20,12 @@ public class MenuItem
 
     public List<Ingredient> Ingredients { get; set; } = [];
 
+    [NotMapped] public List<MenuItemIngredient> MenuItemIngredients { get; set; }
+
     public bool IsActive { get; set; } = true;
+
+    public bool AreIngredientStocksSufficient()
+    {
+        return Ingredients.All(ingredient => ingredient.IsStockSufficient());
+    }
 }
