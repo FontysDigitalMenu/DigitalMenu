@@ -88,6 +88,31 @@ public class OrderController(
         return Ok(orders.Select(o => OrderViewModel.FromOrder(o, cartItemService)));
     }
 
+    [Authorize(Roles = "Admin, Employee")]
+    [HttpGet("completed/{type}")]
+    public ActionResult<List<OrderViewModel>> GetCompletedOrders([FromRoute] string type)
+    {
+        IEnumerable<Order> orders;
+
+        switch (type)
+        {
+            case "food":
+                orders = orderService.GetCompletedFoodOrders();
+                break;
+            case "drinks":
+                orders = orderService.GetCompletedDrinksOrders();
+                break;
+            default:
+                orders = orderService.GetCompletedOrders();
+                break;
+        }
+
+        List<OrderViewModel> orderViewModels =
+            orders.Select(o => OrderViewModel.FromOrder(o, cartItemService)).ToList();
+
+        return Ok(orderViewModels);
+    }
+
     [HttpGet("{id}/{tableSessionId}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
