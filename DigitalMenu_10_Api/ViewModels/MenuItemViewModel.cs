@@ -14,5 +14,7 @@ public class MenuItemViewModel
 
     public string? Note { get; set; }
 
+    public List<string>? Categories { get; set; }
+
     public List<IngredientViewModel> ExcludedIngredients { get; set; } = [];
 }
