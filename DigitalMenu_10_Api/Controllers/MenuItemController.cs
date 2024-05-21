@@ -180,7 +180,8 @@ public class MenuItemController(
                     menuItemUrl),
             };
 
-            MenuItem? createdMenuItem = await menuItemService.CreateMenuItem(menuItem);
+            MenuItem? createdMenuItem =
+                await menuItemService.CreateMenuItem(menuItem, menuItemCreateRequest.FormLanguage);
             if (createdMenuItem == null)
             {
                 return BadRequest(new { Message = "Menu item could not be created" });
@@ -296,7 +297,8 @@ public class MenuItemController(
                     : "",
             };
 
-            MenuItem? updatedMenuItem = await menuItemService.UpdateMenuItem(menuItem);
+            MenuItem? updatedMenuItem =
+                await menuItemService.UpdateMenuItem(menuItem, menuItemUpdateRequest.FormLanguage);
             if (updatedMenuItem == null)
             {
                 return BadRequest(new { Message = "Menu item could not be updated" });
