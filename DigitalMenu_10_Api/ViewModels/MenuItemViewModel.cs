@@ -13,8 +13,8 @@ public class MenuItemViewModel
     public int Quantity { get; set; }
 
     public string? Note { get; set; }
-    
+
     public List<string>? Categories { get; set; }
-    
+
     public List<IngredientViewModel> ExcludedIngredients { get; set; } = [];
 }

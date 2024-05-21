@@ -59,7 +59,7 @@ public class OrderViewModel
             }).ToList(),
         };
     }
-    
+
     public static OrderViewModel FromOrderWithCatagory(Order order, ICartItemService cartItemService)
     {
         return new OrderViewModel
