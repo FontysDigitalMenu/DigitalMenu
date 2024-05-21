@@ -24,6 +24,8 @@ public class MenuItem
 
     public bool IsActive { get; set; } = true;
 
+    public List<MenuItemTranslation>? Translations { get; set; }
+
     public bool AreIngredientStocksSufficient()
     {
         return Ingredients.All(ingredient => ingredient.IsStockSufficient());

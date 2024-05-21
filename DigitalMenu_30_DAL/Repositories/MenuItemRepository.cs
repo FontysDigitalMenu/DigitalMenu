@@ -11,6 +11,7 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
     public IEnumerable<MenuItem> GetNextMenuItems(int lastId, int amount)
     {
         return dbContext.MenuItems
+            .Include(m => m.Translations)
             .OrderBy(m => m.Id)
             .Where(m => m.IsActive)
             .Where(m => m.Id > lastId)
@@ -25,7 +26,9 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
             .Skip(lastId)
             .Take(amount)
             .Include(cm => cm.MenuItem)
+            .ThenInclude(mi => mi.Translations)
             .Include(cm => cm.Category)
+            .ThenInclude(c => c.Translations)
             .Where(cm => cm.MenuItem.IsActive)
             .ToList()
             .Select(cm => new MenuItem
@@ -35,6 +38,7 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
                 Description = cm.MenuItem.Description,
                 Price = cm.MenuItem.Price,
                 ImageUrl = cm.MenuItem.ImageUrl,
+                Translations = cm.MenuItem.Translations,
                 Categories = [cm.Category],
                 Ingredients = dbContext.MenuItemIngredients
                     .Where(mii => mii.MenuItemId == cm.MenuItem.Id)
@@ -54,6 +58,7 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
     public IEnumerable<Category> GetCategories()
     {
         return dbContext.Categories
+            .Include(c => c.Translations)
             .ToList();
     }
 
@@ -62,6 +67,9 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
         var menuItemWithIngredients = dbContext.MenuItemIngredients
             .Where(mii => mii.MenuItemId == id)
             .Include(mii => mii.Ingredient)
+            .ThenInclude(i => i.Translations)
+            .Include(mii => mii.MenuItem)
+            .ThenInclude(mi => mi.Translations)
             .Select(mii => new
             {
                 mii.MenuItem, mii.Ingredient, mii.Pieces,
@@ -70,6 +78,8 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
 
         List<Category> categories = dbContext.CategoryMenuItems
             .Where(mc => mc.MenuItemId == id)
+            .Include(mc => mc.Category)
+            .ThenInclude(c => c.Translations)
             .Select(mc => mc.Category)
             .ToList();
 
@@ -88,15 +98,18 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
                     Id = m.Ingredient.Id,
                     Name = m.Ingredient.Name,
                     Pieces = m.Pieces,
+                    Translations = m.Ingredient.Translations,
                     Stock = m.Ingredient.Stock,
                 }).ToList(),
                 Categories = categories,
+                Translations = firstMenuItem.Translations,
             };
 
             return menuItem;
         }
 
-        MenuItem? menuItemWithoutIngredient = dbContext.MenuItems.Find(id);
+        MenuItem? menuItemWithoutIngredient =
+            dbContext.MenuItems.Include(mi => mi.Translations).FirstOrDefault(mi => mi.Id == id);
 
         if (menuItemWithoutIngredient != null)
         {
@@ -109,6 +122,7 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
     public async Task<List<MenuItem>> GetMenuItems()
     {
         return await dbContext.MenuItems
+            .Include(m => m.Translations)
             .OrderBy(m => m.Id)
             .Where(m => m.IsActive)
             .ToListAsync();
