@@ -13,4 +13,6 @@ public class Reservation
     public string TableId { get; set; }
 
     public Table Table { get; set; }
+    
+    public bool IsUnlocked { get; set; }
 }
