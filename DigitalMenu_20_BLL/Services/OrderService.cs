@@ -232,7 +232,7 @@ public class OrderService(
     public IEnumerable<Order> GetCompletedOrders()
     {
         IEnumerable<Order> completedOrders = orderRepository.GetPaidOrders()
-            .Where(o => o.FoodStatus == Enums.OrderStatus.Completed || o.DrinkStatus == Enums.OrderStatus.Completed);
+            .Where(o => o.FoodStatus == OrderStatus.Completed || o.DrinkStatus == OrderStatus.Completed);
 
         return completedOrders;
     }
@@ -242,15 +242,15 @@ public class OrderService(
         IEnumerable<Order> orders = orderRepository.GetPaidOrders();
 
         IEnumerable<Order> completedFoodOnlyOrders = orders.Select(order =>
-        {
-            order.OrderMenuItems = order.OrderMenuItems
-            .Where(omi => omi.MenuItem.CategoryMenuItems.Any(c => c.Category.Name != "Drinks")
-            && omi.Order.FoodStatus == Enums.OrderStatus.Completed)
-            .ToList();
+            {
+                order.OrderMenuItems = order.OrderMenuItems
+                    .Where(omi => omi.MenuItem.CategoryMenuItems.Any(c => c.Category.Name != "Drinks")
+                                  && omi.Order.FoodStatus == OrderStatus.Completed)
+                    .ToList();
 
-            return order;
-        })
-        .Where(order => order.OrderMenuItems.Count != 0);
+                return order;
+            })
+            .Where(order => order.OrderMenuItems.Count != 0);
 
         return completedFoodOnlyOrders;
     }
@@ -260,15 +260,15 @@ public class OrderService(
         IEnumerable<Order> orders = orderRepository.GetPaidOrders();
 
         IEnumerable<Order> completedDrinksOnlyOrders = orders.Select(order =>
-        {
-            order.OrderMenuItems = order.OrderMenuItems
-            .Where(omi => omi.MenuItem.CategoryMenuItems.Any(c => c.Category.Name == "Drinks")
-            && omi.Order.DrinkStatus == Enums.OrderStatus.Completed)
-            .ToList();
+            {
+                order.OrderMenuItems = order.OrderMenuItems
+                    .Where(omi => omi.MenuItem.CategoryMenuItems.Any(c => c.Category.Name == "Drinks")
+                                  && omi.Order.DrinkStatus == OrderStatus.Completed)
+                    .ToList();
 
-            return order;
-        })
-        .Where(order => order.OrderMenuItems.Count != 0);
+                return order;
+            })
+            .Where(order => order.OrderMenuItems.Count != 0);
 
         return completedDrinksOnlyOrders;
     }

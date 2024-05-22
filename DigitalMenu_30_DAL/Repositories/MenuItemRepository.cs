@@ -180,4 +180,32 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
         dbContext.SaveChanges();
         return true;
     }
+
+    public void CreateMenuItemTranslations(List<MenuItemTranslation> menuItemTranslations)
+    {
+        dbContext.MenuItemTranslations.AddRange(menuItemTranslations);
+        dbContext.SaveChanges();
+    }
+
+    public void UpdateOrCreateMenuItemTranslation(MenuItemTranslation menuItemTranslation)
+    {
+        MenuItemTranslation? existingTranslation = dbContext.MenuItemTranslations.Find(menuItemTranslation.Id);
+        if (existingTranslation == null)
+        {
+            dbContext.MenuItemTranslations.Add(menuItemTranslation);
+            dbContext.SaveChanges();
+            return;
+        }
+
+        existingTranslation.Name = menuItemTranslation.Name;
+        existingTranslation.Description = menuItemTranslation.Description;
+        dbContext.SaveChanges();
+    }
+
+    public List<MenuItemTranslation> GetMenuItemTranslations(int menuItemId)
+    {
+        return dbContext.MenuItemTranslations
+            .Where(mt => mt.MenuItemId == menuItemId)
+            .ToList();
+    }
 }

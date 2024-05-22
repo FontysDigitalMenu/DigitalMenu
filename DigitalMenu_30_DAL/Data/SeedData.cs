@@ -261,11 +261,11 @@ public class SeedData(ApplicationDbContext dbContext)
                 Name = "Burger",
                 Description = "A delicious burger",
                 Price = 1000,
-                ImageUrl =
-                    "https://www.outofhome-shops.nl/files/202202/dist/3d91e961ea0f0abc6ee29aabe8dddc10.jpg",
+                ImageUrl = "https://www.outofhome-shops.nl/files/202202/dist/3d91e961ea0f0abc6ee29aabe8dddc10.jpg",
                 Translations = new List<MenuItemTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Hamburger", Description = "Heerlijke hamburger" },
+                    new() { LanguageCode = "de", Name = "Burger", Description = "Ein köstlicher Burger" },
                 },
             },
             new MenuItem
@@ -279,6 +279,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Translations = new List<MenuItemTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Pizza", Description = "Heerlijke pizza" },
+                    new() { LanguageCode = "de", Name = "Pizza", Description = "Eine köstliche Pizza" },
                 },
             },
             new MenuItem
@@ -287,11 +288,11 @@ public class SeedData(ApplicationDbContext dbContext)
                 Name = "Pasta",
                 Description = "A delicious pasta",
                 Price = 1200,
-                ImageUrl =
-                    "https://www.culy.nl/wp-content/uploads/2023/09/3_pasta-all-assassina-recept-1024x683.jpg",
+                ImageUrl = "https://www.culy.nl/wp-content/uploads/2023/09/3_pasta-all-assassina-recept-1024x683.jpg",
                 Translations = new List<MenuItemTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Pasta", Description = "Heerlijke pasta" },
+                    new() { LanguageCode = "de", Name = "Pasta", Description = "Eine köstliche Pasta" },
                 },
             },
             new MenuItem
@@ -300,11 +301,11 @@ public class SeedData(ApplicationDbContext dbContext)
                 Name = "Fries",
                 Description = "A delicious fries",
                 Price = 500,
-                ImageUrl =
-                    "https://www.inspiredtaste.net/wp-content/uploads/2023/09/Baked-French-Fries-Video.jpg",
+                ImageUrl = "https://www.inspiredtaste.net/wp-content/uploads/2023/09/Baked-French-Fries-Video.jpg",
                 Translations = new List<MenuItemTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Frietjes", Description = "Heerlijke frietjes" },
+                    new() { LanguageCode = "de", Name = "Pommes", Description = "Köstliche Pommes" },
                 },
             },
             new MenuItem
@@ -318,6 +319,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Translations = new List<MenuItemTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Cola", Description = "Heerlijke cola" },
+                    new() { LanguageCode = "de", Name = "Cola", Description = "Eine köstliche Cola" },
                 },
             },
             new MenuItem
@@ -331,6 +333,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Translations = new List<MenuItemTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Pepsi", Description = "Heerlijke pepsi" },
+                    new() { LanguageCode = "de", Name = "Pepsi", Description = "Ein köstliches Pepsi" },
                 },
             },
             new MenuItem
@@ -343,6 +346,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Translations = new List<MenuItemTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Sprite", Description = "Heerlijke sprite" },
+                    new() { LanguageCode = "de", Name = "Sprite", Description = "Ein köstliches Sprite" },
                 },
             },
             new MenuItem
@@ -356,6 +360,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Translations = new List<MenuItemTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Fanta", Description = "Heerlijke fanta" },
+                    new() { LanguageCode = "de", Name = "Fanta", Description = "Eine köstliche Fanta" },
                 },
             },
             new MenuItem
@@ -366,10 +371,10 @@ public class SeedData(ApplicationDbContext dbContext)
                 Price = 200,
                 ImageUrl =
                     "https://goedkoopblikjes.nl/image/cache/catalog/Frisdrank/Blikje%20fris/Light/7_up_free_zero_sugar_blikjes_33cl_tray-800x800.jpg",
-
                 Translations = new List<MenuItemTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "7up", Description = "Heerlijke 7up" },
+                    new() { LanguageCode = "de", Name = "7up", Description = "Ein köstliches 7up" },
                 },
             },
             new MenuItem
@@ -380,10 +385,10 @@ public class SeedData(ApplicationDbContext dbContext)
                 Price = 200,
                 ImageUrl =
                     "https://www.frisenzoetwaren.nl/wp-content/uploads/2023/07/Mountain-Dew-Citrus-Blast-24-x-330-ml-EU.jpg",
-
                 Translations = new List<MenuItemTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Mountain Dew", Description = "Heerlijke Mountain Dew" },
+                    new() { LanguageCode = "de", Name = "Mountain Dew", Description = "Ein köstlicher Mountain Dew" },
                 },
             }
         );
@@ -398,6 +403,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 1, Name = "Beef Patty", Stock = 16, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Rundergehakt" },
+                    new() { LanguageCode = "de", Name = "Rindfleischfrikadelle" },
                 },
             },
             new Ingredient
@@ -405,6 +411,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 2, Name = "Hamburger Bun", Stock = 8, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Hamburgerbroodje" },
+                    new() { LanguageCode = "de", Name = "Hamburgerbrötchen" },
                 },
             },
             new Ingredient
@@ -412,6 +419,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 3, Name = "Lettuce", Stock = 20, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Sla" },
+                    new() { LanguageCode = "de", Name = "Salat" },
                 },
             },
             new Ingredient
@@ -419,6 +427,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 4, Name = "Tomato Slices", Stock = 26, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Tomaat" },
+                    new() { LanguageCode = "de", Name = "Tomatenscheiben" },
                 },
             },
             new Ingredient
@@ -426,6 +435,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 5, Name = "Onion Slices", Stock = 9, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Ui" },
+                    new() { LanguageCode = "de", Name = "Zwiebelscheiben" },
                 },
             },
             new Ingredient
@@ -433,6 +443,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 6, Name = "Pickles", Stock = 20, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Augurken" },
+                    new() { LanguageCode = "de", Name = "Essiggurken" },
                 },
             },
             new Ingredient
@@ -440,6 +451,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 7, Name = "Cheese", Stock = 10, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Kaas" },
+                    new() { LanguageCode = "de", Name = "Käse" },
                 },
             },
             new Ingredient
@@ -447,6 +459,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 8, Name = "Bacon", Stock = 10, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Spek" },
+                    new() { LanguageCode = "de", Name = "Speck" },
                 },
             },
             new Ingredient
@@ -454,6 +467,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 9, Name = "Ketchup", Stock = 10, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Ketchup" },
+                    new() { LanguageCode = "de", Name = "Ketchup" },
                 },
             },
             new Ingredient
@@ -461,6 +475,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 10, Name = "Mustard", Stock = 18, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Mosterd" },
+                    new() { LanguageCode = "de", Name = "Senf" },
                 },
             },
             new Ingredient
@@ -468,6 +483,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 11, Name = "Mayonnaise", Stock = 4, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Mayonaise" },
+                    new() { LanguageCode = "de", Name = "Mayonnaise" },
                 },
             },
             new Ingredient
@@ -475,6 +491,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 12, Name = "Pizza Dough", Stock = 14, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Pizzadeeg" },
+                    new() { LanguageCode = "de", Name = "Pizzateig" },
                 },
             },
             new Ingredient
@@ -482,6 +499,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 13, Name = "Tomato Sauce", Stock = 19, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Tomatensaus" },
+                    new() { LanguageCode = "de", Name = "Tomatensauce" },
                 },
             },
             new Ingredient
@@ -489,6 +507,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 14, Name = "Mozzarella Cheese", Stock = 10, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Mozzarella kaas" },
+                    new() { LanguageCode = "de", Name = "Mozzarella-Käse" },
                 },
             },
             new Ingredient
@@ -496,6 +515,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 15, Name = "Pepperoni", Stock = 30, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Pepperoni" },
+                    new() { LanguageCode = "de", Name = "Pepperoni" },
                 },
             },
             new Ingredient
@@ -503,6 +523,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 16, Name = "Mushrooms", Stock = 25, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Champignons" },
+                    new() { LanguageCode = "de", Name = "Pilze" },
                 },
             },
             new Ingredient
@@ -510,6 +531,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 17, Name = "Bell Peppers", Stock = 17, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Paprika" },
+                    new() { LanguageCode = "de", Name = "Paprika" },
                 },
             },
             new Ingredient
@@ -517,6 +539,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 18, Name = "Onions", Stock = 14, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Uien" },
+                    new() { LanguageCode = "de", Name = "Zwiebeln" },
                 },
             },
             new Ingredient
@@ -524,6 +547,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 19, Name = "Olives", Stock = 12, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Olijven" },
+                    new() { LanguageCode = "de", Name = "Oliven" },
                 },
             },
             new Ingredient
@@ -531,6 +555,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 20, Name = "Basil", Stock = 10, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Basilicum" },
+                    new() { LanguageCode = "de", Name = "Basilikum" },
                 },
             },
             new Ingredient
@@ -538,6 +563,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 21, Name = "Pasta", Stock = 21, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Pasta" },
+                    new() { LanguageCode = "de", Name = "Pasta" },
                 },
             },
             new Ingredient
@@ -545,6 +571,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 22, Name = "Garlic", Stock = 21, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Knoflook" },
+                    new() { LanguageCode = "de", Name = "Knoblauch" },
                 },
             },
             new Ingredient
@@ -552,6 +579,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 23, Name = "Olive Oil", Stock = 21, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Olijfolie" },
+                    new() { LanguageCode = "de", Name = "Olivenöl" },
                 },
             },
             new Ingredient
@@ -559,6 +587,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 24, Name = "Parmesan Cheese", Stock = 21, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Parmezaanse kaas" },
+                    new() { LanguageCode = "de", Name = "Parmesankäse" },
                 },
             },
             new Ingredient
@@ -566,6 +595,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 25, Name = "Potatoes", Stock = 21, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Aardappelen" },
+                    new() { LanguageCode = "de", Name = "Kartoffeln" },
                 },
             },
             new Ingredient
@@ -573,6 +603,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 26, Name = "Salt", Stock = 10, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Zout" },
+                    new() { LanguageCode = "de", Name = "Salz" },
                 },
             },
             new Ingredient
@@ -580,6 +611,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 27, Name = "Oil", Stock = 10, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Olie" },
+                    new() { LanguageCode = "de", Name = "Öl" },
                 },
             }
         );
@@ -630,6 +662,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 1, Name = "Italian", Translations = new List<CategoryTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Italiaans" },
+                    new() { LanguageCode = "de", Name = "Italienisch" },
                 },
             },
             new Category
@@ -637,6 +670,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 2, Name = "American", Translations = new List<CategoryTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Amerikaans" },
+                    new() { LanguageCode = "de", Name = "Amerikanisch" },
                 },
             },
             new Category
@@ -644,6 +678,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 3, Name = "Drinks", Translations = new List<CategoryTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Dranken" },
+                    new() { LanguageCode = "de", Name = "Getränke" },
                 },
             }
         );

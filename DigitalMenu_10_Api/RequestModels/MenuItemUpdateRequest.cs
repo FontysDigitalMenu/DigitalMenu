@@ -2,6 +2,8 @@
 
 public class MenuItemUpdateRequest
 {
+    public string FormLanguage { get; set; }
+
     public int Id { get; set; }
 
     public string Name { get; set; }
