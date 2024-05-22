@@ -266,6 +266,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "Hamburger", Description = "Heerlijke hamburger" },
                     new() { LanguageCode = "de", Name = "Burger", Description = "Ein köstlicher Burger" },
+                    new() { LanguageCode = "ko", Name = "버거", Description = "맛있는 버거" },
                 },
             },
             new MenuItem
@@ -280,6 +281,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "Pizza", Description = "Heerlijke pizza" },
                     new() { LanguageCode = "de", Name = "Pizza", Description = "Eine köstliche Pizza" },
+                    new() { LanguageCode = "ko", Name = "피자", Description = "맛있는 피자" },
                 },
             },
             new MenuItem
@@ -293,6 +295,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "Pasta", Description = "Heerlijke pasta" },
                     new() { LanguageCode = "de", Name = "Pasta", Description = "Eine köstliche Pasta" },
+                    new() { LanguageCode = "ko", Name = "파스타", Description = "맛있는 파스타" },
                 },
             },
             new MenuItem
@@ -306,6 +309,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "Frietjes", Description = "Heerlijke frietjes" },
                     new() { LanguageCode = "de", Name = "Pommes", Description = "Köstliche Pommes" },
+                    new() { LanguageCode = "ko", Name = "감자 튀김", Description = "맛있는 감자 튀김" },
                 },
             },
             new MenuItem
@@ -320,6 +324,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "Cola", Description = "Heerlijke cola" },
                     new() { LanguageCode = "de", Name = "Cola", Description = "Eine köstliche Cola" },
+                    new() { LanguageCode = "ko", Name = "콜라", Description = "맛있는 콜라" },
                 },
             },
             new MenuItem
@@ -334,6 +339,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "Pepsi", Description = "Heerlijke pepsi" },
                     new() { LanguageCode = "de", Name = "Pepsi", Description = "Ein köstliches Pepsi" },
+                    new() { LanguageCode = "ko", Name = "펩시", Description = "맛있는 펩시" },
                 },
             },
             new MenuItem
@@ -347,6 +353,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "Sprite", Description = "Heerlijke sprite" },
                     new() { LanguageCode = "de", Name = "Sprite", Description = "Ein köstliches Sprite" },
+                    new() { LanguageCode = "ko", Name = "스프라이트", Description = "맛있는 스프라이트" },
                 },
             },
             new MenuItem
@@ -361,6 +368,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "Fanta", Description = "Heerlijke fanta" },
                     new() { LanguageCode = "de", Name = "Fanta", Description = "Eine köstliche Fanta" },
+                    new() { LanguageCode = "ko", Name = "환타", Description = "맛있는 환타" },
                 },
             },
             new MenuItem
@@ -375,6 +383,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "7up", Description = "Heerlijke 7up" },
                     new() { LanguageCode = "de", Name = "7up", Description = "Ein köstliches 7up" },
+                    new() { LanguageCode = "ko", Name = "세븐업", Description = "맛있는 세븐업" },
                 },
             },
             new MenuItem
@@ -389,6 +398,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "Mountain Dew", Description = "Heerlijke Mountain Dew" },
                     new() { LanguageCode = "de", Name = "Mountain Dew", Description = "Ein köstlicher Mountain Dew" },
+                    new() { LanguageCode = "ko", Name = "마운틴듀", Description = "맛있는 마운틴듀" },
                 },
             }
         );
@@ -404,6 +414,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "Rundergehakt" },
                     new() { LanguageCode = "de", Name = "Rindfleischfrikadelle" },
+                    new() { LanguageCode = "ko", Name = "소고기 패티" },
                 },
             },
             new Ingredient
@@ -412,6 +423,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "Hamburgerbroodje" },
                     new() { LanguageCode = "de", Name = "Hamburgerbrötchen" },
+                    new() { LanguageCode = "ko", Name = "햄버거 번" },
                 },
             },
             new Ingredient
@@ -420,6 +432,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "Sla" },
                     new() { LanguageCode = "de", Name = "Salat" },
+                    new() { LanguageCode = "ko", Name = "상추" },
                 },
             },
             new Ingredient
@@ -428,6 +441,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "Tomaat" },
                     new() { LanguageCode = "de", Name = "Tomatenscheiben" },
+                    new() { LanguageCode = "ko", Name = "토마토 슬라이스" },
                 },
             },
             new Ingredient
@@ -436,6 +450,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "Ui" },
                     new() { LanguageCode = "de", Name = "Zwiebelscheiben" },
+                    new() { LanguageCode = "ko", Name = "양파 슬라이스" },
                 },
             },
             new Ingredient
@@ -444,6 +459,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "Augurken" },
                     new() { LanguageCode = "de", Name = "Essiggurken" },
+                    new() { LanguageCode = "ko", Name = "피클" },
                 },
             },
             new Ingredient
@@ -452,6 +468,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "Kaas" },
                     new() { LanguageCode = "de", Name = "Käse" },
+                    new() { LanguageCode = "ko", Name = "치즈" },
                 },
             },
             new Ingredient
@@ -460,6 +477,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "Spek" },
                     new() { LanguageCode = "de", Name = "Speck" },
+                    new() { LanguageCode = "ko", Name = "베이컨" },
                 },
             },
             new Ingredient
@@ -468,6 +486,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "Ketchup" },
                     new() { LanguageCode = "de", Name = "Ketchup" },
+                    new() { LanguageCode = "ko", Name = "케첩" },
                 },
             },
             new Ingredient
@@ -476,6 +495,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "Mosterd" },
                     new() { LanguageCode = "de", Name = "Senf" },
+                    new() { LanguageCode = "ko", Name = "머스타드" },
                 },
             },
             new Ingredient
@@ -484,6 +504,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "Mayonaise" },
                     new() { LanguageCode = "de", Name = "Mayonnaise" },
+                    new() { LanguageCode = "ko", Name = "마요네즈" },
                 },
             },
             new Ingredient
@@ -492,6 +513,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "Pizzadeeg" },
                     new() { LanguageCode = "de", Name = "Pizzateig" },
+                    new() { LanguageCode = "ko", Name = "피자 반죽" },
                 },
             },
             new Ingredient
@@ -500,6 +522,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "Tomatensaus" },
                     new() { LanguageCode = "de", Name = "Tomatensauce" },
+                    new() { LanguageCode = "ko", Name = "토마토 소스" },
                 },
             },
             new Ingredient
@@ -508,6 +531,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "Mozzarella kaas" },
                     new() { LanguageCode = "de", Name = "Mozzarella-Käse" },
+                    new() { LanguageCode = "ko", Name = "모짜렐라 치즈" },
                 },
             },
             new Ingredient
@@ -516,6 +540,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "Pepperoni" },
                     new() { LanguageCode = "de", Name = "Pepperoni" },
+                    new() { LanguageCode = "ko", Name = "페퍼로니" },
                 },
             },
             new Ingredient
@@ -524,6 +549,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "Champignons" },
                     new() { LanguageCode = "de", Name = "Pilze" },
+                    new() { LanguageCode = "ko", Name = "버섯" },
                 },
             },
             new Ingredient
@@ -532,6 +558,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "Paprika" },
                     new() { LanguageCode = "de", Name = "Paprika" },
+                    new() { LanguageCode = "ko", Name = "파프리카" },
                 },
             },
             new Ingredient
@@ -540,6 +567,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "Uien" },
                     new() { LanguageCode = "de", Name = "Zwiebeln" },
+                    new() { LanguageCode = "ko", Name = "양파" },
                 },
             },
             new Ingredient
@@ -548,6 +576,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "Olijven" },
                     new() { LanguageCode = "de", Name = "Oliven" },
+                    new() { LanguageCode = "ko", Name = "올리브" },
                 },
             },
             new Ingredient
@@ -556,6 +585,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "Basilicum" },
                     new() { LanguageCode = "de", Name = "Basilikum" },
+                    new() { LanguageCode = "ko", Name = "바질" },
                 },
             },
             new Ingredient
@@ -564,6 +594,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "Pasta" },
                     new() { LanguageCode = "de", Name = "Pasta" },
+                    new() { LanguageCode = "ko", Name = "파스타" },
                 },
             },
             new Ingredient
@@ -572,6 +603,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "Knoflook" },
                     new() { LanguageCode = "de", Name = "Knoblauch" },
+                    new() { LanguageCode = "ko", Name = "마늘" },
                 },
             },
             new Ingredient
@@ -580,6 +612,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "Olijfolie" },
                     new() { LanguageCode = "de", Name = "Olivenöl" },
+                    new() { LanguageCode = "ko", Name = "올리브 오일" },
                 },
             },
             new Ingredient
@@ -588,6 +621,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "Parmezaanse kaas" },
                     new() { LanguageCode = "de", Name = "Parmesankäse" },
+                    new() { LanguageCode = "ko", Name = "파르미 산 치즈" },
                 },
             },
             new Ingredient
@@ -596,6 +630,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "Aardappelen" },
                     new() { LanguageCode = "de", Name = "Kartoffeln" },
+                    new() { LanguageCode = "ko", Name = "감자" },
                 },
             },
             new Ingredient
@@ -604,6 +639,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "Zout" },
                     new() { LanguageCode = "de", Name = "Salz" },
+                    new() { LanguageCode = "ko", Name = "소금" },
                 },
             },
             new Ingredient
@@ -612,6 +648,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "Olie" },
                     new() { LanguageCode = "de", Name = "Öl" },
+                    new() { LanguageCode = "ko", Name = "유" },
                 },
             }
         );
@@ -663,6 +700,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "Italiaans" },
                     new() { LanguageCode = "de", Name = "Italienisch" },
+                    new() { LanguageCode = "ko", Name = "이탈리아" },
                 },
             },
             new Category
@@ -671,6 +709,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "Amerikaans" },
                     new() { LanguageCode = "de", Name = "Amerikanisch" },
+                    new() { LanguageCode = "ko", Name = "미국" },
                 },
             },
             new Category
@@ -679,6 +718,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 {
                     new() { LanguageCode = "nl", Name = "Dranken" },
                     new() { LanguageCode = "de", Name = "Getränke" },
+                    new() { LanguageCode = "ko", Name = "음료" },
                 },
             }
         );
