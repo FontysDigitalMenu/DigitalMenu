@@ -90,7 +90,7 @@ public class MenuItemController(
 
         menuItem.IsActive = menuItem.AreIngredientStocksSufficient();
 
-        return Ok(new MenuItemViewModel
+        return Ok(new MenuItemViewModel2
         {
             Id = menuItem.Id,
             Name = menuItem.Translations?.FirstOrDefault(t => t.LanguageCode == localeValue)?.Name ?? menuItem.Name,
@@ -103,6 +103,11 @@ public class MenuItemController(
                 Id = i.Id,
                 Name = i.Translations?.FirstOrDefault(t => t.LanguageCode == localeValue)?.Name ?? i.Name,
                 Stock = i.Stock,
+            }).ToList(),
+            Categories = menuItem.Categories.Select(c => new CategoryViewModel
+            {
+                Id = c.Id,
+                Name = c.Translations?.FirstOrDefault(t => t.LanguageCode == localeValue)?.Name ?? c.Name,
             }).ToList(),
         });
     }
