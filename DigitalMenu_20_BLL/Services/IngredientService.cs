@@ -8,7 +8,7 @@ namespace DigitalMenu_20_BLL.Services;
 public class IngredientService(IIngredientRepository ingredientRepository, ITranslationService translationService)
     : IIngredientService
 {
-    private readonly List<string> _languages = ["en", "nl", "de"];
+    private readonly List<string> _languages = ["en", "nl", "de", "ko"];
 
     public Task<Ingredient?> GetIngredientByNameAsync(string name)
     {
