@@ -49,7 +49,7 @@ public class EmailService(
                 </body>
             </html>";
 
-        SendEmail(toEmail, "Reservation created", body);
+        SendEmail(toEmail, mailTranslation.Subject, body);
     }
 
     public void SendEmail(string toEmail, string subject, string body)
