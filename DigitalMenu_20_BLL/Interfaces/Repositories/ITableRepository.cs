@@ -15,4 +15,6 @@ public interface ITableRepository
     public bool Update(Table table);
 
     public bool Delete(string id);
+
+    public List<Table> GetAllReservableTablesWithReservationsFrom(DateTime dateTime);
 }
