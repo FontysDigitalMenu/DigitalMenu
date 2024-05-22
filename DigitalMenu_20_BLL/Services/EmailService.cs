@@ -2,25 +2,51 @@
 using System.Net;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
+using DigitalMenu_20_BLL.Interfaces.Repositories;
 using DigitalMenu_20_BLL.Interfaces.Services;
+using DigitalMenu_20_BLL.Models;
+using Newtonsoft.Json;
 
 namespace DigitalMenu_20_BLL.Services;
 
-public class EmailService(string fromAddress, string fromName, string password, int port, string host) : IEmailService
+public class EmailService(
+    IMailTranslationRepository mailTranslationRepository,
+    string fromAddress,
+    string fromName,
+    string password,
+    int port,
+    string host) : IEmailService
 {
     public void SendReservationEmail(string toEmail, string reservationCode)
     {
+        MailTranslation? mailTranslation = mailTranslationRepository.GetMailTranslationBy("reservation-created", "en");
+        if (mailTranslation == null)
+        {
+            return;
+        }
+
+        var translationResponse = JsonConvert.DeserializeAnonymousType(mailTranslation.Body, new
+        {
+            title = "",
+            salutation = "",
+            instruction = "",
+            thankYou = "",
+            bestRegards = "",
+            companyName = "",
+        });
+
+
         string body = $@"
             <html>
                 <body style='font-family: Arial, sans-serif;'>
                     <div style='max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 10px;'>
-                        <h2 style='color: #2E86C1; text-align: center;'>Reservation Created Successfully</h2>
-                        <p style='font-size: 16px;'>Dear Customer,</p>
-                        <p style='font-size: 16px;'>Your reservation has been created successfully. Please use the following code when you scan the QR-Code:</p>
+                        <h2 style='color: #2E86C1; text-align: center;'>{translationResponse!.title}</h2>
+                        <p style='font-size: 16px;'>{translationResponse.salutation}</p>
+                        <p style='font-size: 16px;'>{translationResponse.instruction}</p>
                         <p style='font-size: 24px; font-weight: bold; text-align: center; color: #27AE60;'>{reservationCode}</p>
-                        <p style='font-size: 16px;'>Thank you for choosing our service. We look forward to serving you.</p>
-                        <p style='font-size: 16px;'>Best Regards,</p>
-                        <p style='font-size: 16px;'>Your Company</p>
+                        <p style='font-size: 16px;'>{translationResponse.thankYou}</p>
+                        <p style='font-size: 16px;'>{translationResponse.bestRegards}</p>
+                        <p style='font-size: 16px;'>{translationResponse.companyName}</p>
                     </div>
                 </body>
             </html>";

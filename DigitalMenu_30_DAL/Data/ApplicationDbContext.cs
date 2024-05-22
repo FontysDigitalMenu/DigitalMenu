@@ -39,4 +39,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<MenuItemTranslation> MenuItemTranslations { get; set; }
 
     public DbSet<Reservation> Reservations { get; set; }
+
+    public DbSet<MailTranslation> MailTranslations { get; set; }
 }

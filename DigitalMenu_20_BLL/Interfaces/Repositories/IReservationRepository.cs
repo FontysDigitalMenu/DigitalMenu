@@ -7,4 +7,6 @@ public interface IReservationRepository
     public Reservation? GetBy(string tableId, DateTime reservationReservationDateTime);
 
     public Reservation? Create(Reservation reservation);
+
+    public List<Reservation> GetByDay(DateTime dateTime);
 }

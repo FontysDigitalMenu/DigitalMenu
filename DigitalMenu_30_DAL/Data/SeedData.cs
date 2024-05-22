@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MySqlConnector;
+using Newtonsoft.Json;
 
 namespace DigitalMenu_30_DAL.Data;
 
@@ -24,6 +25,7 @@ public class SeedData(ApplicationDbContext dbContext)
             await SeedTables();
             await SeedCartItems();
             await SeedOrders();
+            await SeedMailTranslations();
 
             await dbContext.SaveChangesAsync();
         }
@@ -31,6 +33,26 @@ public class SeedData(ApplicationDbContext dbContext)
         {
             Console.WriteLine(ex.Message);
         }
+    }
+
+    private async Task SeedMailTranslations()
+    {
+        string mailBody = JsonConvert.SerializeObject(new
+        {
+            title = "Reservation Created Successfully",
+            salutation = "Dear Customer,",
+            instruction =
+                "Your reservation has been created successfully. Please use the following code when you scan the QR-Code:",
+            thankYou = "Thank you for choosing our service. We look forward to serving you.",
+            bestRegards = "Best Regards,",
+            companyName = "Digital Menu",
+        });
+        MailTranslation mailTranslation = new()
+        {
+            Body = mailBody,
+            Language = "en",
+            Subject = "Reservation Created Successfully",
+        };
     }
 
     private async Task SeedOrders()

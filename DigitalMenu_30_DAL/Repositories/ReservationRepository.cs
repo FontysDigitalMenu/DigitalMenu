@@ -18,4 +18,9 @@ public class ReservationRepository(ApplicationDbContext dbContext) : IReservatio
 
         return dbContext.SaveChanges() > 0 ? reservation : null;
     }
+
+    public List<Reservation> GetByDay(DateTime dateTime)
+    {
+        return dbContext.Reservations.Where(r => r.ReservationDateTime.Date == dateTime.Date).ToList();
+    }
 }
