@@ -15,4 +15,8 @@ public class Table
     public string? QrCode { get; set; }
 
     public DateTime CreatedAt { get; set; }
+
+    public bool IsReservable { get; set; }
+
+    public List<Reservation> Reservations { get; set; }
 }

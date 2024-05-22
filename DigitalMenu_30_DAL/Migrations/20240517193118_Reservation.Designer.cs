@@ -4,6 +4,7 @@ using DigitalMenu_30_DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DigitalMenu_30_DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240517193118_Reservation")]
+    partial class Reservation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -90,32 +93,6 @@ namespace DigitalMenu_30_DAL.Migrations
                     b.ToTable("CategoryMenuItems");
                 });
 
-            modelBuilder.Entity("DigitalMenu_20_BLL.Models.CategoryTranslation", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("LanguageCode")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.ToTable("CategoryTranslations");
-                });
-
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.ExcludedIngredientCartItem", b =>
                 {
                     b.Property<int>("Id")
@@ -182,61 +159,6 @@ namespace DigitalMenu_30_DAL.Migrations
                     b.ToTable("Ingredients");
                 });
 
-            modelBuilder.Entity("DigitalMenu_20_BLL.Models.IngredientTranslation", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("IngredientId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("LanguageCode")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IngredientId");
-
-                    b.ToTable("IngredientTranslations");
-                });
-
-            modelBuilder.Entity("DigitalMenu_20_BLL.Models.MailTranslation", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Body")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Language")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Subject")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("MailTranslations");
-                });
-
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.MenuItem", b =>
                 {
                     b.Property<int>("Id")
@@ -284,36 +206,6 @@ namespace DigitalMenu_30_DAL.Migrations
                     b.HasIndex("IngredientId");
 
                     b.ToTable("MenuItemIngredients");
-                });
-
-            modelBuilder.Entity("DigitalMenu_20_BLL.Models.MenuItemTranslation", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("LanguageCode")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<int>("MenuItemId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MenuItemId");
-
-                    b.ToTable("MenuItemTranslations");
                 });
 
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.Order", b =>
@@ -394,18 +286,15 @@ namespace DigitalMenu_30_DAL.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<bool>("IsUnlocked")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<DateTime>("ReservationDateTime")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<int>("ReservationId")
-                        .HasColumnType("int");
 
                     b.Property<string>("TableId")
                         .IsRequired()
                         .HasColumnType("varchar(255)");
+
+                    b.Property<int>("reservationId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -456,9 +345,6 @@ namespace DigitalMenu_30_DAL.Migrations
 
                     b.Property<string>("HostId")
                         .HasColumnType("longtext");
-
-                    b.Property<bool>("IsReservable")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -717,17 +603,6 @@ namespace DigitalMenu_30_DAL.Migrations
                     b.Navigation("MenuItem");
                 });
 
-            modelBuilder.Entity("DigitalMenu_20_BLL.Models.CategoryTranslation", b =>
-                {
-                    b.HasOne("DigitalMenu_20_BLL.Models.Category", "Category")
-                        .WithMany("Translations")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-                });
-
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.ExcludedIngredientCartItem", b =>
                 {
                     b.HasOne("DigitalMenu_20_BLL.Models.CartItem", "CartItem")
@@ -766,17 +641,6 @@ namespace DigitalMenu_30_DAL.Migrations
                     b.Navigation("OrderMenuItem");
                 });
 
-            modelBuilder.Entity("DigitalMenu_20_BLL.Models.IngredientTranslation", b =>
-                {
-                    b.HasOne("DigitalMenu_20_BLL.Models.Ingredient", "Ingredient")
-                        .WithMany("Translations")
-                        .HasForeignKey("IngredientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Ingredient");
-                });
-
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.MenuItemIngredient", b =>
                 {
                     b.HasOne("DigitalMenu_20_BLL.Models.Ingredient", "Ingredient")
@@ -792,17 +656,6 @@ namespace DigitalMenu_30_DAL.Migrations
                         .IsRequired();
 
                     b.Navigation("Ingredient");
-
-                    b.Navigation("MenuItem");
-                });
-
-            modelBuilder.Entity("DigitalMenu_20_BLL.Models.MenuItemTranslation", b =>
-                {
-                    b.HasOne("DigitalMenu_20_BLL.Models.MenuItem", "MenuItem")
-                        .WithMany("Translations")
-                        .HasForeignKey("MenuItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
 
                     b.Navigation("MenuItem");
                 });
@@ -933,20 +786,11 @@ namespace DigitalMenu_30_DAL.Migrations
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.Category", b =>
                 {
                     b.Navigation("CategoryMenuItems");
-
-                    b.Navigation("Translations");
-                });
-
-            modelBuilder.Entity("DigitalMenu_20_BLL.Models.Ingredient", b =>
-                {
-                    b.Navigation("Translations");
                 });
 
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.MenuItem", b =>
                 {
                     b.Navigation("CategoryMenuItems");
-
-                    b.Navigation("Translations");
                 });
 
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.Order", b =>
