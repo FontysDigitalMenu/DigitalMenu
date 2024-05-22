@@ -5,6 +5,7 @@ using DigitalMenu_20_BLL.Exceptions;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
 
 namespace DigitalMenu_10_Api.Controllers;
 
@@ -20,16 +21,19 @@ public class ReservationController(
     [ProducesResponseType(500)]
     public ActionResult<Reservation> Post([FromBody] ReservationRequest request)
     {
+        Request.Headers.TryGetValue("Accept-Language", out StringValues locale);
+        string localeValue = locale.FirstOrDefault() ?? "en";
+        if (localeValue.Length > 2) localeValue = "en";
+
         Reservation reservation = new()
         {
             Email = request.Email,
             ReservationDateTime = request.ReservationDateTime,
-            TableId = request.TableId,
         };
 
         try
         {
-            reservationService.Create(reservation);
+            reservationService.Create(reservation, localeValue);
         }
         catch (ReservationException e)
         {

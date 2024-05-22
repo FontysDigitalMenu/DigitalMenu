@@ -5,6 +5,4 @@ public class ReservationRequest
     public string Email { get; set; }
 
     public DateTime ReservationDateTime { get; set; }
-
-    public string TableId { get; set; }
 }

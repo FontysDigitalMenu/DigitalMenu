@@ -5,7 +5,7 @@ namespace DigitalMenu_20_BLL.Interfaces.Services;
 
 public interface IReservationService
 {
-    public Reservation? Create(Reservation reservation);
+    public Reservation? Create(Reservation reservation, string language);
 
     public List<Reservation> GetByDay(DateTime dateTime);
 

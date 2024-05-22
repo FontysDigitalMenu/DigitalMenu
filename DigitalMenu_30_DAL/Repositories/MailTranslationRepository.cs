@@ -6,9 +6,11 @@ namespace DigitalMenu_30_DAL.Repositories;
 
 public class MailTranslationRepository(ApplicationDbContext dbContext) : IMailTranslationRepository
 {
-    public MailTranslation? GetMailTranslationBy(string type, string language)
+    public MailTranslation GetMailTranslationBy(string type, string language)
     {
-        return dbContext.MailTranslations
+        MailTranslation? mailTranslation = dbContext.MailTranslations
             .FirstOrDefault(mt => mt.Type == type && mt.Language == language);
+
+        return mailTranslation ?? dbContext.MailTranslations.First(mt => mt.Type == type && mt.Language == "en");
     }
 }

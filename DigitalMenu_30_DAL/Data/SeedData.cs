@@ -37,22 +37,72 @@ public class SeedData(ApplicationDbContext dbContext)
 
     private async Task SeedMailTranslations()
     {
-        string mailBody = JsonConvert.SerializeObject(new
-        {
-            title = "Reservation Created Successfully",
-            salutation = "Dear Customer,",
-            instruction =
-                "Your reservation has been created successfully. Please use the following code when you scan the QR-Code:",
-            thankYou = "Thank you for choosing our service. We look forward to serving you.",
-            bestRegards = "Best Regards,",
-            companyName = "Digital Menu",
-        });
-        MailTranslation mailTranslation = new()
-        {
-            Body = mailBody,
-            Language = "en",
-            Subject = "Reservation Created Successfully",
-        };
+        dbContext.MailTranslations.AddRange(
+            new MailTranslation
+            {
+                Type = "reservation-created",
+                Body = JsonConvert.SerializeObject(new
+                {
+                    title = "Reservation Created Successfully",
+                    salutation = "Dear Customer,",
+                    instruction =
+                        "Your reservation has been created successfully. Please use the following code when you scan the QR-Code:",
+                    thankYou = "Thank you for choosing our service. We look forward to serving you.",
+                    bestRegards = "Best Regards,",
+                    companyName = "Digital Menu",
+                }),
+                Language = "en",
+                Subject = "Reservation Created Successfully",
+            }, new MailTranslation
+            {
+                Type = "reservation-created",
+                Body = JsonConvert.SerializeObject(new
+                {
+                    title = "Reservering succesvol aangemaakt",
+                    salutation = "Beste klant,",
+                    instruction =
+                        "Uw reservering is succesvol aangemaakt. Gebruik de volgende code wanneer u de QR-code scant:",
+                    thankYou =
+                        "Bedankt voor het kiezen van onze service. We kijken ernaar uit om u van dienst te zijn.",
+                    bestRegards = "Met vriendelijke groet,",
+                    companyName = "Digital Menu",
+                }),
+                Language = "nl",
+                Subject = "Reservering succesvol aangemaakt",
+            }, new MailTranslation
+            {
+                Type = "reservation-created",
+                Body = JsonConvert.SerializeObject(new
+                {
+                    title = "Reservierung erfolgreich erstellt",
+                    salutation = "Sehr geehrter Kunde,",
+                    instruction =
+                        "Ihre Reservierung wurde erfolgreich erstellt. Bitte verwenden Sie den folgenden Code, wenn Sie den QR-Code scannen:",
+                    thankYou =
+                        "Vielen Dank, dass Sie unseren Service gewählt haben. Wir freuen uns darauf, Sie zu bedienen.",
+                    bestRegards = "Mit freundlichen Grüßen,",
+                    companyName = "Digital Menu",
+                }),
+                Language = "de",
+                Subject = "Reservierung erfolgreich erstellt",
+            }, new MailTranslation
+            {
+                Type = "reservation-created",
+                Body = JsonConvert.SerializeObject(new
+                {
+                    title = "예약이 성공적으로 완료되었습니다",
+                    salutation = "고객님,",
+                    instruction =
+                        "예약이 성공적으로 완료되었습니다. QR 코드를 스캔할 때 다음 코드를 사용하세요:",
+                    thankYou = "저희 서비스를 선택해 주셔서 감사합니다. 저희는 고객님을 모시게 되어 기쁩니다.",
+                    bestRegards = "감사합니다,",
+                    companyName = "디지털 메뉴",
+                }),
+                Language = "ko",
+                Subject = "예약이 성공적으로 완료되었습니다",
+            });
+
+        await dbContext.SaveChangesAsync();
     }
 
     private async Task SeedOrders()
@@ -720,18 +770,6 @@ public class SeedData(ApplicationDbContext dbContext)
             new() { CategoryId = 3, MenuItemId = 10 },
         });
 
-        /*        List<int> ids1 = [2, 3];
-                List<MenuItem> menuItems1 = dbContext.MenuItems.Where(mi => ids1.Contains(mi.Id)).ToList();
-                dbContext.Categories.First(c => c.Id == 1).MenuItems = [..menuItems1];
-
-                List<int> ids2 = [1, 4];
-                List<MenuItem> menuItems2 = dbContext.MenuItems.Where(mi => ids2.Contains(mi.Id)).ToList();
-                dbContext.Categories.First(c => c.Id == 2).MenuItems = [..menuItems2];*/
-
-        /*        List<int> ids3 = [5, 6, 7, 8, 9, 10];
-                List<MenuItem> menuItems3 = dbContext.MenuItems.Where(mi => ids3.Contains(mi.Id)).ToList();
-                dbContext.Categories.First(c => c.Id == 3).MenuItems = [..menuItems3];
-        */
         await dbContext.SaveChangesAsync();
     }
 
@@ -745,6 +783,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 SessionId = "0449DB90-66AF-4E17-8086-C1452270B52D",
                 QrCode = "n/a",
                 CreatedAt = DateTime.Parse("2023-09-01 12:00:00"),
+                IsReservable = true,
             },
             new Table
             {
@@ -753,6 +792,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 SessionId = "7EAE8F7F-C969-4FCD-869E-07AC2E62EB44",
                 QrCode = "n/a",
                 CreatedAt = DateTime.Parse("2023-09-01 12:00:00").AddMinutes(10),
+                IsReservable = true,
             },
             new Table
             {
@@ -761,6 +801,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 SessionId = "CBF261E5-A710-4611-A423-87943EB5DC32",
                 QrCode = "n/a",
                 CreatedAt = DateTime.Parse("2023-09-01 12:00:00").AddMinutes(20),
+                IsReservable = true,
             },
             new Table
             {

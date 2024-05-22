@@ -10,6 +10,8 @@ public class ReservationViewModel
 
     public DateTime ReservationDateTime { get; set; }
 
+    public string TableName { get; set; }
+
     public static ReservationViewModel FromReservation(Reservation reservation)
     {
         return new ReservationViewModel
@@ -17,6 +19,7 @@ public class ReservationViewModel
             ReservationId = reservation.ReservationId,
             Email = reservation.Email,
             ReservationDateTime = reservation.ReservationDateTime,
+            TableName = reservation.Table.Name,
         };
     }
 }

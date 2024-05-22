@@ -17,13 +17,10 @@ public class EmailService(
     int port,
     string host) : IEmailService
 {
-    public void SendReservationEmail(string toEmail, string reservationCode)
+    public void SendReservationEmail(string toEmail, string reservationCode, string tableName, string language)
     {
-        MailTranslation? mailTranslation = mailTranslationRepository.GetMailTranslationBy("reservation-created", "en");
-        if (mailTranslation == null)
-        {
-            return;
-        }
+        MailTranslation mailTranslation =
+            mailTranslationRepository.GetMailTranslationBy("reservation-created", language);
 
         var translationResponse = JsonConvert.DeserializeAnonymousType(mailTranslation.Body, new
         {
@@ -44,6 +41,7 @@ public class EmailService(
                         <p style='font-size: 16px;'>{translationResponse.salutation}</p>
                         <p style='font-size: 16px;'>{translationResponse.instruction}</p>
                         <p style='font-size: 24px; font-weight: bold; text-align: center; color: #27AE60;'>{reservationCode}</p>
+                        <p style='font-size: 24px; font-weight: bold; text-align: center;'>{tableName}</p>
                         <p style='font-size: 16px;'>{translationResponse.thankYou}</p>
                         <p style='font-size: 16px;'>{translationResponse.bestRegards}</p>
                         <p style='font-size: 16px;'>{translationResponse.companyName}</p>

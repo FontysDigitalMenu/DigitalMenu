@@ -2,5 +2,5 @@
 
 public interface IEmailService
 {
-    public void SendReservationEmail(string toEmail, string reservationCode);
+    public void SendReservationEmail(string toEmail, string reservationCode, string tableName, string language);
 }

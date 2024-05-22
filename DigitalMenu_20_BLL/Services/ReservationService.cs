@@ -15,20 +15,24 @@ public class ReservationService(
 
     private readonly List<string> _validReservationTimes = ["13:00", "15:30", "18:00", "20:30", "23:00"];
 
-    public Reservation? Create(Reservation reservation)
+    public Reservation? Create(Reservation reservation, string language)
     {
         ValidateReservationBeforeCreation(reservation);
-
         reservation.ReservationId = new Random().Next(100000, 999999);
-
         reservation.ReservationDateTime = TruncateToNearestMinute(reservation.ReservationDateTime);
+
+        Table availableTable = GetAvailableTable(reservation.ReservationDateTime);
+        reservation.Table = availableTable;
+        reservation.TableId = availableTable.Id;
+
         Reservation? createdReservation = reservationRepository.Create(reservation);
         if (createdReservation == null)
         {
             throw new ReservationException("Failed to create reservation");
         }
 
-        emailService.SendReservationEmail(reservation.Email, reservation.ReservationId.ToString());
+        emailService.SendReservationEmail(reservation.Email, reservation.ReservationId.ToString(),
+            reservation.Table.Name, language);
 
         return reservation;
     }
@@ -60,6 +64,26 @@ public class ReservationService(
         return availableTimes;
     }
 
+    private Table GetAvailableTable(DateTime dateTime)
+    {
+        List<Table> tables = tableRepository.GetAllReservableTablesWithReservationsFrom(dateTime);
+
+        DateTime reservationStart = dateTime;
+        DateTime reservationEnd = reservationStart.AddHours(ReservationDuration);
+
+        List<Table> availableTables = tables.Where(t => t.Reservations.All(r =>
+            (reservationStart < r.ReservationDateTime && reservationEnd <= r.ReservationDateTime) ||
+            reservationStart > r.ReservationDateTime
+        )).ToList();
+
+        if (availableTables.Count <= 0)
+        {
+            throw new ReservationException("No table is available");
+        }
+
+        return availableTables.First();
+    }
+
     private static DateTime TruncateToNearestMinute(DateTime dateTime)
     {
         return new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, 0);
@@ -77,19 +101,6 @@ public class ReservationService(
         if (!isTwoAndAHalfHoursAhead)
         {
             throw new ReservationException("Reservation must be at least 2.5 hours ahead");
-        }
-
-        bool isValidTable = tableRepository.GetById(reservation.TableId) != null;
-        if (!isValidTable)
-        {
-            throw new ReservationException("Invalid table");
-        }
-
-        bool isTableAvailable =
-            reservationRepository.GetBy(reservation.TableId, reservation.ReservationDateTime) == null;
-        if (!isTableAvailable)
-        {
-            throw new ReservationException("Table is not available");
         }
 
         if (!EmailService.IsValid(reservation.Email))

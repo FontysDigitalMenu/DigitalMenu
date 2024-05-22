@@ -1,6 +1,7 @@
 ﻿using DigitalMenu_20_BLL.Interfaces.Repositories;
 using DigitalMenu_20_BLL.Models;
 using DigitalMenu_30_DAL.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace DigitalMenu_30_DAL.Repositories;
 
@@ -45,5 +46,13 @@ public class TableRepository(ApplicationDbContext dbContext) : ITableRepository
 
         dbContext.Tables.Remove(table);
         return dbContext.SaveChanges() > 0;
+    }
+
+    public List<Table> GetAllReservableTablesWithReservationsFrom(DateTime dateTime)
+    {
+        return dbContext.Tables
+            .Include(t => t.Reservations.Where(r => r.ReservationDateTime.Date == dateTime.Date))
+            .Where(t => t.IsReservable)
+            .ToList();
     }
 }
