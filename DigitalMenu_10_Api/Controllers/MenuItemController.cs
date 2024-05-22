@@ -103,6 +103,7 @@ public class MenuItemController(
                 Id = i.Id,
                 Name = i.Translations?.FirstOrDefault(t => t.LanguageCode == localeValue)?.Name ?? i.Name,
                 Stock = i.Stock,
+                Pieces = i.Pieces,
             }).ToList(),
             Categories = menuItem.Categories.Select(c => new CategoryViewModel
             {
