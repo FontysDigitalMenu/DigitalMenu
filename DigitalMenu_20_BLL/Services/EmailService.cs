@@ -74,7 +74,7 @@ public class EmailService(
         message.Subject = subject;
         message.Body = body;
         message.IsBodyHtml = true;
-        
+
         try
         {
             smtp.Send(message);

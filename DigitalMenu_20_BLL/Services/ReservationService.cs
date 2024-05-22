@@ -11,7 +11,7 @@ public class ReservationService(
     ITableRepository tableRepository,
     IEmailService emailService) : IReservationService
 {
-    private const double ReservationDuration = 2.5;
+    public const double ReservationDuration = 2.5;
 
     private readonly List<string> _validReservationTimes = ["13:00", "15:30", "18:00", "20:30", "23:00"];
 
@@ -62,6 +62,16 @@ public class ReservationService(
         }
 
         return availableTimes;
+    }
+
+    public void Delete(int reservationId)
+    {
+        reservationRepository.Delete(reservationId);
+    }
+
+    public void Unlock(int id)
+    {
+        reservationRepository.Unlock(id);
     }
 
     private Table GetAvailableTable(DateTime dateTime)
