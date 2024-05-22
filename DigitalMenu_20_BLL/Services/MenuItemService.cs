@@ -8,7 +8,7 @@ namespace DigitalMenu_20_BLL.Services;
 public class MenuItemService(IMenuItemRepository menuItemRepository, ITranslationService translationService)
     : IMenuItemService
 {
-    private readonly List<string> _languages = ["en", "nl", "de"];
+    private readonly List<string> _languages = ["en", "nl", "de", "ko"];
 
     public IEnumerable<Category> GetCategoriesWithNextMenuItems(int lastId, int amount)
     {
