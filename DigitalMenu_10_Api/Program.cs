@@ -54,6 +54,9 @@ builder.Services.AddScoped<IMollieHelper>(_ => new MollieHelper(
     builder.Configuration.GetValue<string>("Mollie:RedirectUrl")!,
     builder.Configuration.GetValue<string>("BackendUrl")!
 ));
+builder.Services.AddScoped<ITranslationService>(_ => new TranslationService(
+    builder.Configuration.GetValue<string>("TranslationUrl")!
+));
 builder.Services.AddScoped<IEmailService>(_ => new EmailService(
     builder.Configuration.GetValue<string>("Email:FromAddress")!,
     builder.Configuration.GetValue<string>("Email:FromName")!,

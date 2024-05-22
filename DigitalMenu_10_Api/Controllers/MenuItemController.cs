@@ -90,7 +90,7 @@ public class MenuItemController(
 
         menuItem.IsActive = menuItem.AreIngredientStocksSufficient();
 
-        return Ok(new MenuItemViewModel
+        return Ok(new MenuItemViewModel2
         {
             Id = menuItem.Id,
             Name = menuItem.Translations?.FirstOrDefault(t => t.LanguageCode == localeValue)?.Name ?? menuItem.Name,
@@ -103,6 +103,12 @@ public class MenuItemController(
                 Id = i.Id,
                 Name = i.Translations?.FirstOrDefault(t => t.LanguageCode == localeValue)?.Name ?? i.Name,
                 Stock = i.Stock,
+                Pieces = i.Pieces,
+            }).ToList(),
+            Categories = menuItem.Categories.Select(c => new CategoryViewModel
+            {
+                Id = c.Id,
+                Name = c.Translations?.FirstOrDefault(t => t.LanguageCode == localeValue)?.Name ?? c.Name,
             }).ToList(),
         });
     }
@@ -180,7 +186,8 @@ public class MenuItemController(
                     menuItemUrl),
             };
 
-            MenuItem? createdMenuItem = await menuItemService.CreateMenuItem(menuItem);
+            MenuItem? createdMenuItem =
+                await menuItemService.CreateMenuItem(menuItem, menuItemCreateRequest.FormLanguage);
             if (createdMenuItem == null)
             {
                 return BadRequest(new { Message = "Menu item could not be created" });
@@ -296,7 +303,8 @@ public class MenuItemController(
                     : "",
             };
 
-            MenuItem? updatedMenuItem = await menuItemService.UpdateMenuItem(menuItem);
+            MenuItem? updatedMenuItem =
+                await menuItemService.UpdateMenuItem(menuItem, menuItemUpdateRequest.FormLanguage);
             if (updatedMenuItem == null)
             {
                 return BadRequest(new { Message = "Menu item could not be updated" });

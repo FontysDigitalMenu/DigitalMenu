@@ -18,6 +18,12 @@ public interface IOrderService
 
     public IEnumerable<Order> GetPaidDrinksOrders();
 
+    public IEnumerable<Order> GetCompletedOrders();
+
+    public IEnumerable<Order> GetCompletedFoodOrders();
+
+    public IEnumerable<Order> GetCompletedDrinksOrders();
+
     public bool Update(Order order);
 
     public List<Order> GetUnpaidOrdersByTableSessionId(string tableSessionId);

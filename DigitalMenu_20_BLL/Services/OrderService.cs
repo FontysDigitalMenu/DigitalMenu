@@ -229,6 +229,50 @@ public class OrderService(
         return drinkOnlyOrders;
     }
 
+    public IEnumerable<Order> GetCompletedOrders()
+    {
+        IEnumerable<Order> completedOrders = orderRepository.GetPaidOrders()
+            .Where(o => o.FoodStatus == OrderStatus.Completed || o.DrinkStatus == OrderStatus.Completed);
+
+        return completedOrders;
+    }
+
+    public IEnumerable<Order> GetCompletedFoodOrders()
+    {
+        IEnumerable<Order> orders = orderRepository.GetPaidOrders();
+
+        IEnumerable<Order> completedFoodOnlyOrders = orders.Select(order =>
+            {
+                order.OrderMenuItems = order.OrderMenuItems
+                    .Where(omi => omi.MenuItem.CategoryMenuItems.Any(c => c.Category.Name != "Drinks")
+                                  && omi.Order.FoodStatus == OrderStatus.Completed)
+                    .ToList();
+
+                return order;
+            })
+            .Where(order => order.OrderMenuItems.Count != 0);
+
+        return completedFoodOnlyOrders;
+    }
+
+    public IEnumerable<Order> GetCompletedDrinksOrders()
+    {
+        IEnumerable<Order> orders = orderRepository.GetPaidOrders();
+
+        IEnumerable<Order> completedDrinksOnlyOrders = orders.Select(order =>
+            {
+                order.OrderMenuItems = order.OrderMenuItems
+                    .Where(omi => omi.MenuItem.CategoryMenuItems.Any(c => c.Category.Name == "Drinks")
+                                  && omi.Order.DrinkStatus == OrderStatus.Completed)
+                    .ToList();
+
+                return order;
+            })
+            .Where(order => order.OrderMenuItems.Count != 0);
+
+        return completedDrinksOnlyOrders;
+    }
+
     public int GetTotalAmount(string tableSessionId)
     {
         if (!cartItemRepository.ExistsByTableSessionId(tableSessionId))
