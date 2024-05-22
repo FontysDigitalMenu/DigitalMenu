@@ -64,7 +64,8 @@ builder.Services.AddScoped<IEmailService>(provider => new EmailService(
     builder.Configuration.GetValue<string>("Email:FromName")!,
     builder.Configuration.GetValue<string>("Email:Password")!,
     builder.Configuration.GetValue<int>("Email:Port")!,
-    builder.Configuration.GetValue<string>("Email:Host")!
+    builder.Configuration.GetValue<string>("Email:Host")!,
+    builder.Configuration.GetValue<bool>("Email:EnableSsl")!
 ));
 
 builder.Services.AddSwaggerGen(options =>

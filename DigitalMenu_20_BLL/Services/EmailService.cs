@@ -6,6 +6,7 @@ using DigitalMenu_20_BLL.Interfaces.Repositories;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
 using Newtonsoft.Json;
+using Serilog;
 
 namespace DigitalMenu_20_BLL.Services;
 
@@ -15,7 +16,8 @@ public class EmailService(
     string fromName,
     string password,
     int port,
-    string host) : IEmailService
+    string host,
+    bool enableSsl) : IEmailService
 {
     public void SendReservationEmail(string toEmail, string reservationCode, string tableName, string language)
     {
@@ -61,7 +63,7 @@ public class EmailService(
         {
             Host = host,
             Port = port,
-            EnableSsl = false,
+            EnableSsl = enableSsl,
             DeliveryMethod = SmtpDeliveryMethod.Network,
             UseDefaultCredentials = false,
             Credentials = new NetworkCredential(from.Address, password),
@@ -72,7 +74,15 @@ public class EmailService(
         message.Subject = subject;
         message.Body = body;
         message.IsBodyHtml = true;
-        smtp.Send(message);
+        
+        try
+        {
+            smtp.Send(message);
+        }
+        catch (Exception e)
+        {
+            Log.Warning("Mail could not be sent. Error: {0}", e.Message);
+        }
     }
 
     public static bool IsValid(string email)
