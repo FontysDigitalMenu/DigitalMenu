@@ -3,4 +3,6 @@
 public class TableRequest
 {
     public string Name { get; set; }
+    
+    public bool IsReservable { get; set; }
 }
