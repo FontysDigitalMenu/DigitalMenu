@@ -1,6 +1,6 @@
 ﻿namespace DigitalMenu_10_Api.ViewModels;
 
-public class MenuItemViewModel
+public class MenuItemViewModel2
 {
     public int Id { get; set; }
 
@@ -20,7 +20,7 @@ public class MenuItemViewModel
 
     public bool IsActive { get; set; } = true;
 
-    public List<string>? Categories { get; set; }
+    public List<CategoryViewModel>? Categories { get; set; }
 
     public List<IngredientViewModel> ExcludedIngredients { get; set; } = [];
 }

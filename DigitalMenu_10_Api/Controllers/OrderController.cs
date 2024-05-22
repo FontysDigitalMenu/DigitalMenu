@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using DigitalMenu_10_Api.Hub;
+﻿using DigitalMenu_10_Api.Hub;
 using DigitalMenu_10_Api.RequestModels;
 using DigitalMenu_10_Api.Services;
 using DigitalMenu_10_Api.ViewModels;
@@ -36,9 +35,13 @@ public class OrderController(
         Order createdOrder;
         try
         {
-            createdOrder = orderService.Create(orderRequest.TableSessionId, splits);
+            createdOrder = await orderService.Create(orderRequest.TableSessionId, splits);
         }
-        catch (ValidationException e)
+        catch (Exception e)
+        {
+            return BadRequest(new { e.Message });
+        }
+        /*catch (ValidationException e)
         {
             return BadRequest(new { e.Message });
         }
@@ -49,7 +52,7 @@ public class OrderController(
         catch (DatabaseCreationException e)
         {
             return BadRequest(new { e.Message });
-        }
+        }*/
 
         cartItemService.ClearByTableSessionId(orderRequest.TableSessionId);
 
@@ -83,6 +86,31 @@ public class OrderController(
         }
 
         return Ok(orders.Select(o => OrderViewModel.FromOrder(o, cartItemService)));
+    }
+
+    [Authorize(Roles = "Admin, Employee")]
+    [HttpGet("completed/{type}")]
+    public ActionResult<List<OrderViewModel>> GetCompletedOrders([FromRoute] string type)
+    {
+        IEnumerable<Order> orders;
+
+        switch (type)
+        {
+            case "food":
+                orders = orderService.GetCompletedFoodOrders();
+                break;
+            case "drinks":
+                orders = orderService.GetCompletedDrinksOrders();
+                break;
+            default:
+                orders = orderService.GetCompletedOrders();
+                break;
+        }
+
+        List<OrderViewModel> orderViewModels =
+            orders.Select(o => OrderViewModel.FromOrder(o, cartItemService)).ToList();
+
+        return Ok(orderViewModels);
     }
 
     [HttpGet("{id}/{tableSessionId}")]
@@ -186,6 +214,8 @@ public class OrderController(
         {
             hubContext.Clients.Group($"order-{order.Id}").ReceiveOrderUpdate(orderViewModel);
         }
+
+        hubContext.Clients.All.ReceiveOrderDrinksUpdate();
 
         return NoContent();
     }

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using DigitalMenu_20_BLL.Enums;
 using DigitalMenu_20_BLL.Exceptions;
 using DigitalMenu_20_BLL.Interfaces.Repositories;
 using DigitalMenu_20_BLL.Interfaces.Services;
@@ -12,9 +13,11 @@ public class OrderService(
     IOrderRepository orderRepository,
     ICartItemRepository cartItemRepository,
     ITableRepository tableRepository,
-    ISplitRepository splitRepository) : IOrderService
+    ISplitRepository splitRepository,
+    IMenuItemRepository menuItemRepository,
+    IIngredientRepository ingredientRepository) : IOrderService
 {
-    public Order Create(string tableSessionId, List<Split> splits)
+    public async Task<Order> Create(string tableSessionId, List<Split> splits)
     {
         Table? table = tableRepository.GetBySessionId(tableSessionId);
         if (table == null)
@@ -40,6 +43,53 @@ public class OrderService(
                     IngredientId = ei.Id,
                 }).ToList(),
         }).ToList();
+
+
+        foreach (OrderMenuItem orderMenuItem in orderMenuItems)
+        {
+            MenuItem? menuItem = menuItemRepository.GetMenuItemBy(orderMenuItem.MenuItemId);
+
+            if (menuItem == null)
+            {
+                throw new NotFoundException("Menu item does not exist");
+            }
+
+            foreach (Ingredient ingredient in menuItem.Ingredients)
+            {
+                Ingredient? ingredientWithStock = await ingredientRepository.GetIngredientById(ingredient.Id);
+
+                if (ingredientWithStock != null)
+                {
+                    ingredient.Stock = ingredientWithStock.Stock;
+                }
+
+                if (ingredient.Stock < ingredient.Pieces || ingredient.Stock - ingredient.Pieces < 0)
+                {
+                    throw new Exception("Insufficient stock for ingredient: " + ingredient.Name);
+                }
+            }
+
+            foreach (Ingredient ingredient in menuItem.Ingredients)
+            {
+                Ingredient? ingredientWithStock = await ingredientRepository.GetIngredientById(ingredient.Id);
+
+                if (ingredientWithStock != null)
+                {
+                    ingredient.Stock = ingredientWithStock.Stock;
+                }
+
+                ingredient.Stock -= ingredient.Pieces;
+
+                Ingredient updatedIngredient = new()
+                {
+                    Id = ingredient.Id,
+                    Name = ingredient.Name,
+                    Stock = ingredient.Stock,
+                };
+
+                await ingredientRepository.UpdateIngredient(updatedIngredient);
+            }
+        }
 
         int totalAmount = GetTotalAmount(tableSessionId);
         if (splits.Any(s => s.Amount <= 0))
@@ -129,9 +179,20 @@ public class OrderService(
 
         IEnumerable<Order> foodOnlyOrders = orders.Select(order =>
             {
-                order.OrderMenuItems = order.OrderMenuItems
+                List<OrderMenuItem> foodOrderMenuItems = order.OrderMenuItems
                     .Where(omi => omi.MenuItem.CategoryMenuItems.Any(c => c.Category.Name != "Drinks"))
                     .ToList();
+
+                List<OrderMenuItem> drinkOrderMenuItems = order.OrderMenuItems
+                    .Where(omi => omi.MenuItem.CategoryMenuItems.Any(c => c.Category.Name == "Drinks"))
+                    .ToList();
+
+                if (drinkOrderMenuItems.Count <= 0)
+                {
+                    order.DrinkStatus = OrderStatus.None;
+                }
+
+                order.OrderMenuItems = foodOrderMenuItems;
 
                 return order;
             })
@@ -146,15 +207,70 @@ public class OrderService(
 
         IEnumerable<Order> drinkOnlyOrders = orders.Select(order =>
             {
-                order.OrderMenuItems = order.OrderMenuItems
+                List<OrderMenuItem> foodOrderMenuItems = order.OrderMenuItems
+                    .Where(omi => omi.MenuItem.CategoryMenuItems.Any(c => c.Category.Name != "Drinks"))
+                    .ToList();
+
+                List<OrderMenuItem> drinkOrderMenuItems = order.OrderMenuItems
                     .Where(omi => omi.MenuItem.CategoryMenuItems.Any(c => c.Category.Name == "Drinks"))
                     .ToList();
+
+                if (foodOrderMenuItems.Count <= 0)
+                {
+                    order.FoodStatus = OrderStatus.None;
+                }
+
+                order.OrderMenuItems = drinkOrderMenuItems;
 
                 return order;
             })
             .Where(order => order.OrderMenuItems.Count != 0);
 
         return drinkOnlyOrders;
+    }
+
+    public IEnumerable<Order> GetCompletedOrders()
+    {
+        IEnumerable<Order> completedOrders = orderRepository.GetPaidOrders()
+            .Where(o => o.FoodStatus == OrderStatus.Completed || o.DrinkStatus == OrderStatus.Completed);
+
+        return completedOrders;
+    }
+
+    public IEnumerable<Order> GetCompletedFoodOrders()
+    {
+        IEnumerable<Order> orders = orderRepository.GetPaidOrders();
+
+        IEnumerable<Order> completedFoodOnlyOrders = orders.Select(order =>
+            {
+                order.OrderMenuItems = order.OrderMenuItems
+                    .Where(omi => omi.MenuItem.CategoryMenuItems.Any(c => c.Category.Name != "Drinks")
+                                  && omi.Order.FoodStatus == OrderStatus.Completed)
+                    .ToList();
+
+                return order;
+            })
+            .Where(order => order.OrderMenuItems.Count != 0);
+
+        return completedFoodOnlyOrders;
+    }
+
+    public IEnumerable<Order> GetCompletedDrinksOrders()
+    {
+        IEnumerable<Order> orders = orderRepository.GetPaidOrders();
+
+        IEnumerable<Order> completedDrinksOnlyOrders = orders.Select(order =>
+            {
+                order.OrderMenuItems = order.OrderMenuItems
+                    .Where(omi => omi.MenuItem.CategoryMenuItems.Any(c => c.Category.Name == "Drinks")
+                                  && omi.Order.DrinkStatus == OrderStatus.Completed)
+                    .ToList();
+
+                return order;
+            })
+            .Where(order => order.OrderMenuItems.Count != 0);
+
+        return completedDrinksOnlyOrders;
     }
 
     public int GetTotalAmount(string tableSessionId)

@@ -1,17 +1,21 @@
-﻿using DigitalMenu_10_Api.RequestModels;
+﻿using DigitalMenu_10_Api.Hub;
+using DigitalMenu_10_Api.RequestModels;
 using DigitalMenu_10_Api.ViewModels;
 using DigitalMenu_20_BLL.Exceptions;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace DigitalMenu_10_Api.Controllers;
 
 [Authorize(Roles = "Admin")]
 [Route("api/v1/ingredients")]
 [ApiController]
-public class IngredientsController(IIngredientService ingredientService) : ControllerBase
+public class IngredientsController(
+    IIngredientService ingredientService,
+    IHubContext<IngredientHub, IIngredientHubClient> hubContext) : ControllerBase
 {
     [HttpGet]
     [ProducesResponseType(200)]
@@ -62,11 +66,14 @@ public class IngredientsController(IIngredientService ingredientService) : Contr
                 Stock = ingredientCreateRequest.Stock,
             };
 
-            Ingredient? createdIngredient = await ingredientService.CreateIngredient(ingredient);
+            Ingredient? createdIngredient =
+                await ingredientService.CreateIngredient(ingredient, ingredientCreateRequest.FormLanguage);
             if (createdIngredient == null)
             {
                 return BadRequest(new { Message = "Ingredient could not be created" });
             }
+
+            await SendUpdatedIngredientsStock();
 
             return Created("",
                 new Ingredient
@@ -95,11 +102,14 @@ public class IngredientsController(IIngredientService ingredientService) : Contr
             ingredient.Name = ingredientUpdateRequest.Name;
             ingredient.Stock = ingredientUpdateRequest.Stock;
 
-            bool ingredientUpdated = await ingredientService.UpdateIngredient(ingredient);
+            bool ingredientUpdated =
+                await ingredientService.UpdateIngredient(ingredient, ingredientUpdateRequest.FormLanguage);
             if (!ingredientUpdated)
             {
                 return BadRequest(new { Message = "Ingredient could not be updated" });
             }
+
+            await SendUpdatedIngredientsStock();
 
             return NoContent();
         }
@@ -124,6 +134,8 @@ public class IngredientsController(IIngredientService ingredientService) : Contr
                 return BadRequest(new { Message = "Could not delete ingredient." });
             }
 
+            await SendUpdatedIngredientsStock();
+
             return NoContent();
         }
         catch (ArgumentException e)
@@ -134,5 +146,19 @@ public class IngredientsController(IIngredientService ingredientService) : Contr
         {
             return NotFound();
         }
+    }
+
+    private async Task SendUpdatedIngredientsStock()
+    {
+        List<Ingredient> ingredients = await ingredientService.GetIngredients();
+
+        List<IngredientViewModel> ingredientViewModels = ingredients.Select(ingredient => new IngredientViewModel
+        {
+            Id = ingredient.Id,
+            Name = ingredient.Name,
+            Stock = ingredient.Stock,
+        }).ToList();
+
+        await hubContext.Clients.All.ReceiveIngredient(ingredientViewModels);
     }
 }

@@ -50,8 +50,20 @@ public class IngredientRepository(ApplicationDbContext dbContext) : IIngredientR
 
     public async Task<bool> UpdateIngredient(Ingredient ingredient)
     {
-        dbContext.Ingredients.Update(ingredient);
-        return await dbContext.SaveChangesAsync() > 0;
+        Ingredient? trackedIngredient = await dbContext.Ingredients.FindAsync(ingredient.Id);
+
+        if (trackedIngredient != null)
+        {
+            trackedIngredient.Name = ingredient.Name;
+            trackedIngredient.Stock = ingredient.Stock;
+        }
+        else
+        {
+            dbContext.Ingredients.Update(ingredient);
+        }
+
+        await dbContext.SaveChangesAsync();
+        return true;
     }
 
     public async Task<bool> DeleteIngredient(int ingredientId)
@@ -64,5 +76,32 @@ public class IngredientRepository(ApplicationDbContext dbContext) : IIngredientR
 
         dbContext.Ingredients.Remove(ingredient);
         return await dbContext.SaveChangesAsync() > 0;
+    }
+
+    public void CreateIngredientTranslations(List<IngredientTranslation> ingredientTranslations)
+    {
+        dbContext.IngredientTranslations.AddRange(ingredientTranslations);
+        dbContext.SaveChanges();
+    }
+
+    public void UpdateOrCreateIngredientTranslation(IngredientTranslation ingredientTranslation)
+    {
+        IngredientTranslation? existingTranslation = dbContext.IngredientTranslations.Find(ingredientTranslation.Id);
+        if (existingTranslation == null)
+        {
+            dbContext.IngredientTranslations.Add(ingredientTranslation);
+            dbContext.SaveChanges();
+            return;
+        }
+
+        existingTranslation.Name = ingredientTranslation.Name;
+        dbContext.SaveChanges();
+    }
+
+    public Task<List<IngredientTranslation>> GetIngredientTranslations(int ingredientId)
+    {
+        return dbContext.IngredientTranslations
+            .Where(it => it.IngredientId == ingredientId)
+            .ToListAsync();
     }
 }

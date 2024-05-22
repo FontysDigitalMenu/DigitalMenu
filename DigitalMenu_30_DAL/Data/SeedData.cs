@@ -261,8 +261,12 @@ public class SeedData(ApplicationDbContext dbContext)
                 Name = "Burger",
                 Description = "A delicious burger",
                 Price = 1000,
-                ImageUrl =
-                    "https://www.outofhome-shops.nl/files/202202/dist/3d91e961ea0f0abc6ee29aabe8dddc10.jpg",
+                ImageUrl = "https://www.outofhome-shops.nl/files/202202/dist/3d91e961ea0f0abc6ee29aabe8dddc10.jpg",
+                Translations = new List<MenuItemTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "Hamburger", Description = "Heerlijke hamburger" },
+                    new() { LanguageCode = "de", Name = "Burger", Description = "Ein köstlicher Burger" },
+                },
             },
             new MenuItem
             {
@@ -272,6 +276,11 @@ public class SeedData(ApplicationDbContext dbContext)
                 Price = 1500,
                 ImageUrl =
                     "https://www.moulinex-me.com/medias/?context=bWFzdGVyfHJvb3R8MTQzNTExfGltYWdlL2pwZWd8aGNlL2hmZC8xNTk2ODYyNTc4NjkxMC5qcGd8MmYwYzQ4YTg0MTgzNmVjYTZkMWZkZWZmMDdlMWFlMjRhOGIxMTQ2MTZkNDk4ZDU3ZjlkNDk2MzMzNDA5OWY3OA",
+                Translations = new List<MenuItemTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "Pizza", Description = "Heerlijke pizza" },
+                    new() { LanguageCode = "de", Name = "Pizza", Description = "Eine köstliche Pizza" },
+                },
             },
             new MenuItem
             {
@@ -279,8 +288,12 @@ public class SeedData(ApplicationDbContext dbContext)
                 Name = "Pasta",
                 Description = "A delicious pasta",
                 Price = 1200,
-                ImageUrl =
-                    "https://www.culy.nl/wp-content/uploads/2023/09/3_pasta-all-assassina-recept-1024x683.jpg",
+                ImageUrl = "https://www.culy.nl/wp-content/uploads/2023/09/3_pasta-all-assassina-recept-1024x683.jpg",
+                Translations = new List<MenuItemTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "Pasta", Description = "Heerlijke pasta" },
+                    new() { LanguageCode = "de", Name = "Pasta", Description = "Eine köstliche Pasta" },
+                },
             },
             new MenuItem
             {
@@ -288,8 +301,12 @@ public class SeedData(ApplicationDbContext dbContext)
                 Name = "Fries",
                 Description = "A delicious fries",
                 Price = 500,
-                ImageUrl =
-                    "https://www.inspiredtaste.net/wp-content/uploads/2023/09/Baked-French-Fries-Video.jpg",
+                ImageUrl = "https://www.inspiredtaste.net/wp-content/uploads/2023/09/Baked-French-Fries-Video.jpg",
+                Translations = new List<MenuItemTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "Frietjes", Description = "Heerlijke frietjes" },
+                    new() { LanguageCode = "de", Name = "Pommes", Description = "Köstliche Pommes" },
+                },
             },
             new MenuItem
             {
@@ -299,6 +316,11 @@ public class SeedData(ApplicationDbContext dbContext)
                 Price = 200,
                 ImageUrl =
                     "https://kentstreetcellars.com.au/cdn/shop/files/coke-can_7bf866c9-bffc-449d-a173-de324ac47905_1200x1200.png?v=1687840069",
+                Translations = new List<MenuItemTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "Cola", Description = "Heerlijke cola" },
+                    new() { LanguageCode = "de", Name = "Cola", Description = "Eine köstliche Cola" },
+                },
             },
             new MenuItem
             {
@@ -308,6 +330,11 @@ public class SeedData(ApplicationDbContext dbContext)
                 Price = 200,
                 ImageUrl =
                     "https://www.compliment.nl/wp-content/uploads/2018/08/Pepsi-Cola-regular-blik-24x-33cl_jpg.webp",
+                Translations = new List<MenuItemTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "Pepsi", Description = "Heerlijke pepsi" },
+                    new() { LanguageCode = "de", Name = "Pepsi", Description = "Ein köstliches Pepsi" },
+                },
             },
             new MenuItem
             {
@@ -316,6 +343,11 @@ public class SeedData(ApplicationDbContext dbContext)
                 Description = "A delicious sprite",
                 Price = 200,
                 ImageUrl = "https://www.africaproducts.nl/cdn/shop/products/3836_700x.jpg?v=1613150968",
+                Translations = new List<MenuItemTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "Sprite", Description = "Heerlijke sprite" },
+                    new() { LanguageCode = "de", Name = "Sprite", Description = "Ein köstliches Sprite" },
+                },
             },
             new MenuItem
             {
@@ -325,6 +357,11 @@ public class SeedData(ApplicationDbContext dbContext)
                 Price = 200,
                 ImageUrl =
                     "https://www.frisdrankkoning.nl/wp-content/uploads/2023/01/1d0e3d578e436b391f9d6edf8524f094_Fanta_____Orange_1.jpg",
+                Translations = new List<MenuItemTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "Fanta", Description = "Heerlijke fanta" },
+                    new() { LanguageCode = "de", Name = "Fanta", Description = "Eine köstliche Fanta" },
+                },
             },
             new MenuItem
             {
@@ -334,6 +371,11 @@ public class SeedData(ApplicationDbContext dbContext)
                 Price = 200,
                 ImageUrl =
                     "https://goedkoopblikjes.nl/image/cache/catalog/Frisdrank/Blikje%20fris/Light/7_up_free_zero_sugar_blikjes_33cl_tray-800x800.jpg",
+                Translations = new List<MenuItemTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "7up", Description = "Heerlijke 7up" },
+                    new() { LanguageCode = "de", Name = "7up", Description = "Ein köstliches 7up" },
+                },
             },
             new MenuItem
             {
@@ -343,6 +385,11 @@ public class SeedData(ApplicationDbContext dbContext)
                 Price = 200,
                 ImageUrl =
                     "https://www.frisenzoetwaren.nl/wp-content/uploads/2023/07/Mountain-Dew-Citrus-Blast-24-x-330-ml-EU.jpg",
+                Translations = new List<MenuItemTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "Mountain Dew", Description = "Heerlijke Mountain Dew" },
+                    new() { LanguageCode = "de", Name = "Mountain Dew", Description = "Ein köstlicher Mountain Dew" },
+                },
             }
         );
         await dbContext.SaveChangesAsync();
@@ -351,33 +398,222 @@ public class SeedData(ApplicationDbContext dbContext)
     private async Task SeedIngredients()
     {
         dbContext.Ingredients.AddRange(
-            new Ingredient { Id = 1, Name = "Beef Patty" },
-            new Ingredient { Id = 2, Name = "Hamburger Bun" },
-            new Ingredient { Id = 3, Name = "Lettuce" },
-            new Ingredient { Id = 4, Name = "Tomato Slices" },
-            new Ingredient { Id = 5, Name = "Onion Slices" },
-            new Ingredient { Id = 6, Name = "Pickles" },
-            new Ingredient { Id = 7, Name = "Cheese" },
-            new Ingredient { Id = 8, Name = "Bacon" },
-            new Ingredient { Id = 9, Name = "Ketchup" },
-            new Ingredient { Id = 10, Name = "Mustard" },
-            new Ingredient { Id = 11, Name = "Mayonnaise" },
-            new Ingredient { Id = 12, Name = "Pizza Dough" },
-            new Ingredient { Id = 13, Name = "Tomato Sauce" },
-            new Ingredient { Id = 14, Name = "Mozzarella Cheese" },
-            new Ingredient { Id = 15, Name = "Pepperoni" },
-            new Ingredient { Id = 16, Name = "Mushrooms" },
-            new Ingredient { Id = 17, Name = "Bell Peppers" },
-            new Ingredient { Id = 18, Name = "Onions" },
-            new Ingredient { Id = 19, Name = "Olives" },
-            new Ingredient { Id = 20, Name = "Basil" },
-            new Ingredient { Id = 21, Name = "Pasta" },
-            new Ingredient { Id = 22, Name = "Garlic" },
-            new Ingredient { Id = 23, Name = "Olive Oil" },
-            new Ingredient { Id = 24, Name = "Parmesan Cheese" },
-            new Ingredient { Id = 25, Name = "Potatoes" },
-            new Ingredient { Id = 26, Name = "Salt" },
-            new Ingredient { Id = 27, Name = "Oil" }
+            new Ingredient
+            {
+                Id = 1, Name = "Beef Patty", Stock = 16, Translations = new List<IngredientTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "Rundergehakt" },
+                    new() { LanguageCode = "de", Name = "Rindfleischfrikadelle" },
+                },
+            },
+            new Ingredient
+            {
+                Id = 2, Name = "Hamburger Bun", Stock = 8, Translations = new List<IngredientTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "Hamburgerbroodje" },
+                    new() { LanguageCode = "de", Name = "Hamburgerbrötchen" },
+                },
+            },
+            new Ingredient
+            {
+                Id = 3, Name = "Lettuce", Stock = 20, Translations = new List<IngredientTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "Sla" },
+                    new() { LanguageCode = "de", Name = "Salat" },
+                },
+            },
+            new Ingredient
+            {
+                Id = 4, Name = "Tomato Slices", Stock = 26, Translations = new List<IngredientTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "Tomaat" },
+                    new() { LanguageCode = "de", Name = "Tomatenscheiben" },
+                },
+            },
+            new Ingredient
+            {
+                Id = 5, Name = "Onion Slices", Stock = 9, Translations = new List<IngredientTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "Ui" },
+                    new() { LanguageCode = "de", Name = "Zwiebelscheiben" },
+                },
+            },
+            new Ingredient
+            {
+                Id = 6, Name = "Pickles", Stock = 20, Translations = new List<IngredientTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "Augurken" },
+                    new() { LanguageCode = "de", Name = "Essiggurken" },
+                },
+            },
+            new Ingredient
+            {
+                Id = 7, Name = "Cheese", Stock = 10, Translations = new List<IngredientTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "Kaas" },
+                    new() { LanguageCode = "de", Name = "Käse" },
+                },
+            },
+            new Ingredient
+            {
+                Id = 8, Name = "Bacon", Stock = 10, Translations = new List<IngredientTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "Spek" },
+                    new() { LanguageCode = "de", Name = "Speck" },
+                },
+            },
+            new Ingredient
+            {
+                Id = 9, Name = "Ketchup", Stock = 10, Translations = new List<IngredientTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "Ketchup" },
+                    new() { LanguageCode = "de", Name = "Ketchup" },
+                },
+            },
+            new Ingredient
+            {
+                Id = 10, Name = "Mustard", Stock = 18, Translations = new List<IngredientTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "Mosterd" },
+                    new() { LanguageCode = "de", Name = "Senf" },
+                },
+            },
+            new Ingredient
+            {
+                Id = 11, Name = "Mayonnaise", Stock = 4, Translations = new List<IngredientTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "Mayonaise" },
+                    new() { LanguageCode = "de", Name = "Mayonnaise" },
+                },
+            },
+            new Ingredient
+            {
+                Id = 12, Name = "Pizza Dough", Stock = 14, Translations = new List<IngredientTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "Pizzadeeg" },
+                    new() { LanguageCode = "de", Name = "Pizzateig" },
+                },
+            },
+            new Ingredient
+            {
+                Id = 13, Name = "Tomato Sauce", Stock = 19, Translations = new List<IngredientTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "Tomatensaus" },
+                    new() { LanguageCode = "de", Name = "Tomatensauce" },
+                },
+            },
+            new Ingredient
+            {
+                Id = 14, Name = "Mozzarella Cheese", Stock = 10, Translations = new List<IngredientTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "Mozzarella kaas" },
+                    new() { LanguageCode = "de", Name = "Mozzarella-Käse" },
+                },
+            },
+            new Ingredient
+            {
+                Id = 15, Name = "Pepperoni", Stock = 30, Translations = new List<IngredientTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "Pepperoni" },
+                    new() { LanguageCode = "de", Name = "Pepperoni" },
+                },
+            },
+            new Ingredient
+            {
+                Id = 16, Name = "Mushrooms", Stock = 25, Translations = new List<IngredientTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "Champignons" },
+                    new() { LanguageCode = "de", Name = "Pilze" },
+                },
+            },
+            new Ingredient
+            {
+                Id = 17, Name = "Bell Peppers", Stock = 17, Translations = new List<IngredientTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "Paprika" },
+                    new() { LanguageCode = "de", Name = "Paprika" },
+                },
+            },
+            new Ingredient
+            {
+                Id = 18, Name = "Onions", Stock = 14, Translations = new List<IngredientTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "Uien" },
+                    new() { LanguageCode = "de", Name = "Zwiebeln" },
+                },
+            },
+            new Ingredient
+            {
+                Id = 19, Name = "Olives", Stock = 12, Translations = new List<IngredientTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "Olijven" },
+                    new() { LanguageCode = "de", Name = "Oliven" },
+                },
+            },
+            new Ingredient
+            {
+                Id = 20, Name = "Basil", Stock = 10, Translations = new List<IngredientTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "Basilicum" },
+                    new() { LanguageCode = "de", Name = "Basilikum" },
+                },
+            },
+            new Ingredient
+            {
+                Id = 21, Name = "Pasta", Stock = 21, Translations = new List<IngredientTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "Pasta" },
+                    new() { LanguageCode = "de", Name = "Pasta" },
+                },
+            },
+            new Ingredient
+            {
+                Id = 22, Name = "Garlic", Stock = 21, Translations = new List<IngredientTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "Knoflook" },
+                    new() { LanguageCode = "de", Name = "Knoblauch" },
+                },
+            },
+            new Ingredient
+            {
+                Id = 23, Name = "Olive Oil", Stock = 21, Translations = new List<IngredientTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "Olijfolie" },
+                    new() { LanguageCode = "de", Name = "Olivenöl" },
+                },
+            },
+            new Ingredient
+            {
+                Id = 24, Name = "Parmesan Cheese", Stock = 21, Translations = new List<IngredientTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "Parmezaanse kaas" },
+                    new() { LanguageCode = "de", Name = "Parmesankäse" },
+                },
+            },
+            new Ingredient
+            {
+                Id = 25, Name = "Potatoes", Stock = 21, Translations = new List<IngredientTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "Aardappelen" },
+                    new() { LanguageCode = "de", Name = "Kartoffeln" },
+                },
+            },
+            new Ingredient
+            {
+                Id = 26, Name = "Salt", Stock = 10, Translations = new List<IngredientTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "Zout" },
+                    new() { LanguageCode = "de", Name = "Salz" },
+                },
+            },
+            new Ingredient
+            {
+                Id = 27, Name = "Oil", Stock = 10, Translations = new List<IngredientTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "Olie" },
+                    new() { LanguageCode = "de", Name = "Öl" },
+                },
+            }
         );
         await dbContext.SaveChangesAsync();
     }
@@ -421,9 +657,30 @@ public class SeedData(ApplicationDbContext dbContext)
     private async Task SeedCategories()
     {
         dbContext.Categories.AddRange(
-            new Category { Id = 1, Name = "Italian" },
-            new Category { Id = 2, Name = "American" },
-            new Category { Id = 3, Name = "Drinks" }
+            new Category
+            {
+                Id = 1, Name = "Italian", Translations = new List<CategoryTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "Italiaans" },
+                    new() { LanguageCode = "de", Name = "Italienisch" },
+                },
+            },
+            new Category
+            {
+                Id = 2, Name = "American", Translations = new List<CategoryTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "Amerikaans" },
+                    new() { LanguageCode = "de", Name = "Amerikanisch" },
+                },
+            },
+            new Category
+            {
+                Id = 3, Name = "Drinks", Translations = new List<CategoryTranslation>
+                {
+                    new() { LanguageCode = "nl", Name = "Dranken" },
+                    new() { LanguageCode = "de", Name = "Getränke" },
+                },
+            }
         );
         await dbContext.SaveChangesAsync();
 

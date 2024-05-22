@@ -17,4 +17,10 @@ public interface IIngredientRepository
     public Task<bool> UpdateIngredient(Ingredient ingredient);
 
     public Task<bool> DeleteIngredient(int ingredientId);
+
+    public void CreateIngredientTranslations(List<IngredientTranslation> ingredientTranslations);
+
+    public void UpdateOrCreateIngredientTranslation(IngredientTranslation ingredientTranslation);
+
+    public Task<List<IngredientTranslation>> GetIngredientTranslations(int ingredientId);
 }

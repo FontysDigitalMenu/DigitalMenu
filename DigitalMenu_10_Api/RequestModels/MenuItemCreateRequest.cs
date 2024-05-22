@@ -2,6 +2,8 @@
 
 public class MenuItemCreateRequest
 {
+    public string FormLanguage { get; set; }
+
     public string Name { get; set; }
 
     public decimal Price { get; set; }

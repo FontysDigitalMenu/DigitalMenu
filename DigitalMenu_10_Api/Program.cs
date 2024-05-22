@@ -52,6 +52,9 @@ builder.Services.AddScoped<IMollieHelper>(_ => new MollieHelper(
     builder.Configuration.GetValue<string>("Mollie:RedirectUrl")!,
     builder.Configuration.GetValue<string>("BackendUrl")!
 ));
+builder.Services.AddScoped<ITranslationService>(_ => new TranslationService(
+    builder.Configuration.GetValue<string>("TranslationUrl")!
+));
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -140,5 +143,6 @@ app.MapControllers();
 app.UseCors();
 
 app.MapHub<OrderHub>("/api/orderHub");
+app.MapHub<IngredientHub>("/api/ingredientHub");
 
 app.Run();

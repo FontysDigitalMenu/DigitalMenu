@@ -6,6 +6,8 @@ public interface IOrderHubClient
 {
     Task ReceiveOrder(OrderViewModel orderViewModel);
 
+    Task ReceiveOrderDrinksUpdate();
+
     Task ReceiveOrderUpdate(OrderViewModel orderViewModel);
 
     Task AddToGroup(GroupRequest groupRequest);
