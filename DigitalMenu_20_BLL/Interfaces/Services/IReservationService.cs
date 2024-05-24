@@ -10,4 +10,10 @@ public interface IReservationService
     public List<Reservation> GetByDay(DateTime dateTime);
 
     public List<AvailableTimes> GetAvailableTimes(DateTime date);
+
+    public void Delete(int reservationId);
+
+    public void Unlock(int reservationId);
+
+    public bool MustPayReservationFee(string tableSessionId);
 }

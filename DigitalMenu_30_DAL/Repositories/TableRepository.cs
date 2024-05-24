@@ -21,7 +21,9 @@ public class TableRepository(ApplicationDbContext dbContext) : ITableRepository
 
     public Table? GetById(string id)
     {
-        return dbContext.Tables.Find(id);
+        return dbContext.Tables
+            .Include(t => t.Reservations)
+            .First(t => t.Id == id);
     }
 
     public Table? GetBySessionId(string sessionId)
@@ -46,6 +48,20 @@ public class TableRepository(ApplicationDbContext dbContext) : ITableRepository
 
         dbContext.Tables.Remove(table);
         return dbContext.SaveChanges() > 0;
+    }
+
+    public Table? GetTableByIdWithReservationsFromDay(string id, DateTime dateTime)
+    {
+        return dbContext.Tables
+            .Include(t => t.Reservations.Where(r => r.ReservationDateTime.Date == dateTime.Date))
+            .FirstOrDefault(t => t.Id == id);
+    }
+
+    public Table? GetTableBySessionIdWithReservationsFromDay(string sessionId, DateTime dateTime)
+    {
+        return dbContext.Tables
+            .Include(t => t.Reservations.Where(r => r.ReservationDateTime.Date == dateTime.Date))
+            .FirstOrDefault(t => t.SessionId == sessionId);
     }
 
     public List<Table> GetAllReservableTablesWithReservationsFrom(DateTime dateTime)

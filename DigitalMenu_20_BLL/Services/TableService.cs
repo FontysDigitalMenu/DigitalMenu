@@ -1,4 +1,5 @@
-﻿using DigitalMenu_20_BLL.Exceptions;
+﻿using DigitalMenu_20_BLL.Dtos;
+using DigitalMenu_20_BLL.Exceptions;
 using DigitalMenu_20_BLL.Interfaces.Repositories;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
@@ -7,7 +8,7 @@ using DigitalMenu_20_BLL.Models;
 
 namespace DigitalMenu_20_BLL.Services;
 
-public class TableService(ITableRepository tableRepository) : ITableService
+public class TableService(ITableRepository tableRepository, IReservationService reservationService) : ITableService
 {
     // public string GenerateQrCode(string backendUrl, string id)
     // {
@@ -80,5 +81,56 @@ public class TableService(ITableRepository tableRepository) : ITableService
         }
 
         return true;
+    }
+
+    public TableScan Scan(string id, int? code)
+    {
+        DateTime now = DateTime.Now;
+        Table? table = tableRepository.GetTableByIdWithReservationsFromDay(id, now);
+
+        if (table == null)
+        {
+            return new TableScan { Table = null };
+        }
+
+        Reservation? reservation = IsTableAvailableForAtLeastTwoAndAHalfHours(table, now);
+        if (reservation == null)
+        {
+            return new TableScan { Table = table, IsReserved = false };
+        }
+
+        bool reservationIsHourOldAndNotUnlocked =
+            reservation.ReservationDateTime.AddHours(1) <= now && !reservation.IsUnlocked;
+        if (reservationIsHourOldAndNotUnlocked)
+        {
+            reservationService.Delete(reservation.Id);
+            return new TableScan { Table = table, IsReserved = false };
+        }
+
+        if (reservation.ReservationId != code && !reservation.IsUnlocked)
+        {
+            return new TableScan { Table = table, IsReserved = true };
+        }
+
+        if (reservation.ReservationId == code)
+        {
+            reservationService.Unlock(reservation.Id);
+        }
+
+        return new TableScan { Table = table, IsReserved = true, IsUnlocked = true };
+    }
+
+    private static Reservation? IsTableAvailableForAtLeastTwoAndAHalfHours(Table table, DateTime dateTime)
+    {
+        foreach (Reservation reservation in table.Reservations)
+        {
+            if (reservation.ReservationDateTime.TimeOfDay <= dateTime.TimeOfDay &&
+                reservation.ReservationDateTime.AddHours(ReservationService.ReservationDuration) >= dateTime)
+            {
+                return reservation;
+            }
+        }
+
+        return null;
     }
 }

@@ -23,4 +23,28 @@ public class ReservationRepository(ApplicationDbContext dbContext) : IReservatio
     {
         return dbContext.Reservations.Where(r => r.ReservationDateTime.Date == dateTime.Date).ToList();
     }
+
+    public void Delete(int reservationId)
+    {
+        Reservation? reservation = dbContext.Reservations.FirstOrDefault(r => r.Id == reservationId);
+        if (reservation == null)
+        {
+            return;
+        }
+
+        dbContext.Reservations.Remove(reservation);
+        dbContext.SaveChanges();
+    }
+
+    public void Unlock(int id)
+    {
+        Reservation? reservation = dbContext.Reservations.FirstOrDefault(r => r.Id == id);
+        if (reservation == null)
+        {
+            return;
+        }
+
+        reservation.IsUnlocked = true;
+        dbContext.SaveChanges();
+    }
 }

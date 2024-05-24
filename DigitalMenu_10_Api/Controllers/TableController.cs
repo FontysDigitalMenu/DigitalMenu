@@ -1,5 +1,6 @@
 using DigitalMenu_10_Api.RequestModels;
 using DigitalMenu_10_Api.ViewModels;
+using DigitalMenu_20_BLL.Dtos;
 using DigitalMenu_20_BLL.Exceptions;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
@@ -32,6 +33,31 @@ public class TableController(ITableService tableService) : ControllerBase
         if (table == null)
         {
             return NotFound();
+        }
+
+        TableViewModel tableViewModel = new()
+            { Id = table.Id, Name = table.Name, SessionId = table.SessionId, IsReservable = table.IsReservable };
+
+        return Ok(tableViewModel);
+    }
+
+    [AllowAnonymous]
+    [HttpGet("scan/{id}/{code:int?}")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(404)]
+    public IActionResult Scan([FromRoute] string id, [FromRoute] int? code = null)
+    {
+        TableScan tableScan = tableService.Scan(id, code);
+        Table? table = tableScan.Table;
+        if (table == null)
+        {
+            return NotFound();
+        }
+
+        if (tableScan.IsReserved && !tableScan.IsUnlocked)
+        {
+            return Unauthorized(new
+                { Message = "Please authorize yourself with the 6-digit code in your reservation verification mail" });
         }
 
         TableViewModel tableViewModel = new()

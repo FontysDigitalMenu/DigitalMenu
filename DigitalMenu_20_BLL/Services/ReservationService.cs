@@ -11,7 +11,7 @@ public class ReservationService(
     ITableRepository tableRepository,
     IEmailService emailService) : IReservationService
 {
-    private const double ReservationDuration = 2.5;
+    public const double ReservationDuration = 2.5;
 
     private readonly List<string> _validReservationTimes = ["13:00", "15:30", "18:00", "20:30", "23:00"];
 
@@ -64,6 +64,26 @@ public class ReservationService(
         return availableTimes;
     }
 
+    public void Delete(int reservationId)
+    {
+        reservationRepository.Delete(reservationId);
+    }
+
+    public void Unlock(int id)
+    {
+        reservationRepository.Unlock(id);
+    }
+
+    public bool MustPayReservationFee(string tableSessionId)
+    {
+        DateTime now = DateTime.Now;
+        Table? table = tableRepository.GetTableBySessionIdWithReservationsFromDay(tableSessionId, now);
+
+        return table?.Reservations.Any(r =>
+            r.IsUnlocked && now >= r.ReservationDateTime &&
+            now <= r.ReservationDateTime.AddHours(ReservationDuration)) ?? false;
+    }
+
     private Table GetAvailableTable(DateTime dateTime)
     {
         List<Table> tables = tableRepository.GetAllReservableTablesWithReservationsFrom(dateTime);
@@ -97,7 +117,7 @@ public class ReservationService(
             throw new ReservationException("Invalid time");
         }
 
-        bool isTwoAndAHalfHoursAhead = reservation.ReservationDateTime > DateTime.Now.AddHours(2.5);
+        bool isTwoAndAHalfHoursAhead = reservation.ReservationDateTime > DateTime.Now.AddHours(ReservationDuration);
         if (!isTwoAndAHalfHoursAhead)
         {
             throw new ReservationException("Reservation must be at least 2.5 hours ahead");

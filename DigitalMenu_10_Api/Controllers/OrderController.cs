@@ -16,6 +16,7 @@ namespace DigitalMenu_10_Api.Controllers;
 [ApiController]
 public class OrderController(
     IOrderService orderService,
+    IReservationService reservationService,
     ICartItemService cartItemService,
     IHubContext<OrderHub, IOrderHubClient> hubContext) : ControllerBase
 {
@@ -57,7 +58,7 @@ public class OrderController(
         cartItemService.ClearByTableSessionId(orderRequest.TableSessionId);
 
         await hubContext.Clients.Group($"cart-{orderRequest.TableSessionId}")
-            .ReceiveCartUpdate(CartService.GetCartViewModel(orderService, cartItemService,
+            .ReceiveCartUpdate(CartService.GetCartViewModel(reservationService, orderService, cartItemService,
                 orderRequest.TableSessionId));
 
         return CreatedAtAction("Get",
