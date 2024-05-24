@@ -9,4 +9,8 @@ public interface IReservationRepository
     public Reservation? Create(Reservation reservation);
 
     public List<Reservation> GetByDay(DateTime dateTime);
+
+    public void Delete(int reservationId);
+
+    public void Unlock(int id);
 }

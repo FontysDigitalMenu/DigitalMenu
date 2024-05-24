@@ -57,4 +57,13 @@ public class ReservationController(
             startDateTime = at.startDateTime,
         }));
     }
+
+    [HttpDelete("{reservationId:int}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(500)]
+    public IActionResult Delete([FromRoute] int reservationId)
+    {
+        reservationService.Delete(reservationId);
+        return NoContent();
+    }
 }
