@@ -50,13 +50,20 @@ public class TableRepository(ApplicationDbContext dbContext) : ITableRepository
         return dbContext.SaveChanges() > 0;
     }
 
-    public Table? GetTableWithReservationsFrom(string id, DateTime dateTime)
+    public Table? GetTableByIdWithReservationsFromDay(string id, DateTime dateTime)
     {
         return dbContext.Tables
             .Include(t => t.Reservations.Where(r => r.ReservationDateTime.Date == dateTime.Date))
             .FirstOrDefault(t => t.Id == id);
     }
 
+    public Table? GetTableBySessionIdWithReservationsFromDay(string sessionId, DateTime dateTime)
+    {
+        return dbContext.Tables
+            .Include(t => t.Reservations.Where(r => r.ReservationDateTime.Date == dateTime.Date))
+            .FirstOrDefault(t => t.SessionId == sessionId);
+    }
+    
     public List<Table> GetAllReservableTablesWithReservationsFrom(DateTime dateTime)
     {
         return dbContext.Tables

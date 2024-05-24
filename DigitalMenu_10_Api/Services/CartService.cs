@@ -6,9 +6,11 @@ namespace DigitalMenu_10_Api.Services;
 
 public static class CartService
 {
-    public static CartViewModel GetCartViewModel(IOrderService orderService, ICartItemService cartItemService,
+    public static CartViewModel GetCartViewModel(IReservationService reservationService, IOrderService orderService, ICartItemService cartItemService,
         string tableSessionId)
     {
+        int reservationFee = reservationService.MustPayReservationFee(tableSessionId) ? 500 : 0 ;
+        
         List<Order> unpaidOrders = orderService.GetUnpaidOrdersByTableSessionId(tableSessionId);
 
         List<CartItem> cartItems = cartItemService.GetByTableSessionId(tableSessionId);
@@ -31,7 +33,8 @@ public static class CartService
                     ImageUrl = cartItem.MenuItem.ImageUrl,
                 },
             }).ToList(),
-            TotalAmount = cartItems.Sum(item => item.MenuItem.Price * item.Quantity),
+            TotalAmount = cartItems.Sum(item => item.MenuItem.Price * item.Quantity) + reservationFee,
+            ReservationFee = reservationFee,
         };
     }
 }

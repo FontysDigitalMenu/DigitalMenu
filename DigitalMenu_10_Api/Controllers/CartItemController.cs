@@ -17,6 +17,7 @@ public class CartItemController(
     ITableService tableService,
     IIngredientService ingredientService,
     IOrderService orderService,
+    IReservationService reservationService,
     IHubContext<OrderHub, IOrderHubClient> hubContext) : ControllerBase
 {
     [HttpPost]
@@ -45,7 +46,7 @@ public class CartItemController(
                 cartItemService.Update(cartItem);
 
                 await hubContext.Clients.Group($"cart-{cartRequest.TableSessionId}")
-                    .ReceiveCartUpdate(CartService.GetCartViewModel(orderService, cartItemService,
+                    .ReceiveCartUpdate(CartService.GetCartViewModel(reservationService, orderService, cartItemService,
                         cartRequest.TableSessionId));
 
                 return NoContent();
@@ -88,7 +89,7 @@ public class CartItemController(
         }
 
         await hubContext.Clients.Group($"cart-{cartRequest.TableSessionId}")
-            .ReceiveCartUpdate(CartService.GetCartViewModel(orderService, cartItemService, cartRequest.TableSessionId));
+            .ReceiveCartUpdate(CartService.GetCartViewModel(reservationService, orderService, cartItemService, cartRequest.TableSessionId));
 
         return NoContent();
     }
@@ -135,7 +136,7 @@ public class CartItemController(
             return NotFound();
         }
 
-        return Ok(CartService.GetCartViewModel(orderService, cartItemService, tableSessionId));
+        return Ok(CartService.GetCartViewModel(reservationService, orderService, cartItemService, tableSessionId));
     }
 
     [HttpPut("minus")]
@@ -166,7 +167,7 @@ public class CartItemController(
         }
 
         await hubContext.Clients.Group($"cart-{cartRequest.TableSessionId}")
-            .ReceiveCartUpdate(CartService.GetCartViewModel(orderService, cartItemService, cartRequest.TableSessionId));
+            .ReceiveCartUpdate(CartService.GetCartViewModel(reservationService, orderService, cartItemService, cartRequest.TableSessionId));
 
         return NoContent();
     }
@@ -191,7 +192,7 @@ public class CartItemController(
         cartItemService.Update(cartItem);
 
         await hubContext.Clients.Group($"cart-{cartRequest.TableSessionId}")
-            .ReceiveCartUpdate(CartService.GetCartViewModel(orderService, cartItemService, cartRequest.TableSessionId));
+            .ReceiveCartUpdate(CartService.GetCartViewModel(reservationService, orderService, cartItemService, cartRequest.TableSessionId));
 
         return NoContent();
     }
@@ -239,7 +240,7 @@ public class CartItemController(
         }
 
         await hubContext.Clients.Group($"cart-{cartRequest.TableSessionId}")
-            .ReceiveCartUpdate(CartService.GetCartViewModel(orderService, cartItemService, cartRequest.TableSessionId));
+            .ReceiveCartUpdate(CartService.GetCartViewModel(reservationService, orderService, cartItemService, cartRequest.TableSessionId));
 
         return NoContent();
     }
