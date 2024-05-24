@@ -78,10 +78,12 @@ public class ReservationService(
     {
         DateTime now = DateTime.Now;
         Table? table = tableRepository.GetTableBySessionIdWithReservationsFromDay(tableSessionId, now);
-        
-        return table?.Reservations.Any(r => r.IsUnlocked && now >= r.ReservationDateTime && now <= r.ReservationDateTime.AddHours(ReservationDuration)) ?? false;
+
+        return table?.Reservations.Any(r =>
+            r.IsUnlocked && now >= r.ReservationDateTime &&
+            now <= r.ReservationDateTime.AddHours(ReservationDuration)) ?? false;
     }
-    
+
     private Table GetAvailableTable(DateTime dateTime)
     {
         List<Table> tables = tableRepository.GetAllReservableTablesWithReservationsFrom(dateTime);

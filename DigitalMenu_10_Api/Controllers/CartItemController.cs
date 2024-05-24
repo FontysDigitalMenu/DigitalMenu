@@ -89,7 +89,8 @@ public class CartItemController(
         }
 
         await hubContext.Clients.Group($"cart-{cartRequest.TableSessionId}")
-            .ReceiveCartUpdate(CartService.GetCartViewModel(reservationService, orderService, cartItemService, cartRequest.TableSessionId));
+            .ReceiveCartUpdate(CartService.GetCartViewModel(reservationService, orderService, cartItemService,
+                cartRequest.TableSessionId));
 
         return NoContent();
     }
@@ -167,7 +168,8 @@ public class CartItemController(
         }
 
         await hubContext.Clients.Group($"cart-{cartRequest.TableSessionId}")
-            .ReceiveCartUpdate(CartService.GetCartViewModel(reservationService, orderService, cartItemService, cartRequest.TableSessionId));
+            .ReceiveCartUpdate(CartService.GetCartViewModel(reservationService, orderService, cartItemService,
+                cartRequest.TableSessionId));
 
         return NoContent();
     }
@@ -192,7 +194,8 @@ public class CartItemController(
         cartItemService.Update(cartItem);
 
         await hubContext.Clients.Group($"cart-{cartRequest.TableSessionId}")
-            .ReceiveCartUpdate(CartService.GetCartViewModel(reservationService, orderService, cartItemService, cartRequest.TableSessionId));
+            .ReceiveCartUpdate(CartService.GetCartViewModel(reservationService, orderService, cartItemService,
+                cartRequest.TableSessionId));
 
         return NoContent();
     }
@@ -240,7 +243,8 @@ public class CartItemController(
         }
 
         await hubContext.Clients.Group($"cart-{cartRequest.TableSessionId}")
-            .ReceiveCartUpdate(CartService.GetCartViewModel(reservationService, orderService, cartItemService, cartRequest.TableSessionId));
+            .ReceiveCartUpdate(CartService.GetCartViewModel(reservationService, orderService, cartItemService,
+                cartRequest.TableSessionId));
 
         return NoContent();
     }

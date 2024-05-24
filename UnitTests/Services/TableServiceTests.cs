@@ -8,16 +8,17 @@ namespace UnitTests.Services;
 
 public class TableServiceTests
 {
-    private readonly Mock<ITableRepository> _tableRepositoryMock = new();
-
     private readonly Mock<IReservationRepository> _reservationRepositoryMock = new();
+
+    private readonly Mock<ITableRepository> _tableRepositoryMock = new();
 
     private TableService _tableService = null!;
 
     [SetUp]
     public void Setup()
     {
-        ReservationService reservationService = new(_reservationRepositoryMock.Object, _tableRepositoryMock.Object, null!);
+        ReservationService reservationService =
+            new(_reservationRepositoryMock.Object, _tableRepositoryMock.Object, null!);
         _tableService = new TableService(_tableRepositoryMock.Object, reservationService);
     }
 

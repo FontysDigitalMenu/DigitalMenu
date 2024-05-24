@@ -63,7 +63,7 @@ public class TableRepository(ApplicationDbContext dbContext) : ITableRepository
             .Include(t => t.Reservations.Where(r => r.ReservationDateTime.Date == dateTime.Date))
             .FirstOrDefault(t => t.SessionId == sessionId);
     }
-    
+
     public List<Table> GetAllReservableTablesWithReservationsFrom(DateTime dateTime)
     {
         return dbContext.Tables

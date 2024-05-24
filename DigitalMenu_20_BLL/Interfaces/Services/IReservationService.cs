@@ -14,6 +14,6 @@ public interface IReservationService
     public void Delete(int reservationId);
 
     public void Unlock(int reservationId);
-    
+
     public bool MustPayReservationFee(string tableSessionId);
 }
