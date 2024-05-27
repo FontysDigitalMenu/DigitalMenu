@@ -414,6 +414,31 @@ namespace DigitalMenu_30_DAL.Migrations
                     b.ToTable("Reservations");
                 });
 
+            modelBuilder.Entity("DigitalMenu_20_BLL.Models.Setting", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("PrimaryColor")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("SecondaryColor")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Settings");
+                });
+
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.Split", b =>
                 {
                     b.Property<int>("Id")
@@ -840,7 +865,7 @@ namespace DigitalMenu_30_DAL.Migrations
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.Reservation", b =>
                 {
                     b.HasOne("DigitalMenu_20_BLL.Models.Table", "Table")
-                        .WithMany()
+                        .WithMany("Reservations")
                         .HasForeignKey("TableId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -964,6 +989,8 @@ namespace DigitalMenu_30_DAL.Migrations
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.Table", b =>
                 {
                     b.Navigation("Orders");
+
+                    b.Navigation("Reservations");
                 });
 #pragma warning restore 612, 618
         }

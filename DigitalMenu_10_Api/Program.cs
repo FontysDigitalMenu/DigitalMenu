@@ -50,6 +50,8 @@ builder.Services.AddScoped<ISplitRepository, SplitRepository>();
 builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
 builder.Services.AddScoped<IMailTranslationRepository, MailTranslationRepository>();
+builder.Services.AddScoped<ISettingService, SettingService>();
+builder.Services.AddScoped<ISettingRepository, SettingRepository>();
 builder.Services.AddScoped<IMollieHelper>(_ => new MollieHelper(
     builder.Configuration.GetValue<string>("Mollie:ApiKey")!,
     builder.Configuration.GetValue<string>("Mollie:RedirectUrl")!,
