@@ -31,4 +31,14 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Table> Tables { get; set; }
 
     public DbSet<Split> Splits { get; set; }
+
+    public DbSet<CategoryTranslation> CategoryTranslations { get; set; }
+
+    public DbSet<IngredientTranslation> IngredientTranslations { get; set; }
+
+    public DbSet<MenuItemTranslation> MenuItemTranslations { get; set; }
+
+    public DbSet<Reservation> Reservations { get; set; }
+
+    public DbSet<MailTranslation> MailTranslations { get; set; }
 }

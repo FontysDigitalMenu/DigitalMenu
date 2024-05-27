@@ -10,6 +10,10 @@ public class OrderServiceTests
 {
     private readonly Mock<ICartItemRepository> _cartItemRepositoryMock = new();
 
+    private readonly Mock<IIngredientRepository> _ingredientRepository = new();
+
+    private readonly Mock<IMenuItemRepository> _menuItemRepository = new();
+
     private readonly Mock<IOrderRepository> _orderRepositoryMock = new();
 
     private readonly Mock<ISplitRepository> _splitRepositoryMock = new();
@@ -22,7 +26,8 @@ public class OrderServiceTests
     public void Setup()
     {
         _orderService = new OrderService(_orderRepositoryMock.Object, _cartItemRepositoryMock.Object,
-            _tableRepositoryMock.Object, _splitRepositoryMock.Object);
+            _tableRepositoryMock.Object, _splitRepositoryMock.Object, _menuItemRepository.Object,
+            _ingredientRepository.Object);
     }
 
     // [Test]
