@@ -7,7 +7,8 @@ public interface IIngredientService
     Task<Ingredient?> GetIngredientByNameAsync(string name);
 
     Task<List<Ingredient>> GetIngredients();
-
+    Task<List<Ingredient>> GetIngredientsPerPage(int currentPage, int amount);
+    int GetIngredientCount();
     public Task<bool> DeleteIngredientsByMenuItemId(int menuItemId);
 
     public Task<Ingredient?> CreateIngredient(Ingredient ingredient);

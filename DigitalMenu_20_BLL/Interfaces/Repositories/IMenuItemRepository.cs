@@ -11,9 +11,9 @@ public interface IMenuItemRepository
     public IEnumerable<Category> GetCategories();
 
     public MenuItem? GetMenuItemBy(int id);
-
-    public Task<List<MenuItem>> GetMenuItems();
-
+    
+    public Task<List<MenuItem>> GetMenuItems(int lastMenuItem, int amount);
+    int GetMenuItemCount();
     public Task<MenuItem?> CreateMenuItem(MenuItem menuItem);
 
     public Task<MenuItem?> UpdateMenuItem(MenuItem menuItem);

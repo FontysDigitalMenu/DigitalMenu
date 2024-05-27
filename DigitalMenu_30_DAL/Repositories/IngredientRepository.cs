@@ -19,6 +19,21 @@ public class IngredientRepository(ApplicationDbContext dbContext) : IIngredientR
             .OrderBy(i => i.Id)
             .ToListAsync();
     }
+    
+    public async Task<List<Ingredient>> GetIngredientsPerPage(int lastIngredient, int amount)
+    {
+        return await dbContext.Ingredients
+            .OrderBy(i => i.Id)
+            .Skip(lastIngredient)
+            .Take(amount)
+            .ToListAsync();
+    }
+    
+    public int GetIngredientCount()
+    {
+        return dbContext.Ingredients
+            .Count();
+    }
 
     public async Task<bool> DeleteIngredientsByMenuItemId(int menuItemId)
     {

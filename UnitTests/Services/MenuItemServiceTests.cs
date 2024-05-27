@@ -111,10 +111,10 @@ public class MenuItemServiceTests
             new MenuItem { Id = 1, Name = "Pizza" },
             new MenuItem { Id = 2, Name = "Burger" },
         ];
-        _mockMenuItemRepository.Setup(repo => repo.GetMenuItems()).ReturnsAsync(menuItems);
+        _mockMenuItemRepository.Setup(repo => repo.GetMenuItems(0, 2)).ReturnsAsync(menuItems);
 
         // Act
-        List<MenuItem> result = await _menuItemService.GetMenuItems();
+        List<MenuItem> result = await _menuItemService.GetMenuItems(1, 2);
         That(result, Is.Not.Null);
         That(result, Has.Count.EqualTo(2));
     }

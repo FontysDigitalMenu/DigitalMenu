@@ -21,9 +21,9 @@ public class IngredientsController(
     [ProducesResponseType(200)]
     [ProducesResponseType(401)]
     [ProducesResponseType(403)]
-    public async Task<ActionResult> GetIngredients()
+    public async Task<ActionResult> GetIngredients(int currentPage, int amount)
     {
-        List<Ingredient> ingredients = await ingredientService.GetIngredients();
+        List<Ingredient> ingredients = await ingredientService.GetIngredientsPerPage(currentPage, amount);
 
         List<IngredientViewModel> ingredientViewModels = ingredients.Select(ingredient => new IngredientViewModel
         {
@@ -31,8 +31,13 @@ public class IngredientsController(
             Name = ingredient.Name,
             Stock = ingredient.Stock,
         }).ToList();
-
-        return Ok(ingredientViewModels);
+        
+        AdminIngredientViewModel ingredientView = new AdminIngredientViewModel()
+        {
+            Ingredients = ingredientViewModels,
+            IngredientCount = ingredientService.GetIngredientCount()
+        };
+        return Ok(ingredientView);
     }
 
     [HttpGet("{id}")]

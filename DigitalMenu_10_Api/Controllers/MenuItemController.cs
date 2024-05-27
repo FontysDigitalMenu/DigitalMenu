@@ -112,24 +112,29 @@ public class MenuItemController(
     [ProducesResponseType(200)]
     [ProducesResponseType(401)]
     [ProducesResponseType(403)]
-    public async Task<ActionResult> GetMenuItems()
+    public async Task<ActionResult> GetMenuItems(int currentPage, int amount)
     {
         Request.Headers.TryGetValue("Accept-Language", out StringValues locale);
         string localeValue = locale.FirstOrDefault() ?? "en";
 
-        List<MenuItem> menuItems = await menuItemService.GetMenuItems();
+        List<MenuItem> menuItems = await menuItemService.GetMenuItems(currentPage, amount);
 
         List<MenuItemViewModel> menuItemViewModels = menuItems.Select(menuItem => new MenuItemViewModel
         {
             Id = menuItem.Id,
             Name = menuItem.Translations?.FirstOrDefault(t => t.LanguageCode == localeValue)?.Name ?? menuItem.Name,
             Description = menuItem.Translations?.FirstOrDefault(t => t.LanguageCode == localeValue)?.Description ??
-                          menuItem.Description,
+            menuItem.Description,
             Price = menuItem.Price,
             ImageUrl = menuItem.ImageUrl,
         }).ToList();
-
-        return Ok(menuItemViewModels);
+        
+        AdminMenuItemViewModel menuItemView = new AdminMenuItemViewModel()
+        {
+            MenuItems = menuItemViewModels,
+            MenuItemCount = menuItemService.GetMenuItemCount()
+        };
+        return Ok(menuItemView);
     }
 
     [Authorize(Roles = "Admin")]
