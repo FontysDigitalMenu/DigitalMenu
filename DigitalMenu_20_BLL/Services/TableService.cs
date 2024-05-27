@@ -85,7 +85,7 @@ public class TableService(ITableRepository tableRepository, IReservationService 
 
     public TableScan Scan(string id, int? code)
     {
-        DateTime now = DateTime.Now;
+        DateTime now = DateTimeService.GetNow();
         Table? table = tableRepository.GetTableByIdWithReservationsFromDay(id, now);
 
         if (table == null)

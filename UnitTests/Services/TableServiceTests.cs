@@ -28,7 +28,10 @@ public class TableServiceTests
         // Arrange
         List<Table> tables =
         [
-            new Table { Id = "CA3D0ED8-78D6-4690-8952-89D7E1FC18A4", Name = "Table 1", CreatedAt = DateTime.Now },
+            new Table
+            {
+                Id = "CA3D0ED8-78D6-4690-8952-89D7E1FC18A4", Name = "Table 1", CreatedAt = DateTimeService.GetNow(),
+            },
             new Table { Id = "B9D09C27-D862-4DBF-A250-A966846DE1E0", Name = "Table 2", CreatedAt = DateTime.Now },
         ];
         _tableRepositoryMock.Setup(x => x.GetAll())
