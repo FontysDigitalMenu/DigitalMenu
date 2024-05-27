@@ -26,6 +26,7 @@ public class SeedData(ApplicationDbContext dbContext)
             await SeedCartItems();
             await SeedOrders();
             await SeedMailTranslations();
+            await SeedSettings();
 
             await dbContext.SaveChangesAsync();
         }
@@ -860,6 +861,21 @@ public class SeedData(ApplicationDbContext dbContext)
                 CreatedAt = DateTime.Parse("2023-09-01 12:00:00").AddMinutes(30),
             }
         );
+        await dbContext.SaveChangesAsync();
+    }
+
+    private async Task SeedSettings()
+    {
+        dbContext.Settings.AddRange(
+            new Setting
+            {
+                Id = 1,
+                CompanyName = "Digital Menu",
+                PrimaryColor = "#EF4444",
+                SecondaryColor = "#EF4444",
+            }
+        );
+
         await dbContext.SaveChangesAsync();
     }
 }
