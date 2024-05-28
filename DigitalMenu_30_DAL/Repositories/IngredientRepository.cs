@@ -19,7 +19,7 @@ public class IngredientRepository(ApplicationDbContext dbContext) : IIngredientR
             .OrderBy(i => i.Id)
             .ToListAsync();
     }
-    
+
     public async Task<List<Ingredient>> GetIngredientsPerPage(int lastIngredient, int amount)
     {
         return await dbContext.Ingredients
@@ -28,7 +28,7 @@ public class IngredientRepository(ApplicationDbContext dbContext) : IIngredientR
             .Take(amount)
             .ToListAsync();
     }
-    
+
     public int GetIngredientCount()
     {
         return dbContext.Ingredients

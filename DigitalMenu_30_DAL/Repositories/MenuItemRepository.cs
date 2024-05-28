@@ -118,7 +118,7 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
 
         return menuItemWithoutIngredient;
     }
-    
+
     public async Task<List<MenuItem>> GetMenuItems(int lastMenuItem, int amount)
     {
         return await dbContext.MenuItems
@@ -129,11 +129,13 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
             .Where(m => m.IsActive)
             .ToListAsync();
     }
+
     public int GetMenuItemCount()
     {
         return dbContext.MenuItems
             .Count();
     }
+
     public async Task<MenuItem?> CreateMenuItem(MenuItem menuItem)
     {
         dbContext.MenuItems.Add(menuItem);

@@ -9,9 +9,11 @@ public interface IMenuItemService
     public IEnumerable<Category> GetCategoriesWithNextMenuItems(int lastId, int amount);
 
     public MenuItem? GetMenuItemById(int id);
-    
+
     public Task<List<MenuItem>> GetMenuItems(int currentPage, int amount);
+
     int GetMenuItemCount();
+
     public Task<MenuItem?> CreateMenuItem(MenuItem menuItem);
 
     public Task<MenuItem?> UpdateMenuItem(MenuItem menuItem);

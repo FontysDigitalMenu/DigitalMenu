@@ -31,17 +31,17 @@ public class IngredientsController(
             Name = ingredient.Name,
             Stock = ingredient.Stock,
         }).ToList();
-        
+
         return Ok(ingredientViewModels);
     }
-    
+
     [HttpGet("count")]
     [ProducesResponseType(200)]
     [ProducesResponseType(401)]
     [ProducesResponseType(403)]
     public ActionResult GetCount()
     {
-        var ingredientCount = ingredientService.GetIngredientCount();
+        int ingredientCount = ingredientService.GetIngredientCount();
         return Ok(ingredientCount);
     }
 

@@ -124,21 +124,21 @@ public class MenuItemController(
             Id = menuItem.Id,
             Name = menuItem.Translations?.FirstOrDefault(t => t.LanguageCode == localeValue)?.Name ?? menuItem.Name,
             Description = menuItem.Translations?.FirstOrDefault(t => t.LanguageCode == localeValue)?.Description ??
-            menuItem.Description,
+                          menuItem.Description,
             Price = menuItem.Price,
             ImageUrl = menuItem.ImageUrl,
         }).ToList();
-        
+
         return Ok(menuItemViewModels);
     }
-    
+
     [HttpGet("count")]
     [ProducesResponseType(200)]
     [ProducesResponseType(401)]
     [ProducesResponseType(403)]
     public ActionResult GetCount()
     {
-        var menuItemCount = menuItemService.GetMenuItemCount();
+        int menuItemCount = menuItemService.GetMenuItemCount();
         return Ok(menuItemCount);
     }
 
