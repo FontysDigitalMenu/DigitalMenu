@@ -8,6 +8,10 @@ public interface IIngredientRepository
 
     Task<List<Ingredient>> GetIngredients();
 
+    Task<List<Ingredient>> GetIngredientsPerPage(int lastIngredient, int amount);
+
+    public int GetIngredientCount();
+
     public Task<bool> DeleteIngredientsByMenuItemId(int menuItemId);
 
     public Task<Ingredient?> CreateIngredient(Ingredient ingredient);
