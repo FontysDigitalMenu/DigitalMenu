@@ -10,6 +10,7 @@ public class CategoryRepository(ApplicationDbContext dbContext) : ICategoryRepos
     public async Task<List<Category>> GetCategories()
     {
         return await dbContext.Categories
+            .Include(c => c.Translations)
             .OrderBy(c => c.Id)
             .ToListAsync();
     }
@@ -17,6 +18,21 @@ public class CategoryRepository(ApplicationDbContext dbContext) : ICategoryRepos
     public async Task<Category?> GetCategoryByName(string categoryName)
     {
         return await dbContext.Categories.FirstOrDefaultAsync(c => c.Name == categoryName);
+    }
+
+    public async Task<Category?> GetCategoryByName(string categoryName, string locale)
+    {
+        CategoryTranslation? categoryTranslation = await dbContext.CategoryTranslations
+            .Include(ct => ct.Category)
+            .FirstOrDefaultAsync(ct => ct.Name == categoryName && ct.LanguageCode == locale);
+
+        return categoryTranslation?.Category;
+    }
+
+    public void CreateTranslations(List<CategoryTranslation> categoryTranslations)
+    {
+        dbContext.CategoryTranslations.AddRange(categoryTranslations);
+        dbContext.SaveChanges();
     }
 
     public async Task<Category> CreateCategory(Category category)

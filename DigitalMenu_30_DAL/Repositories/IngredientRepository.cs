@@ -16,6 +16,7 @@ public class IngredientRepository(ApplicationDbContext dbContext) : IIngredientR
     public async Task<List<Ingredient>> GetIngredients()
     {
         return await dbContext.Ingredients
+            .Include(i => i.Translations)
             .OrderBy(i => i.Id)
             .ToListAsync();
     }
@@ -119,5 +120,13 @@ public class IngredientRepository(ApplicationDbContext dbContext) : IIngredientR
         return dbContext.IngredientTranslations
             .Where(it => it.IngredientId == ingredientId)
             .ToListAsync();
+    }
+
+    public Task<Ingredient?> GetIngredientByName(string ingredientName, string localeValue)
+    {
+        return dbContext.Ingredients
+            .Include(i => i.Translations)
+            .FirstOrDefaultAsync(i =>
+                i.Translations.Any(it => it.Name == ingredientName && it.LanguageCode == localeValue));
     }
 }

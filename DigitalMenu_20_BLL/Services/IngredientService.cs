@@ -8,8 +8,6 @@ namespace DigitalMenu_20_BLL.Services;
 public class IngredientService(IIngredientRepository ingredientRepository, ITranslationService translationService)
     : IIngredientService
 {
-    private readonly List<string> _languages = ["en", "nl", "de", "ko"];
-
     public Task<Ingredient?> GetIngredientByNameAsync(string name)
     {
         return ingredientRepository.GetIngredientByNameAsync(name);
@@ -121,6 +119,11 @@ public class IngredientService(IIngredientRepository ingredientRepository, ITran
         return await ingredientRepository.DeleteIngredient(ingredientId);
     }
 
+    public Task<Ingredient?> GetIngredientByName(string ingredientName, string localeValue)
+    {
+        return ingredientRepository.GetIngredientByName(ingredientName, localeValue);
+    }
+
     private async Task<List<IngredientTranslation>> GetIngredientTranslations(Ingredient ingredient, string language)
     {
         List<IngredientTranslation> ingredientTranslations =
@@ -132,7 +135,7 @@ public class IngredientService(IIngredientRepository ingredientRepository, ITran
                 Name = ingredient.Name,
             },
         ];
-        foreach (string lang in _languages.Where(l => l != language))
+        foreach (string lang in TranslationService.SupportedLanguages.Where(l => l != language))
         {
             string translatedName = await translationService.Translate(ingredient.Name, language, lang);
 

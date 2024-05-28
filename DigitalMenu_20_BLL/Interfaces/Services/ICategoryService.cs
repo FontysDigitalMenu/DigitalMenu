@@ -8,7 +8,9 @@ public interface ICategoryService
 
     public Task<Category?> GetCategoryByName(string categoryName);
 
-    public Task<Category> CreateCategory(string categoryName);
+    public Task<Category?> GetCategoryByName(string categoryName, string locale);
+
+    public Task<Category> CreateCategory(string categoryName, string language);
 
     public Task<bool> DeleteCategoriesByMenuItemId(int menuItemId);
 }

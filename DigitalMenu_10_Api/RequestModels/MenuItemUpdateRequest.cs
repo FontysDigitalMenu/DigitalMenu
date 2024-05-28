@@ -2,7 +2,7 @@
 
 public class MenuItemUpdateRequest
 {
-    public string FormLanguage { get; set; }
+    // public string FormLanguage { get; set; }
 
     public int Id { get; set; }
 
