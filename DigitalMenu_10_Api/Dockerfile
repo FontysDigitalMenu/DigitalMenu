@@ -19,6 +19,7 @@ RUN dotnet build "./DigitalMenu_10_Api.csproj" -c $BUILD_CONFIGURATION -o /app/b
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
+ENV TZ="Europe/Amsterdam"
 RUN dotnet publish "./DigitalMenu_10_Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
