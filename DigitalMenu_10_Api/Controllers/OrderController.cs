@@ -16,6 +16,7 @@ namespace DigitalMenu_10_Api.Controllers;
 [ApiController]
 public class OrderController(
     IOrderService orderService,
+    IReservationService reservationService,
     ICartItemService cartItemService,
     IHubContext<OrderHub, IOrderHubClient> hubContext) : ControllerBase
 {
@@ -57,7 +58,7 @@ public class OrderController(
         cartItemService.ClearByTableSessionId(orderRequest.TableSessionId);
 
         await hubContext.Clients.Group($"cart-{orderRequest.TableSessionId}")
-            .ReceiveCartUpdate(CartService.GetCartViewModel(orderService, cartItemService,
+            .ReceiveCartUpdate(CartService.GetCartViewModel(reservationService, orderService, cartItemService,
                 orderRequest.TableSessionId));
 
         return CreatedAtAction("Get",
@@ -86,6 +87,31 @@ public class OrderController(
         }
 
         return Ok(orders.Select(o => OrderViewModel.FromOrder(o, cartItemService)));
+    }
+
+    [Authorize(Roles = "Admin, Employee")]
+    [HttpGet("completed/{type}")]
+    public ActionResult<List<OrderViewModel>> GetCompletedOrders([FromRoute] string type)
+    {
+        IEnumerable<Order> orders;
+
+        switch (type)
+        {
+            case "food":
+                orders = orderService.GetCompletedFoodOrders();
+                break;
+            case "drinks":
+                orders = orderService.GetCompletedDrinksOrders();
+                break;
+            default:
+                orders = orderService.GetCompletedOrders();
+                break;
+        }
+
+        List<OrderViewModel> orderViewModels =
+            orders.Select(o => OrderViewModel.FromOrder(o, cartItemService)).ToList();
+
+        return Ok(orderViewModels);
     }
 
     [HttpGet("{id}/{tableSessionId}")]

@@ -1,4 +1,5 @@
-﻿using DigitalMenu_20_BLL.Models;
+﻿using DigitalMenu_20_BLL.Dtos;
+using DigitalMenu_20_BLL.Models;
 
 namespace DigitalMenu_20_BLL.Interfaces.Services;
 
@@ -21,4 +22,6 @@ public interface ITableService
     public bool ResetSession(string id);
 
     public bool AddHost(string id, string deviceId);
+
+    public TableScan Scan(string id, int? code);
 }

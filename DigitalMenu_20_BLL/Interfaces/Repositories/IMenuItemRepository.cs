@@ -25,4 +25,10 @@ public interface IMenuItemRepository
     public Task<List<CategoryMenuItem>?> AddCategoriesToMenuItem(List<CategoryMenuItem> categoryMenuItems);
 
     public bool Delete(int id);
+
+    public void CreateMenuItemTranslations(List<MenuItemTranslation> menuItemTranslations);
+
+    public void UpdateOrCreateMenuItemTranslation(MenuItemTranslation menuItemTranslation);
+
+    public List<MenuItemTranslation> GetMenuItemTranslations(int menuItemId);
 }

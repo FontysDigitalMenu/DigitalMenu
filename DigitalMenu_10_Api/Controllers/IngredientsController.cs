@@ -76,7 +76,8 @@ public class IngredientsController(
                 Stock = ingredientCreateRequest.Stock,
             };
 
-            Ingredient? createdIngredient = await ingredientService.CreateIngredient(ingredient);
+            Ingredient? createdIngredient =
+                await ingredientService.CreateIngredient(ingredient, ingredientCreateRequest.FormLanguage);
             if (createdIngredient == null)
             {
                 return BadRequest(new { Message = "Ingredient could not be created" });
@@ -111,7 +112,8 @@ public class IngredientsController(
             ingredient.Name = ingredientUpdateRequest.Name;
             ingredient.Stock = ingredientUpdateRequest.Stock;
 
-            bool ingredientUpdated = await ingredientService.UpdateIngredient(ingredient);
+            bool ingredientUpdated =
+                await ingredientService.UpdateIngredient(ingredient, ingredientUpdateRequest.FormLanguage);
             if (!ingredientUpdated)
             {
                 return BadRequest(new { Message = "Ingredient could not be updated" });

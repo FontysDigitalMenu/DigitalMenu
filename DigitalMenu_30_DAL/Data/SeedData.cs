@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MySqlConnector;
+using Newtonsoft.Json;
 
 namespace DigitalMenu_30_DAL.Data;
 
@@ -24,6 +25,8 @@ public class SeedData(ApplicationDbContext dbContext)
             await SeedTables();
             await SeedCartItems();
             await SeedOrders();
+            await SeedMailTranslations();
+            await SeedSettings();
 
             await dbContext.SaveChangesAsync();
         }
@@ -31,6 +34,76 @@ public class SeedData(ApplicationDbContext dbContext)
         {
             Console.WriteLine(ex.Message);
         }
+    }
+
+    private async Task SeedMailTranslations()
+    {
+        dbContext.MailTranslations.AddRange(
+            new MailTranslation
+            {
+                Type = "reservation-created",
+                Body = JsonConvert.SerializeObject(new
+                {
+                    title = "Reservation Created Successfully",
+                    salutation = "Dear Customer,",
+                    instruction =
+                        "Your reservation has been created successfully. Please use the following code when you scan the QR-Code:",
+                    thankYou = "Thank you for choosing our service. We look forward to serving you.",
+                    bestRegards = "Best Regards,",
+                    companyName = "Digital Menu",
+                }),
+                Language = "en",
+                Subject = "Reservation Created Successfully",
+            }, new MailTranslation
+            {
+                Type = "reservation-created",
+                Body = JsonConvert.SerializeObject(new
+                {
+                    title = "Reservering succesvol aangemaakt",
+                    salutation = "Beste klant,",
+                    instruction =
+                        "Uw reservering is succesvol aangemaakt. Gebruik de volgende code wanneer u de QR-code scant:",
+                    thankYou =
+                        "Bedankt voor het kiezen van onze service. We kijken ernaar uit om u van dienst te zijn.",
+                    bestRegards = "Met vriendelijke groet,",
+                    companyName = "Digital Menu",
+                }),
+                Language = "nl",
+                Subject = "Reservering succesvol aangemaakt",
+            }, new MailTranslation
+            {
+                Type = "reservation-created",
+                Body = JsonConvert.SerializeObject(new
+                {
+                    title = "Reservierung erfolgreich erstellt",
+                    salutation = "Sehr geehrter Kunde,",
+                    instruction =
+                        "Ihre Reservierung wurde erfolgreich erstellt. Bitte verwenden Sie den folgenden Code, wenn Sie den QR-Code scannen:",
+                    thankYou =
+                        "Vielen Dank, dass Sie unseren Service gewählt haben. Wir freuen uns darauf, Sie zu bedienen.",
+                    bestRegards = "Mit freundlichen Grüßen,",
+                    companyName = "Digital Menu",
+                }),
+                Language = "de",
+                Subject = "Reservierung erfolgreich erstellt",
+            }, new MailTranslation
+            {
+                Type = "reservation-created",
+                Body = JsonConvert.SerializeObject(new
+                {
+                    title = "예약이 성공적으로 완료되었습니다",
+                    salutation = "고객님,",
+                    instruction =
+                        "예약이 성공적으로 완료되었습니다. QR 코드를 스캔할 때 다음 코드를 사용하세요:",
+                    thankYou = "저희 서비스를 선택해 주셔서 감사합니다. 저희는 고객님을 모시게 되어 기쁩니다.",
+                    bestRegards = "감사합니다,",
+                    companyName = "디지털 메뉴",
+                }),
+                Language = "ko",
+                Subject = "예약이 성공적으로 완료되었습니다",
+            });
+
+        await dbContext.SaveChangesAsync();
     }
 
     private async Task SeedOrders()
@@ -261,11 +334,12 @@ public class SeedData(ApplicationDbContext dbContext)
                 Name = "Burger",
                 Description = "A delicious burger",
                 Price = 1000,
-                ImageUrl =
-                    "https://www.outofhome-shops.nl/files/202202/dist/3d91e961ea0f0abc6ee29aabe8dddc10.jpg",
+                ImageUrl = "https://www.outofhome-shops.nl/files/202202/dist/3d91e961ea0f0abc6ee29aabe8dddc10.jpg",
                 Translations = new List<MenuItemTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Hamburger", Description = "Heerlijke hamburger" },
+                    new() { LanguageCode = "de", Name = "Burger", Description = "Ein köstlicher Burger" },
+                    new() { LanguageCode = "ko", Name = "버거", Description = "맛있는 버거" },
                 },
             },
             new MenuItem
@@ -279,6 +353,8 @@ public class SeedData(ApplicationDbContext dbContext)
                 Translations = new List<MenuItemTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Pizza", Description = "Heerlijke pizza" },
+                    new() { LanguageCode = "de", Name = "Pizza", Description = "Eine köstliche Pizza" },
+                    new() { LanguageCode = "ko", Name = "피자", Description = "맛있는 피자" },
                 },
             },
             new MenuItem
@@ -287,11 +363,12 @@ public class SeedData(ApplicationDbContext dbContext)
                 Name = "Pasta",
                 Description = "A delicious pasta",
                 Price = 1200,
-                ImageUrl =
-                    "https://www.culy.nl/wp-content/uploads/2023/09/3_pasta-all-assassina-recept-1024x683.jpg",
+                ImageUrl = "https://www.culy.nl/wp-content/uploads/2023/09/3_pasta-all-assassina-recept-1024x683.jpg",
                 Translations = new List<MenuItemTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Pasta", Description = "Heerlijke pasta" },
+                    new() { LanguageCode = "de", Name = "Pasta", Description = "Eine köstliche Pasta" },
+                    new() { LanguageCode = "ko", Name = "파스타", Description = "맛있는 파스타" },
                 },
             },
             new MenuItem
@@ -300,11 +377,12 @@ public class SeedData(ApplicationDbContext dbContext)
                 Name = "Fries",
                 Description = "A delicious fries",
                 Price = 500,
-                ImageUrl =
-                    "https://www.inspiredtaste.net/wp-content/uploads/2023/09/Baked-French-Fries-Video.jpg",
+                ImageUrl = "https://www.inspiredtaste.net/wp-content/uploads/2023/09/Baked-French-Fries-Video.jpg",
                 Translations = new List<MenuItemTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Frietjes", Description = "Heerlijke frietjes" },
+                    new() { LanguageCode = "de", Name = "Pommes", Description = "Köstliche Pommes" },
+                    new() { LanguageCode = "ko", Name = "감자 튀김", Description = "맛있는 감자 튀김" },
                 },
             },
             new MenuItem
@@ -318,6 +396,8 @@ public class SeedData(ApplicationDbContext dbContext)
                 Translations = new List<MenuItemTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Cola", Description = "Heerlijke cola" },
+                    new() { LanguageCode = "de", Name = "Cola", Description = "Eine köstliche Cola" },
+                    new() { LanguageCode = "ko", Name = "콜라", Description = "맛있는 콜라" },
                 },
             },
             new MenuItem
@@ -331,6 +411,8 @@ public class SeedData(ApplicationDbContext dbContext)
                 Translations = new List<MenuItemTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Pepsi", Description = "Heerlijke pepsi" },
+                    new() { LanguageCode = "de", Name = "Pepsi", Description = "Ein köstliches Pepsi" },
+                    new() { LanguageCode = "ko", Name = "펩시", Description = "맛있는 펩시" },
                 },
             },
             new MenuItem
@@ -343,6 +425,8 @@ public class SeedData(ApplicationDbContext dbContext)
                 Translations = new List<MenuItemTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Sprite", Description = "Heerlijke sprite" },
+                    new() { LanguageCode = "de", Name = "Sprite", Description = "Ein köstliches Sprite" },
+                    new() { LanguageCode = "ko", Name = "스프라이트", Description = "맛있는 스프라이트" },
                 },
             },
             new MenuItem
@@ -356,6 +440,8 @@ public class SeedData(ApplicationDbContext dbContext)
                 Translations = new List<MenuItemTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Fanta", Description = "Heerlijke fanta" },
+                    new() { LanguageCode = "de", Name = "Fanta", Description = "Eine köstliche Fanta" },
+                    new() { LanguageCode = "ko", Name = "환타", Description = "맛있는 환타" },
                 },
             },
             new MenuItem
@@ -366,10 +452,11 @@ public class SeedData(ApplicationDbContext dbContext)
                 Price = 200,
                 ImageUrl =
                     "https://goedkoopblikjes.nl/image/cache/catalog/Frisdrank/Blikje%20fris/Light/7_up_free_zero_sugar_blikjes_33cl_tray-800x800.jpg",
-
                 Translations = new List<MenuItemTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "7up", Description = "Heerlijke 7up" },
+                    new() { LanguageCode = "de", Name = "7up", Description = "Ein köstliches 7up" },
+                    new() { LanguageCode = "ko", Name = "세븐업", Description = "맛있는 세븐업" },
                 },
             },
             new MenuItem
@@ -380,10 +467,11 @@ public class SeedData(ApplicationDbContext dbContext)
                 Price = 200,
                 ImageUrl =
                     "https://www.frisenzoetwaren.nl/wp-content/uploads/2023/07/Mountain-Dew-Citrus-Blast-24-x-330-ml-EU.jpg",
-
                 Translations = new List<MenuItemTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Mountain Dew", Description = "Heerlijke Mountain Dew" },
+                    new() { LanguageCode = "de", Name = "Mountain Dew", Description = "Ein köstlicher Mountain Dew" },
+                    new() { LanguageCode = "ko", Name = "마운틴듀", Description = "맛있는 마운틴듀" },
                 },
             }
         );
@@ -398,6 +486,8 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 1, Name = "Beef Patty", Stock = 16, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Rundergehakt" },
+                    new() { LanguageCode = "de", Name = "Rindfleischfrikadelle" },
+                    new() { LanguageCode = "ko", Name = "소고기 패티" },
                 },
             },
             new Ingredient
@@ -405,6 +495,8 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 2, Name = "Hamburger Bun", Stock = 8, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Hamburgerbroodje" },
+                    new() { LanguageCode = "de", Name = "Hamburgerbrötchen" },
+                    new() { LanguageCode = "ko", Name = "햄버거 번" },
                 },
             },
             new Ingredient
@@ -412,6 +504,8 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 3, Name = "Lettuce", Stock = 20, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Sla" },
+                    new() { LanguageCode = "de", Name = "Salat" },
+                    new() { LanguageCode = "ko", Name = "상추" },
                 },
             },
             new Ingredient
@@ -419,6 +513,8 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 4, Name = "Tomato Slices", Stock = 26, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Tomaat" },
+                    new() { LanguageCode = "de", Name = "Tomatenscheiben" },
+                    new() { LanguageCode = "ko", Name = "토마토 슬라이스" },
                 },
             },
             new Ingredient
@@ -426,6 +522,8 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 5, Name = "Onion Slices", Stock = 9, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Ui" },
+                    new() { LanguageCode = "de", Name = "Zwiebelscheiben" },
+                    new() { LanguageCode = "ko", Name = "양파 슬라이스" },
                 },
             },
             new Ingredient
@@ -433,6 +531,8 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 6, Name = "Pickles", Stock = 20, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Augurken" },
+                    new() { LanguageCode = "de", Name = "Essiggurken" },
+                    new() { LanguageCode = "ko", Name = "피클" },
                 },
             },
             new Ingredient
@@ -440,6 +540,8 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 7, Name = "Cheese", Stock = 10, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Kaas" },
+                    new() { LanguageCode = "de", Name = "Käse" },
+                    new() { LanguageCode = "ko", Name = "치즈" },
                 },
             },
             new Ingredient
@@ -447,6 +549,8 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 8, Name = "Bacon", Stock = 10, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Spek" },
+                    new() { LanguageCode = "de", Name = "Speck" },
+                    new() { LanguageCode = "ko", Name = "베이컨" },
                 },
             },
             new Ingredient
@@ -454,6 +558,8 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 9, Name = "Ketchup", Stock = 10, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Ketchup" },
+                    new() { LanguageCode = "de", Name = "Ketchup" },
+                    new() { LanguageCode = "ko", Name = "케첩" },
                 },
             },
             new Ingredient
@@ -461,6 +567,8 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 10, Name = "Mustard", Stock = 18, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Mosterd" },
+                    new() { LanguageCode = "de", Name = "Senf" },
+                    new() { LanguageCode = "ko", Name = "머스타드" },
                 },
             },
             new Ingredient
@@ -468,6 +576,8 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 11, Name = "Mayonnaise", Stock = 4, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Mayonaise" },
+                    new() { LanguageCode = "de", Name = "Mayonnaise" },
+                    new() { LanguageCode = "ko", Name = "마요네즈" },
                 },
             },
             new Ingredient
@@ -475,6 +585,8 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 12, Name = "Pizza Dough", Stock = 14, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Pizzadeeg" },
+                    new() { LanguageCode = "de", Name = "Pizzateig" },
+                    new() { LanguageCode = "ko", Name = "피자 반죽" },
                 },
             },
             new Ingredient
@@ -482,6 +594,8 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 13, Name = "Tomato Sauce", Stock = 19, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Tomatensaus" },
+                    new() { LanguageCode = "de", Name = "Tomatensauce" },
+                    new() { LanguageCode = "ko", Name = "토마토 소스" },
                 },
             },
             new Ingredient
@@ -489,6 +603,8 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 14, Name = "Mozzarella Cheese", Stock = 10, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Mozzarella kaas" },
+                    new() { LanguageCode = "de", Name = "Mozzarella-Käse" },
+                    new() { LanguageCode = "ko", Name = "모짜렐라 치즈" },
                 },
             },
             new Ingredient
@@ -496,6 +612,8 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 15, Name = "Pepperoni", Stock = 30, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Pepperoni" },
+                    new() { LanguageCode = "de", Name = "Pepperoni" },
+                    new() { LanguageCode = "ko", Name = "페퍼로니" },
                 },
             },
             new Ingredient
@@ -503,6 +621,8 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 16, Name = "Mushrooms", Stock = 25, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Champignons" },
+                    new() { LanguageCode = "de", Name = "Pilze" },
+                    new() { LanguageCode = "ko", Name = "버섯" },
                 },
             },
             new Ingredient
@@ -510,6 +630,8 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 17, Name = "Bell Peppers", Stock = 17, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Paprika" },
+                    new() { LanguageCode = "de", Name = "Paprika" },
+                    new() { LanguageCode = "ko", Name = "파프리카" },
                 },
             },
             new Ingredient
@@ -517,6 +639,8 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 18, Name = "Onions", Stock = 14, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Uien" },
+                    new() { LanguageCode = "de", Name = "Zwiebeln" },
+                    new() { LanguageCode = "ko", Name = "양파" },
                 },
             },
             new Ingredient
@@ -524,6 +648,8 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 19, Name = "Olives", Stock = 12, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Olijven" },
+                    new() { LanguageCode = "de", Name = "Oliven" },
+                    new() { LanguageCode = "ko", Name = "올리브" },
                 },
             },
             new Ingredient
@@ -531,6 +657,8 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 20, Name = "Basil", Stock = 10, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Basilicum" },
+                    new() { LanguageCode = "de", Name = "Basilikum" },
+                    new() { LanguageCode = "ko", Name = "바질" },
                 },
             },
             new Ingredient
@@ -538,6 +666,8 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 21, Name = "Pasta", Stock = 21, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Pasta" },
+                    new() { LanguageCode = "de", Name = "Pasta" },
+                    new() { LanguageCode = "ko", Name = "파스타" },
                 },
             },
             new Ingredient
@@ -545,6 +675,8 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 22, Name = "Garlic", Stock = 21, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Knoflook" },
+                    new() { LanguageCode = "de", Name = "Knoblauch" },
+                    new() { LanguageCode = "ko", Name = "마늘" },
                 },
             },
             new Ingredient
@@ -552,6 +684,8 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 23, Name = "Olive Oil", Stock = 21, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Olijfolie" },
+                    new() { LanguageCode = "de", Name = "Olivenöl" },
+                    new() { LanguageCode = "ko", Name = "올리브 오일" },
                 },
             },
             new Ingredient
@@ -559,6 +693,8 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 24, Name = "Parmesan Cheese", Stock = 21, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Parmezaanse kaas" },
+                    new() { LanguageCode = "de", Name = "Parmesankäse" },
+                    new() { LanguageCode = "ko", Name = "파르미 산 치즈" },
                 },
             },
             new Ingredient
@@ -566,6 +702,8 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 25, Name = "Potatoes", Stock = 21, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Aardappelen" },
+                    new() { LanguageCode = "de", Name = "Kartoffeln" },
+                    new() { LanguageCode = "ko", Name = "감자" },
                 },
             },
             new Ingredient
@@ -573,6 +711,8 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 26, Name = "Salt", Stock = 10, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Zout" },
+                    new() { LanguageCode = "de", Name = "Salz" },
+                    new() { LanguageCode = "ko", Name = "소금" },
                 },
             },
             new Ingredient
@@ -580,6 +720,8 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 27, Name = "Oil", Stock = 10, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Olie" },
+                    new() { LanguageCode = "de", Name = "Öl" },
+                    new() { LanguageCode = "ko", Name = "유" },
                 },
             }
         );
@@ -630,6 +772,8 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 1, Name = "Italian", Translations = new List<CategoryTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Italiaans" },
+                    new() { LanguageCode = "de", Name = "Italienisch" },
+                    new() { LanguageCode = "ko", Name = "이탈리아" },
                 },
             },
             new Category
@@ -637,6 +781,8 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 2, Name = "American", Translations = new List<CategoryTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Amerikaans" },
+                    new() { LanguageCode = "de", Name = "Amerikanisch" },
+                    new() { LanguageCode = "ko", Name = "미국" },
                 },
             },
             new Category
@@ -644,6 +790,8 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 3, Name = "Drinks", Translations = new List<CategoryTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Dranken" },
+                    new() { LanguageCode = "de", Name = "Getränke" },
+                    new() { LanguageCode = "ko", Name = "음료" },
                 },
             }
         );
@@ -663,18 +811,6 @@ public class SeedData(ApplicationDbContext dbContext)
             new() { CategoryId = 3, MenuItemId = 10 },
         });
 
-        /*        List<int> ids1 = [2, 3];
-                List<MenuItem> menuItems1 = dbContext.MenuItems.Where(mi => ids1.Contains(mi.Id)).ToList();
-                dbContext.Categories.First(c => c.Id == 1).MenuItems = [..menuItems1];
-
-                List<int> ids2 = [1, 4];
-                List<MenuItem> menuItems2 = dbContext.MenuItems.Where(mi => ids2.Contains(mi.Id)).ToList();
-                dbContext.Categories.First(c => c.Id == 2).MenuItems = [..menuItems2];*/
-
-        /*        List<int> ids3 = [5, 6, 7, 8, 9, 10];
-                List<MenuItem> menuItems3 = dbContext.MenuItems.Where(mi => ids3.Contains(mi.Id)).ToList();
-                dbContext.Categories.First(c => c.Id == 3).MenuItems = [..menuItems3];
-        */
         await dbContext.SaveChangesAsync();
     }
 
@@ -688,6 +824,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 SessionId = "0449DB90-66AF-4E17-8086-C1452270B52D",
                 QrCode = "n/a",
                 CreatedAt = DateTime.Parse("2023-09-01 12:00:00"),
+                IsReservable = true,
             },
             new Table
             {
@@ -696,6 +833,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 SessionId = "7EAE8F7F-C969-4FCD-869E-07AC2E62EB44",
                 QrCode = "n/a",
                 CreatedAt = DateTime.Parse("2023-09-01 12:00:00").AddMinutes(10),
+                IsReservable = true,
             },
             new Table
             {
@@ -704,6 +842,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 SessionId = "CBF261E5-A710-4611-A423-87943EB5DC32",
                 QrCode = "n/a",
                 CreatedAt = DateTime.Parse("2023-09-01 12:00:00").AddMinutes(20),
+                IsReservable = true,
             },
             new Table
             {
@@ -722,6 +861,21 @@ public class SeedData(ApplicationDbContext dbContext)
                 CreatedAt = DateTime.Parse("2023-09-01 12:00:00").AddMinutes(30),
             }
         );
+        await dbContext.SaveChangesAsync();
+    }
+
+    private async Task SeedSettings()
+    {
+        dbContext.Settings.AddRange(
+            new Setting
+            {
+                Id = 1,
+                CompanyName = "Digital Menu",
+                PrimaryColor = "#EF4444",
+                SecondaryColor = "#EF4444",
+            }
+        );
+
         await dbContext.SaveChangesAsync();
     }
 }

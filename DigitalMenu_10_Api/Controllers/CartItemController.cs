@@ -17,6 +17,7 @@ public class CartItemController(
     ITableService tableService,
     IIngredientService ingredientService,
     IOrderService orderService,
+    IReservationService reservationService,
     IHubContext<OrderHub, IOrderHubClient> hubContext) : ControllerBase
 {
     [HttpPost]
@@ -45,7 +46,7 @@ public class CartItemController(
                 cartItemService.Update(cartItem);
 
                 await hubContext.Clients.Group($"cart-{cartRequest.TableSessionId}")
-                    .ReceiveCartUpdate(CartService.GetCartViewModel(orderService, cartItemService,
+                    .ReceiveCartUpdate(CartService.GetCartViewModel(reservationService, orderService, cartItemService,
                         cartRequest.TableSessionId));
 
                 return NoContent();
@@ -88,7 +89,8 @@ public class CartItemController(
         }
 
         await hubContext.Clients.Group($"cart-{cartRequest.TableSessionId}")
-            .ReceiveCartUpdate(CartService.GetCartViewModel(orderService, cartItemService, cartRequest.TableSessionId));
+            .ReceiveCartUpdate(CartService.GetCartViewModel(reservationService, orderService, cartItemService,
+                cartRequest.TableSessionId));
 
         return NoContent();
     }
@@ -107,21 +109,57 @@ public class CartItemController(
         {
             return NotFound();
         }
+        
+        CartItemViewModel cartItemViewModel = new()
+        {
+            Id = cartItem.Id,
+            Note = cartItem.Note,
+            Quantity = cartItem.Quantity,
+            TableSessionId = cartItem.TableSessionId,
+            MenuItemId = cartItem.MenuItemId,
+        };
 
-        MenuItem? menuitem = menuItemService.GetMenuItemById(cartItem.MenuItemId);
+        MenuItem? menuitem = menuItemService.GetMenuItemById(cartItemViewModel.MenuItemId);
         if (menuitem == null)
         {
             return NotFound();
         }
-
-        cartItem.MenuItem = menuitem;
+        
+        MenuItemViewModel menuItemViewModel = new()
+        {
+            Id = menuitem.Id,
+            Name = menuitem.Name,
+            Description = menuitem.Description,
+            Price = menuitem.Price,
+            ImageUrl = menuitem.ImageUrl,
+            Note = cartItem.Note,
+            Ingredients = menuitem.Ingredients.Select(i => new IngredientViewModel
+            {
+                Id = i.Id,
+                Name = i.Name,
+                Stock = i.Stock,
+                Pieces = i.Pieces,
+            }).ToList(),
+            IsActive = menuitem.IsActive,
+            Categories = menuitem.Categories.Select(c => c.Name).ToList(),
+        };
+        
+        cartItemViewModel.MenuItem = menuItemViewModel;
 
         List<Ingredient> excludedIngredients = cartItemService.GetExcludedIngredientsByCartItemId(cartItemId);
+        
+        List<IngredientViewModel> excludedIngredientsViewModel = excludedIngredients.Select(e => new IngredientViewModel
+        {
+            Id = e.Id,
+            Name = e.Name,
+            Stock = e.Stock,
+            Pieces = e.Pieces,
+        }).ToList();
 
         CartItemWithIngredientsViewModel cartItemWithIngredients = new()
         {
-            CartItem = cartItem,
-            ExcludedIngredients = excludedIngredients,
+            CartItem = cartItemViewModel,
+            ExcludedIngredients = excludedIngredientsViewModel,
         };
 
         return Ok(cartItemWithIngredients);
@@ -135,7 +173,7 @@ public class CartItemController(
             return NotFound();
         }
 
-        return Ok(CartService.GetCartViewModel(orderService, cartItemService, tableSessionId));
+        return Ok(CartService.GetCartViewModel(reservationService, orderService, cartItemService, tableSessionId));
     }
 
     [HttpPut("minus")]
@@ -166,7 +204,8 @@ public class CartItemController(
         }
 
         await hubContext.Clients.Group($"cart-{cartRequest.TableSessionId}")
-            .ReceiveCartUpdate(CartService.GetCartViewModel(orderService, cartItemService, cartRequest.TableSessionId));
+            .ReceiveCartUpdate(CartService.GetCartViewModel(reservationService, orderService, cartItemService,
+                cartRequest.TableSessionId));
 
         return NoContent();
     }
@@ -191,7 +230,8 @@ public class CartItemController(
         cartItemService.Update(cartItem);
 
         await hubContext.Clients.Group($"cart-{cartRequest.TableSessionId}")
-            .ReceiveCartUpdate(CartService.GetCartViewModel(orderService, cartItemService, cartRequest.TableSessionId));
+            .ReceiveCartUpdate(CartService.GetCartViewModel(reservationService, orderService, cartItemService,
+                cartRequest.TableSessionId));
 
         return NoContent();
     }
@@ -239,7 +279,8 @@ public class CartItemController(
         }
 
         await hubContext.Clients.Group($"cart-{cartRequest.TableSessionId}")
-            .ReceiveCartUpdate(CartService.GetCartViewModel(orderService, cartItemService, cartRequest.TableSessionId));
+            .ReceiveCartUpdate(CartService.GetCartViewModel(reservationService, orderService, cartItemService,
+                cartRequest.TableSessionId));
 
         return NoContent();
     }

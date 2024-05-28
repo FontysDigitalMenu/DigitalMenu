@@ -208,6 +208,35 @@ namespace DigitalMenu_30_DAL.Migrations
                     b.ToTable("IngredientTranslations");
                 });
 
+            modelBuilder.Entity("DigitalMenu_20_BLL.Models.MailTranslation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Language")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MailTranslations");
+                });
+
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.MenuItem", b =>
                 {
                     b.Property<int>("Id")
@@ -353,6 +382,63 @@ namespace DigitalMenu_30_DAL.Migrations
                     b.ToTable("OrderMenuItems");
                 });
 
+            modelBuilder.Entity("DigitalMenu_20_BLL.Models.Reservation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("IsUnlocked")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTime>("ReservationDateTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("ReservationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TableId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TableId");
+
+                    b.ToTable("Reservations");
+                });
+
+            modelBuilder.Entity("DigitalMenu_20_BLL.Models.Setting", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("PrimaryColor")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("SecondaryColor")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Settings");
+                });
+
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.Split", b =>
                 {
                     b.Property<int>("Id")
@@ -395,6 +481,9 @@ namespace DigitalMenu_30_DAL.Migrations
 
                     b.Property<string>("HostId")
                         .HasColumnType("longtext");
+
+                    b.Property<bool>("IsReservable")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -773,6 +862,17 @@ namespace DigitalMenu_30_DAL.Migrations
                     b.Navigation("Order");
                 });
 
+            modelBuilder.Entity("DigitalMenu_20_BLL.Models.Reservation", b =>
+                {
+                    b.HasOne("DigitalMenu_20_BLL.Models.Table", "Table")
+                        .WithMany("Reservations")
+                        .HasForeignKey("TableId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Table");
+                });
+
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.Split", b =>
                 {
                     b.HasOne("DigitalMenu_20_BLL.Models.Order", "Order")
@@ -889,6 +989,8 @@ namespace DigitalMenu_30_DAL.Migrations
             modelBuilder.Entity("DigitalMenu_20_BLL.Models.Table", b =>
                 {
                     b.Navigation("Orders");
+
+                    b.Navigation("Reservations");
                 });
 #pragma warning restore 612, 618
         }

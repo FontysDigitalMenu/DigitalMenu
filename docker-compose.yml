@@ -41,6 +41,21 @@ services:
     networks:
       - digitalmenu_network
 
+  mailpit:
+    image: axllent/mailpit:v1.17
+    container_name: ${APP_NAME}-mailpit
+    restart: always
+    volumes:
+        - mailpit_data:/data
+    ports:
+        - 8025:8025
+        - 1025:1025
+    environment:
+        MP_SMTP_AUTH_ACCEPT_ANY: 1
+        MP_SMTP_AUTH_ALLOW_INSECURE: 1
+    networks:
+        - digitalmenu_network
+
 networks:
   digitalmenu_network:
     external: true
@@ -48,3 +63,5 @@ networks:
 volumes:
   mysql_data:
     driver: local
+  mailpit_data:
+      driver: local

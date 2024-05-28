@@ -7,4 +7,6 @@ public class CartViewModel
     public List<CartItemViewModel> CartItems { get; set; }
 
     public int TotalAmount { get; set; }
+
+    public int ReservationFee { get; set; }
 }

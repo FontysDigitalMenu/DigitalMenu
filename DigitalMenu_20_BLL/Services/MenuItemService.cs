@@ -5,8 +5,11 @@ using DigitalMenu_20_BLL.Models;
 
 namespace DigitalMenu_20_BLL.Services;
 
-public class MenuItemService(IMenuItemRepository menuItemRepository) : IMenuItemService
+public class MenuItemService(IMenuItemRepository menuItemRepository, ITranslationService translationService)
+    : IMenuItemService
 {
+    private readonly List<string> _languages = ["en", "nl", "de", "ko"];
+
     public IEnumerable<Category> GetCategoriesWithNextMenuItems(int lastId, int amount)
     {
         IEnumerable<MenuItem> menuItems = menuItemRepository.GetNextMenuItemsWithCategory(lastId, amount);
@@ -47,34 +50,36 @@ public class MenuItemService(IMenuItemRepository menuItemRepository) : IMenuItem
         return menuItemRepository.GetMenuItemCount();
     }
 
-    public async Task<MenuItem?> CreateMenuItem(MenuItem menuItem)
+    public async Task<MenuItem?> CreateMenuItem(MenuItem menuItem, string language)
     {
-        return await menuItemRepository.CreateMenuItem(menuItem);
+        List<MenuItemTranslation> menuItemTranslations = await GetMenuItemTranslations(menuItem, language);
+        MenuItemTranslation englishMenuItem = menuItemTranslations.First(mit => mit.LanguageCode == "en");
+        menuItem.Name = englishMenuItem.Name;
+        menuItem.Description = englishMenuItem.Description;
+        menuItemTranslations.Remove(englishMenuItem);
+
+        MenuItem? createdMenuItem = await menuItemRepository.CreateMenuItem(menuItem);
+        menuItemTranslations.ForEach(mit => mit.MenuItemId = createdMenuItem.Id);
+        menuItemRepository.CreateMenuItemTranslations(menuItemTranslations);
+
+        return createdMenuItem;
     }
 
-    public async Task<MenuItem?> UpdateMenuItem(MenuItem menuItem)
+    public async Task<MenuItem?> UpdateMenuItem(MenuItem menuItem, string language)
     {
-        /*MenuItem? originalMenuItem = menuItemRepository.GetMenuItemBy(menuItem.Id);
+        List<MenuItemTranslation> menuItemTranslations = await GetMenuItemTranslations(menuItem, language);
+        MenuItemTranslation englishMenuItem = menuItemTranslations.First(mit => mit.LanguageCode == "en");
+        menuItem.Name = englishMenuItem.Name;
+        menuItem.Description = englishMenuItem.Description;
+        menuItemTranslations.Remove(englishMenuItem);
 
-        if (originalMenuItem == null)
+        MenuItem? updatedMenuItem = await menuItemRepository.UpdateMenuItem(menuItem);
+        foreach (MenuItemTranslation menuItemTranslation in menuItemTranslations)
         {
-            throw new NotFoundException("MenuItem does not exist");
+            menuItemRepository.UpdateOrCreateMenuItemTranslation(menuItemTranslation);
         }
 
-        originalMenuItem.Name = menuItem.Name;
-        originalMenuItem.Description = menuItem.Description;
-        originalMenuItem.Price = menuItem.Price;
-        originalMenuItem.Ingredients = [];
-        originalMenuItem.Categories = null;
-
-        if (string.IsNullOrEmpty(menuItem.ImageUrl))
-        {
-            menuItem.ImageUrl = originalMenuItem.ImageUrl;
-        }
-
-        originalMenuItem.ImageUrl = menuItem.ImageUrl;*/
-
-        return await menuItemRepository.UpdateMenuItem(menuItem);
+        return updatedMenuItem;
     }
 
     public async Task<List<MenuItemIngredient>?> AddIngredientsToMenuItem(List<MenuItemIngredient> menuItemIngredients)
@@ -104,5 +109,45 @@ public class MenuItemService(IMenuItemRepository menuItemRepository) : IMenuItem
         }
 
         return menuItemRepository.Delete(id);
+    }
+
+    private async Task<List<MenuItemTranslation>> GetMenuItemTranslations(MenuItem menuItem, string language)
+    {
+        List<MenuItemTranslation> menuItemTranslations =
+        [
+            new MenuItemTranslation
+            {
+                MenuItemId = menuItem.Id,
+                LanguageCode = language,
+                Name = menuItem.Name,
+                Description = menuItem.Description,
+            },
+        ];
+        foreach (string lang in _languages.Where(l => l != language))
+        {
+            string translatedName = await translationService.Translate(menuItem.Name, language, lang);
+            string translatedDescription = await translationService.Translate(menuItem.Description, language, lang);
+
+            menuItemTranslations.Add(new MenuItemTranslation
+            {
+                MenuItemId = menuItem.Id,
+                LanguageCode = lang,
+                Name = translatedName,
+                Description = translatedDescription,
+            });
+        }
+
+        List<MenuItemTranslation> existingTranslations = menuItemRepository.GetMenuItemTranslations(menuItem.Id);
+        foreach (MenuItemTranslation existingTranslation in existingTranslations)
+        {
+            MenuItemTranslation? translation =
+                menuItemTranslations.FirstOrDefault(mt => mt.LanguageCode == existingTranslation.LanguageCode);
+            if (translation != null)
+            {
+                translation.Id = existingTranslation.Id;
+            }
+        }
+
+        return menuItemTranslations;
     }
 }

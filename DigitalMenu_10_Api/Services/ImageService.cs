@@ -1,4 +1,6 @@
-﻿namespace DigitalMenu_10_Api.Services;
+﻿using DigitalMenu_20_BLL.Services;
+
+namespace DigitalMenu_10_Api.Services;
 
 public class ImageService(IWebHostEnvironment webHostEnvironment)
 {
@@ -28,7 +30,7 @@ public class ImageService(IWebHostEnvironment webHostEnvironment)
 
         string menuItemImageName =
             new string(Path.GetFileNameWithoutExtension(menuItemFile.FileName).Take(10).ToArray()).Replace(' ', '-');
-        menuItemImageName = menuItemImageName + DateTime.Now.ToString("yymmssfff") + myUuid +
+        menuItemImageName = menuItemImageName + DateTimeService.GetNow().ToString("yymmssfff") + myUuid +
                             Path.GetExtension(menuItemFile.FileName);
         string imagePath = Path.Combine(webHostEnvironment.ContentRootPath, "api/Images", menuItemImageName);
 

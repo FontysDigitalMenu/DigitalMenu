@@ -14,9 +14,9 @@ public interface IMenuItemService
 
     int GetMenuItemCount();
 
-    public Task<MenuItem?> CreateMenuItem(MenuItem menuItem);
+    public Task<MenuItem?> CreateMenuItem(MenuItem menuItem, string language);
 
-    public Task<MenuItem?> UpdateMenuItem(MenuItem menuItem);
+    public Task<MenuItem?> UpdateMenuItem(MenuItem menuItem, string language);
 
     public Task<List<MenuItemIngredient>?> AddIngredientsToMenuItem(List<MenuItemIngredient> menuItemIngredients);
 

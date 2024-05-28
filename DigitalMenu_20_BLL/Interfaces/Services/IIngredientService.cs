@@ -14,11 +14,11 @@ public interface IIngredientService
 
     public Task<bool> DeleteIngredientsByMenuItemId(int menuItemId);
 
-    public Task<Ingredient?> CreateIngredient(Ingredient ingredient);
+    public Task<Ingredient?> CreateIngredient(Ingredient ingredient, string language);
 
     public Task<Ingredient?> GetIngredientById(int ingredientId);
 
-    public Task<bool> UpdateIngredient(Ingredient ingredient);
+    public Task<bool> UpdateIngredient(Ingredient ingredient, string language);
 
     public Task<bool> DeleteIngredient(int ingredientId);
 }
