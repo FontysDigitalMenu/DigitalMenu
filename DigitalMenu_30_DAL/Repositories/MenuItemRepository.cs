@@ -119,13 +119,21 @@ public class MenuItemRepository(ApplicationDbContext dbContext) : IMenuItemRepos
         return menuItemWithoutIngredient;
     }
 
-    public async Task<List<MenuItem>> GetMenuItems()
+    public async Task<List<MenuItem>> GetMenuItems(int lastMenuItem, int amount)
     {
         return await dbContext.MenuItems
             .Include(m => m.Translations)
             .OrderBy(m => m.Id)
+            .Skip(lastMenuItem)
+            .Take(amount)
             .Where(m => m.IsActive)
             .ToListAsync();
+    }
+
+    public int GetMenuItemCount()
+    {
+        return dbContext.MenuItems
+            .Count();
     }
 
     public async Task<MenuItem?> CreateMenuItem(MenuItem menuItem)
