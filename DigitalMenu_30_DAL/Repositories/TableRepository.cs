@@ -1,5 +1,6 @@
 ﻿using DigitalMenu_20_BLL.Interfaces.Repositories;
 using DigitalMenu_20_BLL.Models;
+using DigitalMenu_20_BLL.Services;
 using DigitalMenu_30_DAL.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,7 +15,7 @@ public class TableRepository(ApplicationDbContext dbContext) : ITableRepository
 
     public Table? Create(Table table)
     {
-        table.CreatedAt = DateTime.Now;
+        table.CreatedAt = DateTimeService.GetNow();
         dbContext.Tables.Add(table);
         return dbContext.SaveChanges() > 0 ? table : null;
     }

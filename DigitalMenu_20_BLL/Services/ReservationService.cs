@@ -21,7 +21,12 @@ public class ReservationService(
         reservation.ReservationId = new Random().Next(100000, 999999);
         reservation.ReservationDateTime = TruncateToNearestMinute(reservation.ReservationDateTime);
 
-        Table availableTable = GetAvailableTable(reservation.ReservationDateTime);
+        Table? availableTable = GetAvailableTable(reservation.ReservationDateTime);
+        if (availableTable == null)
+        {
+            throw new ReservationException("No table is available");
+        }
+
         reservation.Table = availableTable;
         reservation.TableId = availableTable.Id;
 
@@ -44,14 +49,19 @@ public class ReservationService(
 
     public List<AvailableTimes> GetAvailableTimes(DateTime date)
     {
-        List<Reservation> reservations = reservationRepository.GetByDay(date);
-
         List<AvailableTimes> availableTimes = [];
         foreach (string validReservationTime in _validReservationTimes)
         {
-            DateTime validTime = DateTime.Parse(validReservationTime);
-            bool timeIsAvailable = reservations.All(r => r.ReservationDateTime.TimeOfDay != validTime.TimeOfDay);
-            if (timeIsAvailable)
+            DateTime validTime = DateTime.Parse(date.ToString("yyyy-MM-dd") + " " + validReservationTime);
+
+            if (DateTimeService.GetNow() > validTime.Subtract(TimeSpan.FromHours(ReservationDuration)))
+            {
+                continue;
+            }
+
+            Table? availableTable = GetAvailableTable(validTime);
+
+            if (availableTable != null)
             {
                 availableTimes.Add(new AvailableTimes
                 {
@@ -76,7 +86,7 @@ public class ReservationService(
 
     public bool MustPayReservationFee(string tableSessionId)
     {
-        DateTime now = DateTime.Now;
+        DateTime now = DateTimeService.GetNow();
         Table? table = tableRepository.GetTableBySessionIdWithReservationsFromDay(tableSessionId, now);
 
         return table?.Reservations.Any(r =>
@@ -84,7 +94,7 @@ public class ReservationService(
             now <= r.ReservationDateTime.AddHours(ReservationDuration)) ?? false;
     }
 
-    private Table GetAvailableTable(DateTime dateTime)
+    private Table? GetAvailableTable(DateTime dateTime)
     {
         List<Table> tables = tableRepository.GetAllReservableTablesWithReservationsFrom(dateTime);
 
@@ -96,12 +106,7 @@ public class ReservationService(
             reservationStart > r.ReservationDateTime
         )).ToList();
 
-        if (availableTables.Count <= 0)
-        {
-            throw new ReservationException("No table is available");
-        }
-
-        return availableTables.First();
+        return availableTables.Count > 0 ? availableTables.First() : null;
     }
 
     private static DateTime TruncateToNearestMinute(DateTime dateTime)
@@ -114,10 +119,11 @@ public class ReservationService(
         bool isValidTime = _validReservationTimes.Contains(reservation.ReservationDateTime.ToString("HH:mm"));
         if (!isValidTime)
         {
-            throw new ReservationException("Invalid time");
+            throw new ReservationException("Invalid reservation time");
         }
 
-        bool isTwoAndAHalfHoursAhead = reservation.ReservationDateTime > DateTime.Now.AddHours(ReservationDuration);
+        bool isTwoAndAHalfHoursAhead =
+            reservation.ReservationDateTime > DateTimeService.GetNow().AddHours(ReservationDuration);
         if (!isTwoAndAHalfHoursAhead)
         {
             throw new ReservationException("Reservation must be at least 2.5 hours ahead");
