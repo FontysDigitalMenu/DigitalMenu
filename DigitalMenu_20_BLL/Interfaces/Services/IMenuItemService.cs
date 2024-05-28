@@ -10,7 +10,9 @@ public interface IMenuItemService
 
     public MenuItem? GetMenuItemById(int id);
 
-    public Task<List<MenuItem>> GetMenuItems();
+    public Task<List<MenuItem>> GetMenuItems(int currentPage, int amount);
+
+    public int GetMenuItemCount();
 
     public Task<MenuItem?> CreateMenuItem(MenuItem menuItem, string language);
 

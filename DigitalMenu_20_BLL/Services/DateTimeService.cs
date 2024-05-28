@@ -4,6 +4,6 @@ public static class DateTimeService
 {
     public static DateTime GetNow()
     {
-        return DateTime.Now;//DateTime.Today.AddHours(18).AddMinutes(0);;
+        return DateTime.Now; //DateTime.Today.AddHours(18).AddMinutes(0);;
     }
 }

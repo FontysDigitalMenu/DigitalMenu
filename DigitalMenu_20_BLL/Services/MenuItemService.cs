@@ -39,9 +39,15 @@ public class MenuItemService(IMenuItemRepository menuItemRepository, ITranslatio
         return menuItemRepository.GetMenuItemBy(id);
     }
 
-    public async Task<List<MenuItem>> GetMenuItems()
+    public async Task<List<MenuItem>> GetMenuItems(int currentPage, int amount)
     {
-        return await menuItemRepository.GetMenuItems();
+        int lastMenuItem = (currentPage - 1) * amount;
+        return await menuItemRepository.GetMenuItems(lastMenuItem, amount);
+    }
+
+    public int GetMenuItemCount()
+    {
+        return menuItemRepository.GetMenuItemCount();
     }
 
     public async Task<MenuItem?> CreateMenuItem(MenuItem menuItem, string language)

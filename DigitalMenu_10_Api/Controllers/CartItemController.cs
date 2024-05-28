@@ -109,7 +109,7 @@ public class CartItemController(
         {
             return NotFound();
         }
-        
+
         CartItemViewModel cartItemViewModel = new()
         {
             Id = cartItem.Id,
@@ -124,7 +124,7 @@ public class CartItemController(
         {
             return NotFound();
         }
-        
+
         MenuItemViewModel menuItemViewModel = new()
         {
             Id = menuitem.Id,
@@ -143,11 +143,11 @@ public class CartItemController(
             IsActive = menuitem.IsActive,
             Categories = menuitem.Categories.Select(c => c.Name).ToList(),
         };
-        
+
         cartItemViewModel.MenuItem = menuItemViewModel;
 
         List<Ingredient> excludedIngredients = cartItemService.GetExcludedIngredientsByCartItemId(cartItemId);
-        
+
         List<IngredientViewModel> excludedIngredientsViewModel = excludedIngredients.Select(e => new IngredientViewModel
         {
             Id = e.Id,

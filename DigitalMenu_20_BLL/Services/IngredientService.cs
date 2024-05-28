@@ -20,6 +20,17 @@ public class IngredientService(IIngredientRepository ingredientRepository, ITran
         return await ingredientRepository.GetIngredients();
     }
 
+    public async Task<List<Ingredient>> GetIngredientsPerPage(int currentPage, int amount)
+    {
+        int lastIngredient = (currentPage - 1) * amount;
+        return await ingredientRepository.GetIngredientsPerPage(lastIngredient, amount);
+    }
+
+    public int GetIngredientCount()
+    {
+        return ingredientRepository.GetIngredientCount();
+    }
+
     public async Task<bool> DeleteIngredientsByMenuItemId(int menuItemId)
     {
         if (menuItemId <= 0)

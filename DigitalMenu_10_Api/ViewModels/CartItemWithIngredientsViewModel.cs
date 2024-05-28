@@ -1,6 +1,4 @@
-﻿using DigitalMenu_20_BLL.Models;
-
-namespace DigitalMenu_10_Api.ViewModels;
+﻿namespace DigitalMenu_10_Api.ViewModels;
 
 public class CartItemWithIngredientsViewModel
 {

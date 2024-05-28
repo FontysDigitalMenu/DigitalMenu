@@ -12,7 +12,9 @@ public interface IMenuItemRepository
 
     public MenuItem? GetMenuItemBy(int id);
 
-    public Task<List<MenuItem>> GetMenuItems();
+    public Task<List<MenuItem>> GetMenuItems(int lastMenuItem, int amount);
+
+    public int GetMenuItemCount();
 
     public Task<MenuItem?> CreateMenuItem(MenuItem menuItem);
 
