@@ -68,7 +68,7 @@ public class ReservationController(
         return NoContent();
     }
 
- 
+    [HttpGet]
     public IActionResult GetReservations()
     {
         List<Reservation> reservations = reservationService.GetReservations();

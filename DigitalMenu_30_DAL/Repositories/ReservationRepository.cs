@@ -1,6 +1,7 @@
 ﻿using DigitalMenu_20_BLL.Interfaces.Repositories;
 using DigitalMenu_20_BLL.Models;
 using DigitalMenu_30_DAL.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace DigitalMenu_30_DAL.Repositories;
 
@@ -50,6 +51,6 @@ public class ReservationRepository(ApplicationDbContext dbContext) : IReservatio
 
     public List<Reservation> GetReservations()
     {
-        return dbContext.Reservations.ToList();
+        return dbContext.Reservations.Include(r => r.Table).ToList();
     }
 }
