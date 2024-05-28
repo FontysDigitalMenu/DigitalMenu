@@ -69,8 +69,10 @@ public class ReservationController(
     }
 
  
-    [HttpGet]
+    [HttpGet("{date:datetime}")]
     [Authorize]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(500)]
     public IActionResult GetReservations([FromRoute] DateTime date)
     {
         List<Reservation> reservations = reservationService.GetReservations(date);
