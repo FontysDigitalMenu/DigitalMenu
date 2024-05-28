@@ -21,7 +21,25 @@ public class IngredientsController(
     [ProducesResponseType(200)]
     [ProducesResponseType(401)]
     [ProducesResponseType(403)]
-    public async Task<ActionResult> GetIngredients(int currentPage, int amount)
+    public async Task<ActionResult> GetIngredients()
+    {
+        List<Ingredient> ingredients = await ingredientService.GetIngredients();
+
+        List<IngredientViewModel> ingredientViewModels = ingredients.Select(ingredient => new IngredientViewModel
+        {
+            Id = ingredient.Id,
+            Name = ingredient.Name,
+            Stock = ingredient.Stock,
+        }).ToList();
+
+        return Ok(ingredientViewModels);
+    }  
+
+    [HttpGet("paginated")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(401)]
+    [ProducesResponseType(403)]
+    public async Task<ActionResult> GetIngredientsPaginated(int currentPage, int amount)
     {
         List<Ingredient> ingredients = await ingredientService.GetIngredientsPerPage(currentPage, amount);
 
