@@ -94,6 +94,11 @@ public class ReservationService(
             now <= r.ReservationDateTime.AddHours(ReservationDuration)) ?? false;
     }
 
+    public List<Reservation> GetReservations(DateTime dateTime)
+    {
+        return reservationRepository.GetReservations(dateTime);
+    }
+
     private Table? GetAvailableTable(DateTime dateTime)
     {
         List<Table> tables = tableRepository.GetAllReservableTablesWithReservationsFrom(dateTime);
@@ -133,10 +138,5 @@ public class ReservationService(
         {
             throw new ReservationException("Invalid email");
         }
-    }
-
-    public List<Reservation> GetReservations(DateTime dateTime)
-    {
-        return reservationRepository.GetReservations(dateTime);
     }
 }

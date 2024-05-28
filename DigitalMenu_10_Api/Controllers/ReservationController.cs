@@ -68,7 +68,7 @@ public class ReservationController(
         return NoContent();
     }
 
- 
+
     [HttpGet("{date:datetime}")]
     [Authorize]
     [ProducesResponseType(200)]
@@ -76,7 +76,7 @@ public class ReservationController(
     public IActionResult GetReservations([FromRoute] DateTime date)
     {
         List<Reservation> reservations = reservationService.GetReservations(date);
-        
+
         return Ok(reservations.Select(r => new ReservationViewModel
         {
             Email = r.Email,

@@ -13,7 +13,6 @@ public interface IReservationRepository
     public void Delete(int reservationId);
 
     public void Unlock(int id);
-    
+
     public List<Reservation> GetReservations(DateTime dateTime);
-    
 }

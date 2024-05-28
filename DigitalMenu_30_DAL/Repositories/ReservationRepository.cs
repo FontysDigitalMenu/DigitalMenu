@@ -51,6 +51,7 @@ public class ReservationRepository(ApplicationDbContext dbContext) : IReservatio
 
     public List<Reservation> GetReservations(DateTime dateTime)
     {
-        return dbContext.Reservations.Include(r => r.Table).Where(r => r.ReservationDateTime.Date == dateTime.Date).ToList();
+        return dbContext.Reservations.Include(r => r.Table).Where(r => r.ReservationDateTime.Date == dateTime.Date)
+            .ToList();
     }
 }
