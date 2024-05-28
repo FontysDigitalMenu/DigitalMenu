@@ -6,6 +6,18 @@ WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
+# Install tzdata and set the timezone to Amsterdam
+USER root
+RUN apt-get update && apt-get install -y tzdata \
+    && ln -snf /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime \
+    && echo "Europe/Amsterdam" > /etc/timezone
+
+# Ensure the app user has permission to the necessary directories
+RUN chown -R app:app /app /home/app
+
+# Switch back to non-root user
+USER app
+
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
