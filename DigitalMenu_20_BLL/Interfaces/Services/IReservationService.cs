@@ -17,5 +17,5 @@ public interface IReservationService
 
     public bool MustPayReservationFee(string tableSessionId);
 
-    public List<Reservation> GetReservations();
+    public List<Reservation> GetReservations(DateTime dateTime);
 }

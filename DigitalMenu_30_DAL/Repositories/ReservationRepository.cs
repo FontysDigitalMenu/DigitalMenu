@@ -49,8 +49,8 @@ public class ReservationRepository(ApplicationDbContext dbContext) : IReservatio
         dbContext.SaveChanges();
     }
 
-    public List<Reservation> GetReservations()
+    public List<Reservation> GetReservations(DateTime dateTime)
     {
-        return dbContext.Reservations.Include(r => r.Table).ToList();
+        return dbContext.Reservations.Include(r => r.Table).Where(r => r.ReservationDateTime.Date == dateTime.Date).ToList();
     }
 }

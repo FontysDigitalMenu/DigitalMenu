@@ -68,10 +68,13 @@ public class ReservationController(
         return NoContent();
     }
 
+ 
     [HttpGet]
-    public IActionResult GetReservations()
+    [Authorize]
+    public IActionResult GetReservations([FromRoute] DateTime date)
     {
-        List<Reservation> reservations = reservationService.GetReservations();
+        List<Reservation> reservations = reservationService.GetReservations(date);
+        
         return Ok(reservations.Select(r => new ReservationViewModel
         {
             Email = r.Email,

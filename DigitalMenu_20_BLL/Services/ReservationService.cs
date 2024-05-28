@@ -135,8 +135,8 @@ public class ReservationService(
         }
     }
 
-    public List<Reservation> GetReservations()
+    public List<Reservation> GetReservations(DateTime dateTime)
     {
-        return reservationRepository.GetReservations();
+        return reservationRepository.GetReservations(dateTime);
     }
 }
