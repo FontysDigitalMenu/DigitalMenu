@@ -32,12 +32,17 @@ public class IngredientsController(
             Stock = ingredient.Stock,
         }).ToList();
         
-        AdminIngredientViewModel ingredientView = new AdminIngredientViewModel()
-        {
-            Ingredients = ingredientViewModels,
-            IngredientCount = ingredientService.GetIngredientCount()
-        };
-        return Ok(ingredientView);
+        return Ok(ingredientViewModels);
+    }
+    
+    [HttpGet("count")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(401)]
+    [ProducesResponseType(403)]
+    public ActionResult GetCount()
+    {
+        var ingredientCount = ingredientService.GetIngredientCount();
+        return Ok(ingredientCount);
     }
 
     [HttpGet("{id}")]

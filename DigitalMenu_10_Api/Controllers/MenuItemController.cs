@@ -129,12 +129,17 @@ public class MenuItemController(
             ImageUrl = menuItem.ImageUrl,
         }).ToList();
         
-        AdminMenuItemViewModel menuItemView = new AdminMenuItemViewModel()
-        {
-            MenuItems = menuItemViewModels,
-            MenuItemCount = menuItemService.GetMenuItemCount()
-        };
-        return Ok(menuItemView);
+        return Ok(menuItemViewModels);
+    }
+    
+    [HttpGet("count")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(401)]
+    [ProducesResponseType(403)]
+    public ActionResult GetCount()
+    {
+        var menuItemCount = menuItemService.GetMenuItemCount();
+        return Ok(menuItemCount);
     }
 
     [Authorize(Roles = "Admin")]
