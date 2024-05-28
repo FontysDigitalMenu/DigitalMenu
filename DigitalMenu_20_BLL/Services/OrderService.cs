@@ -102,7 +102,7 @@ public class OrderService(
             throw new ValidationException("Total amount does not match with splits amount");
         }
 
-        string orderNumber = DateTime.Now.ToString("ddyyMM") +
+        string orderNumber = DateTimeService.GetNow().ToString("ddyyMM") +
                              ShortId.Generate(new GenerationOptions(length: 8, useSpecialCharacters: false,
                                  useNumbers: false))[..4];
 

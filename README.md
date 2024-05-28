@@ -23,7 +23,7 @@ To start the application container you can start it via Visual Studio
 
 For the translations to work, you need to run the docker command because it is too slow for docker-compose
 ```bash
-docker run -it --name translator -p 6000:5000 libretranslate/libretranslate
+docker run -it --name translator -p 8888:5000 libretranslate/libretranslate
 ```
 
 ## migration commands

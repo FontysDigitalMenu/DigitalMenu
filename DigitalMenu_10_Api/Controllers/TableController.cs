@@ -42,6 +42,24 @@ public class TableController(ITableService tableService) : ControllerBase
     }
 
     [AllowAnonymous]
+    [HttpGet("sessionId/{tableSessionId}")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(404)]
+    public IActionResult GetSessionId([FromRoute] string tableSessionId)
+    {
+        Table? table = tableService.GetBySessionId(tableSessionId);
+        if (table == null)
+        {
+            return NotFound();
+        }
+
+        TableViewModel tableViewModel = new()
+            { Id = table.Id, Name = table.Name, SessionId = table.SessionId, IsReservable = table.IsReservable };
+
+        return Ok(tableViewModel);
+    }
+
+    [AllowAnonymous]
     [HttpGet("scan/{id}/{code:int?}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
