@@ -4,6 +4,7 @@ using DigitalMenu_20_BLL.Dtos;
 using DigitalMenu_20_BLL.Exceptions;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 
@@ -65,5 +66,18 @@ public class ReservationController(
     {
         reservationService.Delete(reservationId);
         return NoContent();
+    }
+
+ 
+    public IActionResult GetReservations()
+    {
+        List<Reservation> reservations = reservationService.GetReservations();
+        return Ok(reservations.Select(r => new ReservationViewModel
+        {
+            Email = r.Email,
+            ReservationDateTime = r.ReservationDateTime,
+            ReservationId = r.ReservationId,
+            TableName = r.Table.Name,
+        }));
     }
 }

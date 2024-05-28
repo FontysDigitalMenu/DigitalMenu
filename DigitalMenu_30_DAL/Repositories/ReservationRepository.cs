@@ -47,4 +47,9 @@ public class ReservationRepository(ApplicationDbContext dbContext) : IReservatio
         reservation.IsUnlocked = true;
         dbContext.SaveChanges();
     }
+
+    public List<Reservation> GetReservations()
+    {
+        return dbContext.Reservations.ToList();
+    }
 }

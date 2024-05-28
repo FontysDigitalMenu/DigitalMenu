@@ -134,4 +134,9 @@ public class ReservationService(
             throw new ReservationException("Invalid email");
         }
     }
+
+    public List<Reservation> GetReservations()
+    {
+        return reservationRepository.GetReservations();
+    }
 }

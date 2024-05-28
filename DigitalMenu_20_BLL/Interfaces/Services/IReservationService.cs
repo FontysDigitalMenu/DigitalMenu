@@ -16,4 +16,6 @@ public interface IReservationService
     public void Unlock(int reservationId);
 
     public bool MustPayReservationFee(string tableSessionId);
+
+    public List<Reservation> GetReservations();
 }
