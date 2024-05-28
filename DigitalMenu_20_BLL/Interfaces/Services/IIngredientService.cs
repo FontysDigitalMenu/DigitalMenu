@@ -10,7 +10,7 @@ public interface IIngredientService
 
     Task<List<Ingredient>> GetIngredientsPerPage(int currentPage, int amount);
 
-    int GetIngredientCount();
+    public int GetIngredientCount();
 
     public Task<bool> DeleteIngredientsByMenuItemId(int menuItemId);
 
