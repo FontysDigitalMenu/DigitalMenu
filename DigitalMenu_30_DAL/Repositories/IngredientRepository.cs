@@ -23,6 +23,7 @@ public class IngredientRepository(ApplicationDbContext dbContext) : IIngredientR
     public async Task<List<Ingredient>> GetIngredientsPerPage(int lastIngredient, int amount)
     {
         return await dbContext.Ingredients
+            .Include(i => i.Translations)
             .OrderBy(i => i.Id)
             .Skip(lastIngredient)
             .Take(amount)

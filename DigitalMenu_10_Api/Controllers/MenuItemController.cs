@@ -29,7 +29,7 @@ public class MenuItemController(
         string localeValue = locale.FirstOrDefault() ?? "en";
 
         List<MenuItem> menuItems = (List<MenuItem>)menuItemService.GetNextMenuItems(lastId, amount);
-        List<MenuItemViewModel> menuItemViewModels = new();
+        List<MenuItemViewModel> menuItemViewModels = [];
         foreach (MenuItem menuItem in menuItems)
         {
             MenuItemViewModel menuItemViewModel = new()
@@ -122,6 +122,7 @@ public class MenuItemController(
     {
         Request.Headers.TryGetValue("Accept-Language", out StringValues locale);
         string localeValue = locale.FirstOrDefault() ?? "en";
+        if (localeValue.Length > 2) localeValue = "en";
 
         List<MenuItem> menuItems = await menuItemService.GetMenuItems(currentPage, amount);
 

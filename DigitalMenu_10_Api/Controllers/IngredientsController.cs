@@ -7,6 +7,7 @@ using DigitalMenu_20_BLL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Primitives;
 
 namespace DigitalMenu_10_Api.Controllers;
 
@@ -33,7 +34,7 @@ public class IngredientsController(
         }).ToList();
 
         return Ok(ingredientViewModels);
-    }  
+    }
 
     [HttpGet("paginated")]
     [ProducesResponseType(200)]
@@ -41,12 +42,16 @@ public class IngredientsController(
     [ProducesResponseType(403)]
     public async Task<ActionResult> GetIngredientsPaginated(int currentPage, int amount)
     {
+        Request.Headers.TryGetValue("Accept-Language", out StringValues locale);
+        string localeValue = locale.FirstOrDefault() ?? "en";
+        if (localeValue.Length > 2) localeValue = "en";
+
         List<Ingredient> ingredients = await ingredientService.GetIngredientsPerPage(currentPage, amount);
 
         List<IngredientViewModel> ingredientViewModels = ingredients.Select(ingredient => new IngredientViewModel
         {
             Id = ingredient.Id,
-            Name = ingredient.Name,
+            Name = ingredient.Translations?.FirstOrDefault(t => t.LanguageCode == localeValue)?.Name ?? ingredient.Name,
             Stock = ingredient.Stock,
         }).ToList();
 
