@@ -12,6 +12,7 @@ namespace DigitalMenu_20_BLL.Services;
 
 public class EmailService(
     IMailTranslationRepository mailTranslationRepository,
+    ISettingRepository settingRepository,
     string fromAddress,
     string fromName,
     string password,
@@ -19,10 +20,12 @@ public class EmailService(
     string host,
     bool enableSsl) : IEmailService
 {
-    public void SendReservationEmail(string toEmail, string reservationCode, string tableName, string language)
+    public async Task SendReservationEmail(string toEmail, string reservationCode, string tableName, string language)
     {
         MailTranslation mailTranslation =
             mailTranslationRepository.GetMailTranslationBy("reservation-created", language);
+
+        Setting settings = (await settingRepository.GetSettings())!;
 
         var translationResponse = JsonConvert.DeserializeAnonymousType(mailTranslation.Body, new
         {
@@ -31,7 +34,6 @@ public class EmailService(
             instruction = "",
             thankYou = "",
             bestRegards = "",
-            companyName = "",
         });
 
 
@@ -46,7 +48,7 @@ public class EmailService(
                         <p style='font-size: 24px; font-weight: bold; text-align: center;'>{tableName}</p>
                         <p style='font-size: 16px;'>{translationResponse.thankYou}</p>
                         <p style='font-size: 16px;'>{translationResponse.bestRegards}</p>
-                        <p style='font-size: 16px;'>{translationResponse.companyName}</p>
+                        <p style='font-size: 16px;'>{settings.CompanyName}</p>
                     </div>
                 </body>
             </html>";
@@ -54,7 +56,7 @@ public class EmailService(
         SendEmail(toEmail, mailTranslation.Subject, body);
     }
 
-    public void SendEmail(string toEmail, string subject, string body)
+    private void SendEmail(string toEmail, string subject, string body)
     {
         MailAddress from = new(fromAddress, fromName);
         MailAddress to = new(toEmail);

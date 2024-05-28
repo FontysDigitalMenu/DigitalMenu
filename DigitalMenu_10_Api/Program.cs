@@ -62,6 +62,7 @@ builder.Services.AddScoped<ITranslationService>(_ => new TranslationService(
 ));
 builder.Services.AddScoped<IEmailService>(provider => new EmailService(
     provider.GetRequiredService<IMailTranslationRepository>(),
+    provider.GetRequiredService<ISettingRepository>(),
     builder.Configuration.GetValue<string>("Email:FromAddress")!,
     builder.Configuration.GetValue<string>("Email:FromName")!,
     builder.Configuration.GetValue<string>("Email:Password")!,
