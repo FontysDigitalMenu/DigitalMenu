@@ -6,6 +6,8 @@ namespace DigitalMenu_20_BLL.Services;
 
 public class TranslationService(string apiUrl) : ITranslationService
 {
+    public static readonly List<string> SupportedLanguages = ["en", "nl", "de", "ko"];
+
     private static readonly HttpClient Client = new();
 
     public async Task<string> Translate(string text, string sourceLanguage, string targetLanguage)

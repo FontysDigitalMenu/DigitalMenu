@@ -48,6 +48,7 @@ public class SeedData(ApplicationDbContext dbContext)
                     salutation = "Dear Customer,",
                     instruction =
                         "Your reservation has been created successfully. Please use the following code when you scan the QR-Code:",
+                    cancel = "Cancel your reservation here",
                     thankYou = "Thank you for choosing our service. We look forward to serving you.",
                     bestRegards = "Best Regards,",
                     companyName = "Digital Menu",
@@ -63,6 +64,7 @@ public class SeedData(ApplicationDbContext dbContext)
                     salutation = "Beste klant,",
                     instruction =
                         "Uw reservering is succesvol aangemaakt. Gebruik de volgende code wanneer u de QR-code scant:",
+                    cancel = "Annuleer uw reservering hier",
                     thankYou =
                         "Bedankt voor het kiezen van onze service. We kijken ernaar uit om u van dienst te zijn.",
                     bestRegards = "Met vriendelijke groet,",
@@ -79,6 +81,7 @@ public class SeedData(ApplicationDbContext dbContext)
                     salutation = "Sehr geehrter Kunde,",
                     instruction =
                         "Ihre Reservierung wurde erfolgreich erstellt. Bitte verwenden Sie den folgenden Code, wenn Sie den QR-Code scannen:",
+                    cancel = "Stornieren Sie Ihre Reservierung hier",
                     thankYou =
                         "Vielen Dank, dass Sie unseren Service gewählt haben. Wir freuen uns darauf, Sie zu bedienen.",
                     bestRegards = "Mit freundlichen Grüßen,",
@@ -95,6 +98,7 @@ public class SeedData(ApplicationDbContext dbContext)
                     salutation = "고객님,",
                     instruction =
                         "예약이 성공적으로 완료되었습니다. QR 코드를 스캔할 때 다음 코드를 사용하세요:",
+                    cancel = "여기에서 예약을 취소하십시오",
                     thankYou = "저희 서비스를 선택해 주셔서 감사합니다. 저희는 고객님을 모시게 되어 기쁩니다.",
                     bestRegards = "감사합니다,",
                     companyName = "디지털 메뉴",

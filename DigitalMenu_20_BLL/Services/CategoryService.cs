@@ -5,7 +5,8 @@ using DigitalMenu_20_BLL.Models;
 
 namespace DigitalMenu_20_BLL.Services;
 
-public class CategoryService(ICategoryRepository categoryRepository) : ICategoryService
+public class CategoryService(ICategoryRepository categoryRepository, ITranslationService translationService)
+    : ICategoryService
 {
     public async Task<List<Category>> GetCategories()
     {
@@ -22,19 +23,32 @@ public class CategoryService(ICategoryRepository categoryRepository) : ICategory
         return await categoryRepository.GetCategoryByName(categoryName);
     }
 
-    public async Task<Category> CreateCategory(string categoryName)
+    public async Task<Category?> GetCategoryByName(string categoryName, string locale)
+    {
+        return await categoryRepository.GetCategoryByName(categoryName, locale);
+    }
+
+    public async Task<Category> CreateCategory(string categoryName, string language)
     {
         if (string.IsNullOrEmpty(categoryName))
         {
             throw new ArgumentException("Category name cannot be null or empty.", nameof(categoryName));
         }
 
+        List<CategoryTranslation> categoryTranslations = await GenerateCategoryTranslations(categoryName, language);
+        CategoryTranslation englishCategory = categoryTranslations.First(ct => ct.LanguageCode == "en");
+
         Category category = new()
         {
-            Name = categoryName,
+            Name = englishCategory.Name,
         };
+        Category createdCategory = await categoryRepository.CreateCategory(category);
 
-        return await categoryRepository.CreateCategory(category);
+        categoryTranslations.Remove(englishCategory);
+        categoryTranslations.ForEach(ct => ct.CategoryId = createdCategory.Id);
+        categoryRepository.CreateTranslations(categoryTranslations);
+
+        return category;
     }
 
     public async Task<bool> DeleteCategoriesByMenuItemId(int menuItemId)
@@ -45,5 +59,26 @@ public class CategoryService(ICategoryRepository categoryRepository) : ICategory
         }
 
         return await categoryRepository.DeleteCategoriesByMenuItemId(menuItemId);
+    }
+
+    private async Task<List<CategoryTranslation>> GenerateCategoryTranslations(string categoryName, string language)
+    {
+        List<CategoryTranslation> categoryTranslations =
+        [
+            new CategoryTranslation { Name = categoryName, LanguageCode = language },
+        ];
+
+        foreach (string lang in TranslationService.SupportedLanguages.Where(l => l != language))
+        {
+            string translatedName = await translationService.Translate(categoryName, language, lang);
+
+            categoryTranslations.Add(new CategoryTranslation
+            {
+                LanguageCode = lang,
+                Name = translatedName,
+            });
+        }
+
+        return categoryTranslations;
     }
 }

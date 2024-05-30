@@ -1,6 +1,7 @@
 ﻿using DigitalMenu_20_BLL.Interfaces.Repositories;
 using DigitalMenu_20_BLL.Models;
 using DigitalMenu_30_DAL.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace DigitalMenu_30_DAL.Repositories;
 
@@ -24,7 +25,7 @@ public class ReservationRepository(ApplicationDbContext dbContext) : IReservatio
         return dbContext.Reservations.Where(r => r.ReservationDateTime.Date == dateTime.Date).ToList();
     }
 
-    public void Delete(int reservationId)
+    public void Delete(string reservationId)
     {
         Reservation? reservation = dbContext.Reservations.FirstOrDefault(r => r.Id == reservationId);
         if (reservation == null)
@@ -36,7 +37,7 @@ public class ReservationRepository(ApplicationDbContext dbContext) : IReservatio
         dbContext.SaveChanges();
     }
 
-    public void Unlock(int id)
+    public void Unlock(string id)
     {
         Reservation? reservation = dbContext.Reservations.FirstOrDefault(r => r.Id == id);
         if (reservation == null)
@@ -46,5 +47,16 @@ public class ReservationRepository(ApplicationDbContext dbContext) : IReservatio
 
         reservation.IsUnlocked = true;
         dbContext.SaveChanges();
+    }
+
+    public List<Reservation> GetReservations(DateTime dateTime)
+    {
+        return dbContext.Reservations.Include(r => r.Table).Where(r => r.ReservationDateTime.Date == dateTime.Date)
+            .ToList();
+    }
+
+    public Reservation? GetReservationById(string reservationId)
+    {
+        return dbContext.Reservations.Include(r => r.Table).FirstOrDefault(r => r.Id == reservationId);
     }
 }

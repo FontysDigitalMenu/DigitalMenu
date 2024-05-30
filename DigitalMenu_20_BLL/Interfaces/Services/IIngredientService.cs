@@ -21,4 +21,6 @@ public interface IIngredientService
     public Task<bool> UpdateIngredient(Ingredient ingredient, string language);
 
     public Task<bool> DeleteIngredient(int ingredientId);
+
+    public Task<Ingredient?> GetIngredientByName(string ingredientName, string localeValue);
 }

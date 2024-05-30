@@ -27,6 +27,7 @@ public class MenuItemController(
     {
         Request.Headers.TryGetValue("Accept-Language", out StringValues locale);
         string localeValue = locale.FirstOrDefault() ?? "en";
+        if (localeValue.Length > 2) localeValue = "en";
 
         List<MenuItem> menuItems = (List<MenuItem>)menuItemService.GetNextMenuItems(lastId, amount);
         List<MenuItemViewModel> menuItemViewModels = [];
@@ -54,6 +55,7 @@ public class MenuItemController(
     {
         Request.Headers.TryGetValue("Accept-Language", out StringValues locale);
         string localeValue = locale.FirstOrDefault() ?? "en";
+        if (localeValue.Length > 2) localeValue = "en";
 
         List<Category> categories = (List<Category>)menuItemService.GetCategoriesWithNextMenuItems(lastId, amount);
 
@@ -81,6 +83,7 @@ public class MenuItemController(
     {
         Request.Headers.TryGetValue("Accept-Language", out StringValues locale);
         string localeValue = locale.FirstOrDefault() ?? "en";
+        if (localeValue.Length > 2) localeValue = "en";
 
         MenuItem? menuItem = menuItemService.GetMenuItemById(id);
         if (menuItem == null)
@@ -156,12 +159,16 @@ public class MenuItemController(
     [ProducesResponseType(404)]
     public async Task<ActionResult> CreateMenuItem([FromForm] MenuItemCreateRequest menuItemCreateRequest)
     {
+        Request.Headers.TryGetValue("Accept-Language", out StringValues locale);
+        string localeValue = locale.FirstOrDefault() ?? "en";
+        if (localeValue.Length > 2) localeValue = "en";
+
         try
         {
             List<Category> categories = [];
             foreach (string categoryName in menuItemCreateRequest.Categories)
             {
-                Category? category = await categoryService.GetCategoryByName(categoryName);
+                Category? category = await categoryService.GetCategoryByName(categoryName, localeValue);
 
                 if (category != null)
                 {
@@ -169,19 +176,22 @@ public class MenuItemController(
                 }
                 else
                 {
-                    Category newCategory = await categoryService.CreateCategory(categoryName);
+                    Category newCategory = await categoryService.CreateCategory(categoryName, localeValue);
                     categories.Add(newCategory);
                 }
             }
 
             List<Ingredient> ingredients = [];
-
             if (menuItemCreateRequest.IngredientsName != null)
             {
                 foreach (string ingredientName in menuItemCreateRequest.IngredientsName)
                 {
-                    Ingredient ingredient = await ingredientService.GetIngredientByNameAsync(ingredientName) ??
-                                            throw new NotFoundException("Ingredient not found");
+                    Ingredient? ingredient = await ingredientService.GetIngredientByName(ingredientName, localeValue);
+                    if (ingredient == null)
+                    {
+                        continue;
+                    }
+
                     ingredients.Add(ingredient);
                 }
             }
@@ -193,12 +203,11 @@ public class MenuItemController(
                 Name = menuItemCreateRequest.Name,
                 Description = menuItemCreateRequest.Description,
                 Price = (int)menuItemCreateRequest.Price,
-                ImageUrl = string.Format("{0}://{1}{2}/api/Images/{3}", Request.Scheme, Request.Host, Request.PathBase,
-                    menuItemUrl),
+                ImageUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}/api/Images/{menuItemUrl}",
             };
 
             MenuItem? createdMenuItem =
-                await menuItemService.CreateMenuItem(menuItem, menuItemCreateRequest.FormLanguage);
+                await menuItemService.CreateMenuItem(menuItem, localeValue);
             if (createdMenuItem == null)
             {
                 return BadRequest(new { Message = "Menu item could not be created" });
@@ -266,12 +275,16 @@ public class MenuItemController(
     [ProducesResponseType(404)]
     public async Task<ActionResult> UpdateMenuItem([FromForm] MenuItemUpdateRequest menuItemUpdateRequest)
     {
+        Request.Headers.TryGetValue("Accept-Language", out StringValues locale);
+        string localeValue = locale.FirstOrDefault() ?? "en";
+        if (localeValue.Length > 2) localeValue = "en";
+
         try
         {
             List<Category> categories = [];
             foreach (string categoryName in menuItemUpdateRequest.Categories)
             {
-                Category? category = await categoryService.GetCategoryByName(categoryName);
+                Category? category = await categoryService.GetCategoryByName(categoryName, localeValue);
 
                 if (category != null)
                 {
@@ -279,25 +292,27 @@ public class MenuItemController(
                 }
                 else
                 {
-                    Category newCategory = await categoryService.CreateCategory(categoryName);
+                    Category newCategory = await categoryService.CreateCategory(categoryName, localeValue);
                     categories.Add(newCategory);
                 }
             }
 
             List<Ingredient> ingredients = [];
-
             if (menuItemUpdateRequest.IngredientsName != null)
             {
                 foreach (string ingredientName in menuItemUpdateRequest.IngredientsName)
                 {
-                    Ingredient ingredient = await ingredientService.GetIngredientByNameAsync(ingredientName) ??
-                                            throw new NotFoundException("Ingredient not found");
+                    Ingredient? ingredient = await ingredientService.GetIngredientByName(ingredientName, localeValue);
+                    if (ingredient == null)
+                    {
+                        continue;
+                    }
+
                     ingredients.Add(ingredient);
                 }
             }
 
             string menuItemUrl = "";
-
             if (menuItemUpdateRequest.Image != null)
             {
                 menuItemUrl = await _imageService.SaveImageAsync(menuItemUpdateRequest.Image);
@@ -310,12 +325,12 @@ public class MenuItemController(
                 Description = menuItemUpdateRequest.Description,
                 Price = (int)menuItemUpdateRequest.Price,
                 ImageUrl = menuItemUrl != ""
-                    ? $"{Request.Scheme}://{Request.Host}{Request.PathBase}/Images/{menuItemUrl}"
+                    ? $"{Request.Scheme}://{Request.Host}{Request.PathBase}/api/Images/{menuItemUrl}"
                     : "",
             };
 
             MenuItem? updatedMenuItem =
-                await menuItemService.UpdateMenuItem(menuItem, menuItemUpdateRequest.FormLanguage);
+                await menuItemService.UpdateMenuItem(menuItem, localeValue);
             if (updatedMenuItem == null)
             {
                 return BadRequest(new { Message = "Menu item could not be updated" });

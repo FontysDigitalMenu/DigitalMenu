@@ -11,4 +11,8 @@ public interface ICategoryRepository
     public Task<Category> CreateCategory(Category category);
 
     public Task<bool> DeleteCategoriesByMenuItemId(int menuItemId);
+
+    public Task<Category?> GetCategoryByName(string categoryName, string locale);
+
+    public void CreateTranslations(List<CategoryTranslation> categoryTranslations);
 }

@@ -27,4 +27,6 @@ public interface IIngredientRepository
     public void UpdateOrCreateIngredientTranslation(IngredientTranslation ingredientTranslation);
 
     public Task<List<IngredientTranslation>> GetIngredientTranslations(int ingredientId);
+
+    public Task<Ingredient?> GetIngredientByName(string ingredientName, string localeValue);
 }

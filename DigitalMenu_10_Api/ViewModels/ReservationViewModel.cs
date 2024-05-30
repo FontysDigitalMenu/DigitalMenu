@@ -4,6 +4,8 @@ namespace DigitalMenu_10_Api.ViewModels;
 
 public class ReservationViewModel
 {
+    public string Id { get; set; }
+
     public int ReservationId { get; set; }
 
     public string Email { get; set; }
@@ -16,6 +18,7 @@ public class ReservationViewModel
     {
         return new ReservationViewModel
         {
+            Id = reservation.Id,
             ReservationId = reservation.ReservationId,
             Email = reservation.Email,
             ReservationDateTime = reservation.ReservationDateTime,

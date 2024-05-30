@@ -4,6 +4,7 @@ using DigitalMenu_20_BLL.Dtos;
 using DigitalMenu_20_BLL.Exceptions;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 
@@ -58,12 +59,55 @@ public class ReservationController(
         }));
     }
 
-    [HttpDelete("{reservationId:int}")]
+    [HttpDelete("{reservationId}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(500)]
-    public IActionResult Delete([FromRoute] int reservationId)
+    public IActionResult Delete([FromRoute] string reservationId)
     {
         reservationService.Delete(reservationId);
         return NoContent();
+    }
+
+
+    [HttpGet("{date:datetime}")]
+    [Authorize]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(500)]
+    public IActionResult GetReservations([FromRoute] DateTime date)
+    {
+        List<Reservation> reservations = reservationService.GetReservations(date);
+
+        return Ok(reservations.Select(r => new ReservationViewModel
+        {
+            Id = r.Id,
+            Email = r.Email,
+            ReservationDateTime = r.ReservationDateTime,
+            ReservationId = r.ReservationId,
+            TableName = r.Table.Name,
+        }));
+    }
+
+    [HttpGet("{reservationId}")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(500)]
+    public IActionResult GetReservation([FromRoute] string reservationId)
+    {
+        try
+        {
+            Reservation? reservation = reservationService.GetReservationById(reservationId);
+
+            return Ok(new ReservationViewModel
+            {
+                Id = reservation!.Id,
+                Email = reservation.Email,
+                ReservationDateTime = reservation.ReservationDateTime,
+                ReservationId = reservation.ReservationId,
+                TableName = reservation.Table.Name,
+            });
+        }
+        catch (ReservationException e)
+        {
+            return BadRequest(new { e.Message });
+        }
     }
 }

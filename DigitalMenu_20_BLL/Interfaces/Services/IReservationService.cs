@@ -11,9 +11,13 @@ public interface IReservationService
 
     public List<AvailableTimes> GetAvailableTimes(DateTime date);
 
-    public void Delete(int reservationId);
+    public void Delete(string reservationId);
 
-    public void Unlock(int reservationId);
+    public void Unlock(string reservationId);
 
     public bool MustPayReservationFee(string tableSessionId);
+
+    public List<Reservation> GetReservations(DateTime dateTime);
+
+    public Reservation? GetReservationById(string reservationId);
 }

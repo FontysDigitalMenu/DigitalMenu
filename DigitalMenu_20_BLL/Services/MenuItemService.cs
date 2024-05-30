@@ -8,8 +8,6 @@ namespace DigitalMenu_20_BLL.Services;
 public class MenuItemService(IMenuItemRepository menuItemRepository, ITranslationService translationService)
     : IMenuItemService
 {
-    private readonly List<string> _languages = ["en", "nl", "de", "ko"];
-
     public IEnumerable<Category> GetCategoriesWithNextMenuItems(int lastId, int amount)
     {
         IEnumerable<MenuItem> menuItems = menuItemRepository.GetNextMenuItemsWithCategory(lastId, amount);
@@ -123,7 +121,7 @@ public class MenuItemService(IMenuItemRepository menuItemRepository, ITranslatio
                 Description = menuItem.Description,
             },
         ];
-        foreach (string lang in _languages.Where(l => l != language))
+        foreach (string lang in TranslationService.SupportedLanguages.Where(l => l != language))
         {
             string translatedName = await translationService.Translate(menuItem.Name, language, lang);
             string translatedDescription = await translationService.Translate(menuItem.Description, language, lang);

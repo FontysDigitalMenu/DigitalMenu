@@ -18,6 +18,7 @@ public class ReservationService(
     public Reservation? Create(Reservation reservation, string language)
     {
         ValidateReservationBeforeCreation(reservation);
+        reservation.Id = Guid.NewGuid().ToString();
         reservation.ReservationId = new Random().Next(100000, 999999);
         reservation.ReservationDateTime = TruncateToNearestMinute(reservation.ReservationDateTime);
 
@@ -36,7 +37,7 @@ public class ReservationService(
             throw new ReservationException("Failed to create reservation");
         }
 
-        emailService.SendReservationEmail(reservation.Email, reservation.ReservationId.ToString(),
+        emailService.SendReservationEmail(reservation.Id, reservation.Email, reservation.ReservationId.ToString(),
             reservation.Table.Name, language);
 
         return reservation;
@@ -74,12 +75,12 @@ public class ReservationService(
         return availableTimes;
     }
 
-    public void Delete(int reservationId)
+    public void Delete(string reservationId)
     {
         reservationRepository.Delete(reservationId);
     }
 
-    public void Unlock(int id)
+    public void Unlock(string id)
     {
         reservationRepository.Unlock(id);
     }
@@ -92,6 +93,21 @@ public class ReservationService(
         return table?.Reservations.Any(r =>
             r.IsUnlocked && now >= r.ReservationDateTime &&
             now <= r.ReservationDateTime.AddHours(ReservationDuration)) ?? false;
+    }
+
+    public List<Reservation> GetReservations(DateTime dateTime)
+    {
+        return reservationRepository.GetReservations(dateTime);
+    }
+
+    public Reservation? GetReservationById(string reservationId)
+    {
+        if (string.IsNullOrEmpty(reservationId))
+        {
+            throw new ReservationException("Invalid reservation id");
+        }
+
+        return reservationRepository.GetReservationById(reservationId);
     }
 
     private Table? GetAvailableTable(DateTime dateTime)
