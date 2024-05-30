@@ -59,10 +59,10 @@ public class ReservationController(
         }));
     }
 
-    [HttpDelete("{reservationId:int}")]
+    [HttpDelete("{reservationId}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(500)]
-    public IActionResult Delete([FromRoute] int reservationId)
+    public IActionResult Delete([FromRoute] string reservationId)
     {
         reservationService.Delete(reservationId);
         return NoContent();
@@ -79,10 +79,35 @@ public class ReservationController(
 
         return Ok(reservations.Select(r => new ReservationViewModel
         {
+            Id = r.Id,
             Email = r.Email,
             ReservationDateTime = r.ReservationDateTime,
             ReservationId = r.ReservationId,
             TableName = r.Table.Name,
         }));
+    }
+
+    [HttpGet("{reservationId}")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(500)]
+    public IActionResult GetReservation([FromRoute] string reservationId)
+    {
+        try
+        {
+            Reservation? reservation = reservationService.GetReservationById(reservationId);
+
+            return Ok(new ReservationViewModel
+            {
+                Id = reservation!.Id,
+                Email = reservation.Email,
+                ReservationDateTime = reservation.ReservationDateTime,
+                ReservationId = reservation.ReservationId,
+                TableName = reservation.Table.Name,
+            });
+        }
+        catch (ReservationException e)
+        {
+            return BadRequest(new { e.Message });
+        }
     }
 }

@@ -25,7 +25,7 @@ public class ReservationRepository(ApplicationDbContext dbContext) : IReservatio
         return dbContext.Reservations.Where(r => r.ReservationDateTime.Date == dateTime.Date).ToList();
     }
 
-    public void Delete(int reservationId)
+    public void Delete(string reservationId)
     {
         Reservation? reservation = dbContext.Reservations.FirstOrDefault(r => r.Id == reservationId);
         if (reservation == null)
@@ -37,7 +37,7 @@ public class ReservationRepository(ApplicationDbContext dbContext) : IReservatio
         dbContext.SaveChanges();
     }
 
-    public void Unlock(int id)
+    public void Unlock(string id)
     {
         Reservation? reservation = dbContext.Reservations.FirstOrDefault(r => r.Id == id);
         if (reservation == null)
@@ -53,5 +53,10 @@ public class ReservationRepository(ApplicationDbContext dbContext) : IReservatio
     {
         return dbContext.Reservations.Include(r => r.Table).Where(r => r.ReservationDateTime.Date == dateTime.Date)
             .ToList();
+    }
+
+    public Reservation? GetReservationById(string reservationId)
+    {
+        return dbContext.Reservations.Include(r => r.Table).FirstOrDefault(r => r.Id == reservationId);
     }
 }
