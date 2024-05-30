@@ -2,5 +2,6 @@
 
 public interface IEmailService
 {
-    public Task SendReservationEmail(string toEmail, string reservationCode, string tableName, string language);
+    public Task SendReservationEmail(string reservationId, string toEmail, string reservationCode, string tableName,
+        string language);
 }
