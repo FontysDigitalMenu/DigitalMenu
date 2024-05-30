@@ -876,7 +876,7 @@ public class SeedData(ApplicationDbContext dbContext)
                 Id = 1,
                 CompanyName = "Digital Menu",
                 PrimaryColor = "#EF4444",
-                SecondaryColor = "#EF4444",
+                SecondaryColor = "#C43737",
             }
         );
 
