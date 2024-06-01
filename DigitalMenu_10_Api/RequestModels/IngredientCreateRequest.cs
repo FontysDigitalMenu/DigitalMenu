@@ -2,7 +2,7 @@
 
 public class IngredientCreateRequest
 {
-    public string FormLanguage { get; set; }
+    // public string FormLanguage { get; set; }
 
     public string Name { get; set; }
 
