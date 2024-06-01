@@ -577,7 +577,7 @@ public class SeedData(ApplicationDbContext dbContext)
             },
             new Ingredient
             {
-                Id = 11, Name = "Mayonnaise", Stock = 4, Translations = new List<IngredientTranslation>
+                Id = 11, Name = "Mayonnaise", Stock = 1, Translations = new List<IngredientTranslation>
                 {
                     new() { LanguageCode = "nl", Name = "Mayonaise" },
                     new() { LanguageCode = "de", Name = "Mayonnaise" },

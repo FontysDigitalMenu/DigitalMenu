@@ -95,6 +95,10 @@ public class IngredientsController(
     [ProducesResponseType(400)]
     public async Task<ActionResult> CreateIngredient([FromBody] IngredientCreateRequest ingredientCreateRequest)
     {
+        Request.Headers.TryGetValue("Accept-Language", out StringValues locale);
+        string localeValue = locale.FirstOrDefault() ?? "en";
+        if (localeValue.Length > 2) localeValue = "en";
+
         try
         {
             Ingredient ingredient = new()
@@ -104,7 +108,7 @@ public class IngredientsController(
             };
 
             Ingredient? createdIngredient =
-                await ingredientService.CreateIngredient(ingredient, ingredientCreateRequest.FormLanguage);
+                await ingredientService.CreateIngredient(ingredient, localeValue);
             if (createdIngredient == null)
             {
                 return BadRequest(new { Message = "Ingredient could not be created" });
@@ -128,6 +132,10 @@ public class IngredientsController(
     [ProducesResponseType(400)]
     public async Task<ActionResult> UpdateIngredient(int id, [FromBody] IngredientUpdateRequest ingredientUpdateRequest)
     {
+        Request.Headers.TryGetValue("Accept-Language", out StringValues locale);
+        string localeValue = locale.FirstOrDefault() ?? "en";
+        if (localeValue.Length > 2) localeValue = "en";
+
         try
         {
             Ingredient? ingredient = await ingredientService.GetIngredientById(id);
@@ -140,7 +148,7 @@ public class IngredientsController(
             ingredient.Stock = ingredientUpdateRequest.Stock;
 
             bool ingredientUpdated =
-                await ingredientService.UpdateIngredient(ingredient, ingredientUpdateRequest.FormLanguage);
+                await ingredientService.UpdateIngredient(ingredient, localeValue);
             if (!ingredientUpdated)
             {
                 return BadRequest(new { Message = "Ingredient could not be updated" });
