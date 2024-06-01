@@ -101,6 +101,7 @@ public class MenuItemController(
                           menuItem.Description,
             Price = menuItem.Price,
             ImageUrl = menuItem.ImageUrl,
+            IsActive = menuItem.IsActive,
             Ingredients = menuItem.Ingredients.Select(i => new IngredientViewModel
             {
                 Id = i.Id,
