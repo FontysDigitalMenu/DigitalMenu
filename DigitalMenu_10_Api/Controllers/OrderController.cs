@@ -58,18 +58,19 @@ public class OrderController(
         }*/
 
         cartItemService.ClearByTableSessionId(orderRequest.TableSessionId);
-        
-        var ingredientHubContext = serviceProvider.GetRequiredService<IHubContext<IngredientHub, IIngredientHubClient>>();
-        
+
+        IHubContext<IngredientHub, IIngredientHubClient> ingredientHubContext =
+            serviceProvider.GetRequiredService<IHubContext<IngredientHub, IIngredientHubClient>>();
+
         List<Ingredient> ingredients = await ingredientService.GetIngredients();
-        
+
         List<IngredientViewModel> ingredientViewModels = ingredients.Select(ingredient => new IngredientViewModel
         {
             Id = ingredient.Id,
             Name = ingredient.Name,
             Stock = ingredient.Stock,
         }).ToList();
-        
+
         await ingredientHubContext.Clients.All.ReceiveIngredient(ingredientViewModels);
 
         await hubContext.Clients.Group($"cart-{orderRequest.TableSessionId}")
