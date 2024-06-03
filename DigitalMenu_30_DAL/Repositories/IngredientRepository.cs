@@ -124,6 +124,12 @@ public class IngredientRepository(ApplicationDbContext dbContext) : IIngredientR
 
     public Task<Ingredient?> GetIngredientByName(string ingredientName, string localeValue)
     {
+        if (localeValue == "en")
+        {
+            return dbContext.Ingredients.Include(i => i.Translations).Where(it => it.Name == ingredientName)
+                .FirstOrDefaultAsync();
+        }
+
         return dbContext.Ingredients
             .Include(i => i.Translations)
             .FirstOrDefaultAsync(i =>
