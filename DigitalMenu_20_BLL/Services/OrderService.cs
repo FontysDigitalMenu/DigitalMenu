@@ -53,7 +53,7 @@ public class OrderService(
             {
                 throw new NotFoundException("Menu item does not exist");
             }
-            
+
             foreach (Ingredient ingredient in menuItem.Ingredients)
             {
                 Ingredient? ingredientWithStock = await ingredientRepository.GetIngredientById(ingredient.Id);
@@ -63,7 +63,8 @@ public class OrderService(
                     ingredient.Stock = ingredientWithStock.Stock;
                 }
 
-                if (ingredient.Stock < (ingredient.Pieces * orderMenuItem.Quantity) || ingredient.Stock - (ingredient.Pieces * orderMenuItem.Quantity) < 0)
+                if (ingredient.Stock < ingredient.Pieces * orderMenuItem.Quantity ||
+                    ingredient.Stock - ingredient.Pieces * orderMenuItem.Quantity < 0)
                 {
                     throw new Exception("Insufficient stock for ingredient: " + ingredient.Name);
                 }
