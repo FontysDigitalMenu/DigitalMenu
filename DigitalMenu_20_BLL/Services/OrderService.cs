@@ -63,7 +63,8 @@ public class OrderService(
                     ingredient.Stock = ingredientWithStock.Stock;
                 }
 
-                if (ingredient.Stock < ingredient.Pieces || ingredient.Stock - ingredient.Pieces < 0)
+                if (ingredient.Stock < ingredient.Pieces * orderMenuItem.Quantity ||
+                    ingredient.Stock - ingredient.Pieces * orderMenuItem.Quantity < 0)
                 {
                     throw new Exception("Insufficient stock for ingredient: " + ingredient.Name);
                 }
@@ -78,7 +79,7 @@ public class OrderService(
                     ingredient.Stock = ingredientWithStock.Stock;
                 }
 
-                ingredient.Stock -= ingredient.Pieces;
+                ingredient.Stock -= ingredient.Pieces * orderMenuItem.Quantity;
 
                 Ingredient updatedIngredient = new()
                 {
