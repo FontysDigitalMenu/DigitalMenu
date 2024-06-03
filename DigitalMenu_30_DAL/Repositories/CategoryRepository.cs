@@ -22,6 +22,11 @@ public class CategoryRepository(ApplicationDbContext dbContext) : ICategoryRepos
 
     public async Task<Category?> GetCategoryByName(string categoryName, string locale)
     {
+        if (locale == "en")
+        {
+            return await dbContext.Categories.FirstOrDefaultAsync(c => c.Name == categoryName);
+        }
+
         CategoryTranslation? categoryTranslation = await dbContext.CategoryTranslations
             .Include(ct => ct.Category)
             .FirstOrDefaultAsync(ct => ct.Name == categoryName && ct.LanguageCode == locale);
