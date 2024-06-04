@@ -25,6 +25,8 @@ public class OrderViewModel
 
     public List<SplitViewModel>? Splits { get; set; }
 
+    public TableViewModel? Table { get; set; }
+
     public static OrderViewModel FromOrder(Order order, ICartItemService cartItemService)
     {
         return new OrderViewModel
@@ -58,6 +60,15 @@ public class OrderViewModel
                 Name = s.Name,
                 PaymentStatus = s.PaymentStatus.ToString(),
             }).ToList(),
+            Table = order.Table != null
+                ? new TableViewModel
+                {
+                    Id = order.Table.Id,
+                    Name = order.Table.Name,
+                    IsReservable = order.Table.IsReservable,
+                    SessionId = order.Table.SessionId,
+                }
+                : null,
         };
     }
 
@@ -98,6 +109,15 @@ public class OrderViewModel
                 Name = s.Name,
                 PaymentStatus = s.PaymentStatus.ToString(),
             }).ToList(),
+            Table = order.Table != null
+                ? new TableViewModel
+                {
+                    Id = order.Table.Id,
+                    Name = order.Table.Name,
+                    IsReservable = order.Table.IsReservable,
+                    SessionId = order.Table.SessionId,
+                }
+                : null,
         };
     }
 }
