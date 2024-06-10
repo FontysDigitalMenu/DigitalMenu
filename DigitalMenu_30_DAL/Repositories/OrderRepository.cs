@@ -48,6 +48,7 @@ public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
     public IEnumerable<Order> GetPaidOrders()
     {
         return dbContext.Orders
+            .Include(o => o.Table)
             .Include(o => o.Splits)
             .Include(o => o.OrderMenuItems)
             .ThenInclude(omi => omi.MenuItem)
