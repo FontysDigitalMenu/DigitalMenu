@@ -149,27 +149,27 @@ public class OrderController(
         {
             return NotFound(new { Message = "Order not found" });
         }
-        
+
         OrderViewModel orderViewModel = OrderViewModel.FromOrderWithCatagory(order, cartItemService);
-        
+
         List<MenuItemViewModel> drinkMenuItemViewModels = orderViewModel.MenuItems
             .Where(mi => mi.Categories!.Contains("Drinks"))
             .ToList();
-        
+
         List<MenuItemViewModel> foodMenuItemViewModels = orderViewModel.MenuItems
             .Where(mi => !mi.Categories!.Contains("Drinks"))
             .ToList();
-        
+
         if (drinkMenuItemViewModels.Count != 0)
         {
             orderViewModel.HasDrinks = true;
         }
-        
+
         if (foodMenuItemViewModels.Count != 0)
         {
             orderViewModel.HasFood = true;
         }
-        
+
         return Ok(orderViewModel);
     }
 
@@ -241,30 +241,30 @@ public class OrderController(
         }
 
         OrderViewModel orderViewModel = OrderViewModel.FromOrderWithCatagory(order, cartItemService);
-        
+
         List<MenuItemViewModel> drinkMenuItemViewModels = orderViewModel.MenuItems
             .Where(mi => mi.Categories!.Contains("Drinks"))
             .ToList();
-        
+
         List<MenuItemViewModel> foodMenuItemViewModels = orderViewModel.MenuItems
             .Where(mi => !mi.Categories!.Contains("Drinks"))
             .ToList();
-        
+
         if (drinkMenuItemViewModels.Count != 0)
         {
             orderViewModel.HasDrinks = true;
         }
-        
+
         if (foodMenuItemViewModels.Count != 0)
         {
             orderViewModel.HasFood = true;
         }
-        
+
         if (!orderService.Update(order))
         {
             return BadRequest(new { Message = "Order could not be updated" });
         }
-        
+
         hubContext.Clients.Group($"order-{order.Id}").ReceiveOrderUpdate(orderViewModel);
 
         hubContext.Clients.All.ReceiveOrderDrinksUpdate();

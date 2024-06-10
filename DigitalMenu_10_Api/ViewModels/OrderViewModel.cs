@@ -12,11 +12,13 @@ public class OrderViewModel
     public int TotalAmount { get; set; }
 
     public string DrinkStatus { get; set; }
-    
+
     public bool HasDrinks { get; set; }
+
     public string FoodStatus { get; set; }
-    
+
     public bool HasFood { get; set; }
+
     public bool IsPaymentSuccess { get; set; }
 
     public DateTime OrderDate { get; set; } = DateTimeService.GetNow();
