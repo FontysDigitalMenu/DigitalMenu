@@ -43,4 +43,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<MailTranslation> MailTranslations { get; set; }
 
     public DbSet<Setting> Settings { get; set; }
+
+    public DbSet<Time> Times { get; set; }
 }

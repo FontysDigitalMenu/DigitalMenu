@@ -1,5 +1,6 @@
 ﻿using DigitalMenu_20_BLL.Exceptions;
 using DigitalMenu_20_BLL.Interfaces.Repositories;
+using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
 using DigitalMenu_20_BLL.Services;
 using Moq;
@@ -20,6 +21,8 @@ public class OrderServiceTests
 
     private readonly Mock<ITableRepository> _tableRepositoryMock = new();
 
+    private readonly Mock<ITimeService> _timeServiceMock = new();
+
     private OrderService _orderService = null!;
 
     [SetUp]
@@ -27,7 +30,7 @@ public class OrderServiceTests
     {
         _orderService = new OrderService(_orderRepositoryMock.Object, _cartItemRepositoryMock.Object,
             _tableRepositoryMock.Object, _splitRepositoryMock.Object, _menuItemRepository.Object,
-            _ingredientRepository.Object);
+            _ingredientRepository.Object, _timeServiceMock.Object);
     }
 
     // [Test]

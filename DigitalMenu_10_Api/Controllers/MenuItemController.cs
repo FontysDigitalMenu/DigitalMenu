@@ -17,10 +17,11 @@ public class MenuItemController(
     IWebHostEnvironment webHostEnvironment,
     IMenuItemService menuItemService,
     ICategoryService categoryService,
-    IIngredientService ingredientService
+    IIngredientService ingredientService,
+    ITimeService timeService
 ) : ControllerBase
 {
-    private readonly ImageService _imageService = new(webHostEnvironment);
+    private readonly ImageService _imageService = new(webHostEnvironment, timeService);
 
     [HttpGet]
     public IActionResult Get(int lastId, int amount)

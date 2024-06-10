@@ -498,6 +498,25 @@ namespace DigitalMenu_30_DAL.Migrations
                     b.ToTable("Tables");
                 });
 
+            modelBuilder.Entity("DigitalMenu_20_BLL.Models.Time", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Hours")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Minutes")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Times");
+                });
+
             modelBuilder.Entity("IngredientMenuItem", b =>
                 {
                     b.Property<int>("IngredientsId")
