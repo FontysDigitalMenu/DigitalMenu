@@ -150,7 +150,27 @@ public class OrderController(
             return NotFound(new { Message = "Order not found" });
         }
 
-        return Ok(OrderViewModel.FromOrder(order, cartItemService));
+        OrderViewModel orderViewModel = OrderViewModel.FromOrderWithCatagory(order, cartItemService);
+
+        List<MenuItemViewModel> drinkMenuItemViewModels = orderViewModel.MenuItems
+            .Where(mi => mi.Categories!.Contains("Drinks"))
+            .ToList();
+
+        List<MenuItemViewModel> foodMenuItemViewModels = orderViewModel.MenuItems
+            .Where(mi => !mi.Categories!.Contains("Drinks"))
+            .ToList();
+
+        if (drinkMenuItemViewModels.Count != 0)
+        {
+            orderViewModel.HasDrinks = true;
+        }
+
+        if (foodMenuItemViewModels.Count != 0)
+        {
+            orderViewModel.HasFood = true;
+        }
+
+        return Ok(orderViewModel);
     }
 
     [Authorize(Roles = "Admin, Employee")]
@@ -220,17 +240,32 @@ public class OrderController(
                 return BadRequest(new { Message = "Invalid OrderStatus" });
         }
 
+        OrderViewModel orderViewModel = OrderViewModel.FromOrderWithCatagory(order, cartItemService);
+
+        List<MenuItemViewModel> drinkMenuItemViewModels = orderViewModel.MenuItems
+            .Where(mi => mi.Categories!.Contains("Drinks"))
+            .ToList();
+
+        List<MenuItemViewModel> foodMenuItemViewModels = orderViewModel.MenuItems
+            .Where(mi => !mi.Categories!.Contains("Drinks"))
+            .ToList();
+
+        if (drinkMenuItemViewModels.Count != 0)
+        {
+            orderViewModel.HasDrinks = true;
+        }
+
+        if (foodMenuItemViewModels.Count != 0)
+        {
+            orderViewModel.HasFood = true;
+        }
+
         if (!orderService.Update(order))
         {
             return BadRequest(new { Message = "Order could not be updated" });
         }
 
-        OrderViewModel orderViewModel = OrderViewModel.FromOrder(order, cartItemService);
-
-        if (!orderRequest.IsDrinks)
-        {
-            hubContext.Clients.Group($"order-{order.Id}").ReceiveOrderUpdate(orderViewModel);
-        }
+        hubContext.Clients.Group($"order-{order.Id}").ReceiveOrderUpdate(orderViewModel);
 
         hubContext.Clients.All.ReceiveOrderDrinksUpdate();
 

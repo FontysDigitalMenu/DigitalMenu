@@ -1,7 +1,6 @@
 ﻿using DigitalMenu_20_BLL.Enums;
 using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
-using DigitalMenu_20_BLL.Services;
 
 namespace DigitalMenu_10_Api.ViewModels;
 
@@ -13,11 +12,15 @@ public class OrderViewModel
 
     public string DrinkStatus { get; set; }
 
+    public bool HasDrinks { get; set; }
+
     public string FoodStatus { get; set; }
+
+    public bool HasFood { get; set; }
 
     public bool IsPaymentSuccess { get; set; }
 
-    public DateTime OrderDate { get; set; } = DateTimeService.GetNow();
+    public DateTime OrderDate { get; set; }
 
     public List<MenuItemViewModel> MenuItems { get; set; } = [];
 

@@ -1,15 +1,17 @@
 ﻿using DigitalMenu_20_BLL.Enums;
 using DigitalMenu_20_BLL.Interfaces.Repositories;
+using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
 using DigitalMenu_30_DAL.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace DigitalMenu_30_DAL.Repositories;
 
-public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
+public class OrderRepository(ApplicationDbContext dbContext, ITimeService timeService) : IOrderRepository
 {
     public Order? Create(Order order)
     {
+        order.OrderDate = timeService.GetNow();
         dbContext.Orders.Add(order);
         return dbContext.SaveChanges() > 0 ? order : null;
     }
@@ -20,6 +22,8 @@ public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
             .Include(o => o.Splits)
             .Include(o => o.OrderMenuItems)
             .ThenInclude(omi => omi.MenuItem)
+            .ThenInclude(mi => mi.CategoryMenuItems)
+            .ThenInclude(cmi => cmi.Category)
             .FirstOrDefault(o => o.Id == id && o.SessionId == tableSessionId);
     }
 
@@ -62,6 +66,7 @@ public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
 
     public bool Update(Order order)
     {
+        order.OrderDate = timeService.GetNow();
         dbContext.Orders.Update(order);
         return dbContext.SaveChanges() > 0;
     }

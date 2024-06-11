@@ -8,7 +8,10 @@ using DigitalMenu_20_BLL.Models;
 
 namespace DigitalMenu_20_BLL.Services;
 
-public class TableService(ITableRepository tableRepository, IReservationService reservationService) : ITableService
+public class TableService(
+    ITableRepository tableRepository,
+    IReservationService reservationService,
+    ITimeService timeService) : ITableService
 {
     // public string GenerateQrCode(string backendUrl, string id)
     // {
@@ -85,7 +88,7 @@ public class TableService(ITableRepository tableRepository, IReservationService 
 
     public TableScan Scan(string id, int? code)
     {
-        DateTime now = DateTimeService.GetNow();
+        DateTime now = timeService.GetNow();
         Table? table = tableRepository.GetTableByIdWithReservationsFromDay(id, now);
 
         if (table == null)

@@ -1,5 +1,4 @@
 ﻿using DigitalMenu_20_BLL.Enums;
-using DigitalMenu_20_BLL.Services;
 
 namespace DigitalMenu_20_BLL.Models;
 
@@ -19,7 +18,7 @@ public class Order
 
     public OrderStatus DrinkStatus { get; set; } = OrderStatus.Pending;
 
-    public DateTime OrderDate { get; set; } = DateTimeService.GetNow();
+    public DateTime OrderDate { get; set; }
 
     public List<OrderMenuItem> OrderMenuItems { get; set; } = [];
 

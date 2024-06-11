@@ -9,7 +9,8 @@ namespace DigitalMenu_20_BLL.Services;
 public class ReservationService(
     IReservationRepository reservationRepository,
     ITableRepository tableRepository,
-    IEmailService emailService) : IReservationService
+    IEmailService emailService,
+    ITimeService timeService) : IReservationService
 {
     public const double ReservationDuration = 2.5;
 
@@ -55,7 +56,7 @@ public class ReservationService(
         {
             DateTime validTime = DateTime.Parse(date.ToString("yyyy-MM-dd") + " " + validReservationTime);
 
-            if (DateTimeService.GetNow() > validTime.Subtract(TimeSpan.FromHours(ReservationDuration)))
+            if (timeService.GetNow() > validTime.Subtract(TimeSpan.FromHours(ReservationDuration)))
             {
                 continue;
             }
@@ -87,7 +88,7 @@ public class ReservationService(
 
     public bool MustPayReservationFee(string tableSessionId)
     {
-        DateTime now = DateTimeService.GetNow();
+        DateTime now = timeService.GetNow();
         Table? table = tableRepository.GetTableBySessionIdWithReservationsFromDay(tableSessionId, now);
 
         return table?.Reservations.Any(r =>
@@ -139,7 +140,7 @@ public class ReservationService(
         }
 
         bool isTwoAndAHalfHoursAhead =
-            reservation.ReservationDateTime > DateTimeService.GetNow().AddHours(ReservationDuration);
+            reservation.ReservationDateTime > timeService.GetNow().AddHours(ReservationDuration);
         if (!isTwoAndAHalfHoursAhead)
         {
             throw new ReservationException("Reservation must be at least 2.5 hours ahead");

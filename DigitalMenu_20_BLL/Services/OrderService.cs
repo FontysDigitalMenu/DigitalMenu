@@ -15,7 +15,8 @@ public class OrderService(
     ITableRepository tableRepository,
     ISplitRepository splitRepository,
     IMenuItemRepository menuItemRepository,
-    IIngredientRepository ingredientRepository) : IOrderService
+    IIngredientRepository ingredientRepository,
+    ITimeService timeService) : IOrderService
 {
     public async Task<Order> Create(string tableSessionId, List<Split> splits)
     {
@@ -103,7 +104,7 @@ public class OrderService(
             throw new ValidationException("Total amount does not match with splits amount");
         }
 
-        string orderNumber = DateTimeService.GetNow().ToString("ddyyMM") +
+        string orderNumber = timeService.GetNow().ToString("ddyyMM") +
                              ShortId.Generate(new GenerationOptions(length: 8, useSpecialCharacters: false,
                                  useNumbers: false))[..4];
 
