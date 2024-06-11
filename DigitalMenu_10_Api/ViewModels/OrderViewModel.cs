@@ -12,7 +12,11 @@ public class OrderViewModel
 
     public string DrinkStatus { get; set; }
 
+    public bool HasDrinks { get; set; }
+
     public string FoodStatus { get; set; }
+
+    public bool HasFood { get; set; }
 
     public bool IsPaymentSuccess { get; set; }
 

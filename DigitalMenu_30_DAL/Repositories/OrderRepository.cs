@@ -22,6 +22,8 @@ public class OrderRepository(ApplicationDbContext dbContext, ITimeService timeSe
             .Include(o => o.Splits)
             .Include(o => o.OrderMenuItems)
             .ThenInclude(omi => omi.MenuItem)
+            .ThenInclude(mi => mi.CategoryMenuItems)
+            .ThenInclude(cmi => cmi.Category)
             .FirstOrDefault(o => o.Id == id && o.SessionId == tableSessionId);
     }
 
