@@ -30,6 +30,7 @@ public class OrderRepository(ApplicationDbContext dbContext, ITimeService timeSe
     public Order? GetBy(string id)
     {
         return dbContext.Orders
+            .Include(o => o.Table)
             .Include(o => o.Splits)
             .Include(o => o.OrderMenuItems)
             .ThenInclude(omi => omi.MenuItem)

@@ -1,16 +1,16 @@
 version: "3.8"
 services:
-  app:
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-    restart: unless-stopped
-    environment:
-      - ConnectionStrings__DefaultConnection=Server=digitalmenu-mysql;Port=3306;Database=digitalmenu;User ID=user;Password=password;
-    volumes:
-      - ./:/app
-    networks:
-      - digitalmenu_network
+#  app:
+#    build:
+#      context: .
+#      dockerfile: ./Dockerfile
+#    restart: unless-stopped
+#    environment:
+#      - ConnectionStrings__DefaultConnection=Server=digitalmenu-mysql;Port=3306;Database=digitalmenu;User ID=user;Password=password;
+#    volumes:
+#      - ./:/app
+#    networks:
+#      - digitalmenu_network
   
   pma:
     image: jensr22/phpmyadmin:latest
