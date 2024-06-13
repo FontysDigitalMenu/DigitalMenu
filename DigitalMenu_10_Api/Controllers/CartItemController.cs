@@ -6,6 +6,7 @@ using DigitalMenu_20_BLL.Interfaces.Services;
 using DigitalMenu_20_BLL.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Primitives;
 
 namespace DigitalMenu_10_Api.Controllers;
 
@@ -98,6 +99,10 @@ public class CartItemController(
     [HttpGet]
     public IActionResult GetCartItem(int cartItemId, string tableSessionId)
     {
+        Request.Headers.TryGetValue("Accept-Language", out StringValues locale);
+        string localeValue = locale.FirstOrDefault() ?? "en";
+        if (localeValue.Length > 2) localeValue = "en";
+
         if (tableService.GetBySessionId(tableSessionId) == null)
         {
             return NotFound();
@@ -128,15 +133,16 @@ public class CartItemController(
         MenuItemViewModel menuItemViewModel = new()
         {
             Id = menuitem.Id,
-            Name = menuitem.Name,
-            Description = menuitem.Description,
+            Name = menuitem.Translations?.FirstOrDefault(t => t.LanguageCode == localeValue)?.Name ?? menuitem.Name,
+            Description = menuitem.Translations?.FirstOrDefault(t => t.LanguageCode == localeValue)?.Description ??
+                          menuitem.Description,
             Price = menuitem.Price,
             ImageUrl = menuitem.ImageUrl,
             Note = cartItem.Note,
             Ingredients = menuitem.Ingredients.Select(i => new IngredientViewModel
             {
                 Id = i.Id,
-                Name = i.Name,
+                Name = i.Translations?.FirstOrDefault(t => t.LanguageCode == localeValue)?.Name ?? i.Name,
                 Stock = i.Stock,
                 Pieces = i.Pieces,
             }).ToList(),
@@ -168,12 +174,17 @@ public class CartItemController(
     [HttpGet("{tableSessionId}")]
     public IActionResult ViewCart([FromRoute] string tableSessionId)
     {
+        Request.Headers.TryGetValue("Accept-Language", out StringValues locale);
+        string localeValue = locale.FirstOrDefault() ?? "en";
+        if (localeValue.Length > 2) localeValue = "en";
+
         if (tableService.GetBySessionId(tableSessionId) == null)
         {
             return NotFound();
         }
 
-        return Ok(CartService.GetCartViewModel(reservationService, orderService, cartItemService, tableSessionId));
+        return Ok(CartService.GetCartViewModel(reservationService, orderService, cartItemService, tableSessionId,
+            localeValue));
     }
 
     [HttpPut("minus")]
