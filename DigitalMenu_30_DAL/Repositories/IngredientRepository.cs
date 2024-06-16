@@ -62,7 +62,9 @@ public class IngredientRepository(ApplicationDbContext dbContext) : IIngredientR
 
     public async Task<Ingredient?> GetIngredientById(int ingredientId)
     {
-        return await dbContext.Ingredients.FindAsync(ingredientId);
+        return await dbContext.Ingredients
+            .Include(i => i.Translations)
+            .FirstOrDefaultAsync(i => i.Id == ingredientId);
     }
 
     public async Task<bool> UpdateIngredient(Ingredient ingredient)
