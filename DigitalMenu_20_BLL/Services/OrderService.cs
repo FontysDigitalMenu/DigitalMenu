@@ -16,7 +16,8 @@ public class OrderService(
     ISplitRepository splitRepository,
     IMenuItemRepository menuItemRepository,
     IIngredientRepository ingredientRepository,
-    ITimeService timeService) : IOrderService
+    ITimeService timeService,
+    IReservationService reservationService) : IOrderService
 {
     public async Task<Order> Create(string tableSessionId, List<Split> splits)
     {
@@ -293,6 +294,8 @@ public class OrderService(
             throw new NotFoundException("CartItems do not exist");
         }
 
-        return cartItems.Sum(item => item.MenuItem.Price * item.Quantity);
+        int reservationFee = reservationService.MustPayReservationFee(tableSessionId) ? 500 : 0;
+
+        return cartItems.Sum(item => item.MenuItem.Price * item.Quantity) + reservationFee;
     }
 }

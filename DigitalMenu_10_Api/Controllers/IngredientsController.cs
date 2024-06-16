@@ -72,19 +72,27 @@ public class IngredientsController(
         return Ok(ingredientCount);
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
     public async Task<ActionResult> GetIngredientById([FromRoute] int id)
     {
+        Request.Headers.TryGetValue("Accept-Language", out StringValues locale);
+        string localeValue = locale.FirstOrDefault() ?? "en";
+        if (localeValue.Length > 2) localeValue = "en";
+
         Ingredient? ingredient = await ingredientService.GetIngredientById(id);
         if (ingredient == null)
         {
             return NotFound("Ingredient not found.");
         }
 
-        IngredientViewModel ingredientViewModel =
-            new() { Id = ingredient.Id, Name = ingredient.Name, Stock = ingredient.Stock };
+        IngredientViewModel ingredientViewModel = new()
+        {
+            Id = ingredient.Id,
+            Name = ingredient.Translations?.FirstOrDefault(t => t.LanguageCode == localeValue)?.Name ?? ingredient.Name,
+            Stock = ingredient.Stock,
+        };
 
         return Ok(ingredientViewModel);
     }
@@ -127,7 +135,7 @@ public class IngredientsController(
     }
 
     [Authorize(Roles = "Admin")]
-    [HttpPut("{id}")]
+    [HttpPut("{id:int}")]
     [ProducesResponseType(201)]
     [ProducesResponseType(400)]
     public async Task<ActionResult> UpdateIngredient(int id, [FromBody] IngredientUpdateRequest ingredientUpdateRequest)
