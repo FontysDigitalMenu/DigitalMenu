@@ -37,6 +37,7 @@ public class CartItemRepository(ApplicationDbContext dbContext) : ICartItemRepos
     {
         return dbContext.CartItems
             .Include(ci => ci.MenuItem)
+            .ThenInclude(cim => cim.Translations)
             .Where(ci => ci.TableSessionId == tableSessionId)
             .ToList();
     }

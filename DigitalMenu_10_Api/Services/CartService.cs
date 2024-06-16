@@ -10,7 +10,8 @@ public static class CartService
         IReservationService reservationService,
         IOrderService orderService,
         ICartItemService cartItemService,
-        string tableSessionId)
+        string tableSessionId,
+        string? localeValue = null)
     {
         int reservationFee = reservationService.MustPayReservationFee(tableSessionId) ? 500 : 0;
 
@@ -31,7 +32,8 @@ public static class CartService
                 MenuItem = new MenuItemViewModel
                 {
                     Id = cartItem.MenuItem.Id,
-                    Name = cartItem.MenuItem.Name,
+                    Name = cartItem.MenuItem.Translations?.FirstOrDefault(t => t.LanguageCode == localeValue)?.Name ??
+                           cartItem.MenuItem.Name,
                     Price = cartItem.MenuItem.Price,
                     ImageUrl = cartItem.MenuItem.ImageUrl,
                 },
