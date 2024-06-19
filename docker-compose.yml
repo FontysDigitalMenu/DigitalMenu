@@ -44,7 +44,7 @@ services:
   mailpit:
     image: axllent/mailpit:v1.17
     container_name: ${APP_NAME}-mailpit
-    restart: always
+    restart: unless-stopped
     volumes:
         - mailpit_data:/data
     ports:
